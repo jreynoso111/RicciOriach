@@ -28,12 +28,35 @@
             color: var(--color-text);
             font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
+            position: relative;
+        }
 
-            /* --- FONDO ILUSTRADO (Generado por código SVG) --- */
-            /* Esto dibuja un patrón de ondas tropicales oscuras */
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231a5c4a' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+        /* --- FONDO DINÁMICO (La magia ocurre aquí) --- */
+        .dynamic-background {
+            position: fixed;
+            top: -10%; left: 0; 
+            width: 100%; height: 120%; /* Un poco más alto para permitir movimiento */
+            z-index: -5; /* Al fondo de todo */
+            opacity: 0.6; /* Sutil */
             
-            background-attachment: fixed; /* Efecto Parallax */
+            /* SVG DE PATRÓN DE ONDAS */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231a5c4a' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            
+            /* Animación Automática (Movimiento Suave) */
+            animation: bg-drift 60s linear infinite;
+        }
+
+        @keyframes bg-drift {
+            0% { background-position: 0px 0px; }
+            100% { background-position: 500px 500px; } /* Se mueve diagonalmente */
+        }
+
+        /* --- TEXTURA SUTIL (Encima del fondo dinámico) --- */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 999;
+            opacity: 0.03; /* Muy bajita para que no moleste */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* --- NAVBAR --- */
@@ -161,12 +184,13 @@
         /* --- TOUR SECTION --- */
         .tour-section {
             padding: 4rem 2rem; 
-            /* Fondo semitransparente para que el texto se lea sobre el patrón */
+            /* Fondo para leer bien el texto */
             background: rgba(11, 59, 46, 0.7); 
             backdrop-filter: blur(5px);
             text-align: center;
             margin: 0 2rem;
             border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .tour-section h2 { font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 3rem; color: var(--color-text); }
         .tour-dates { max-width: 900px; margin: 0 auto; }
@@ -208,6 +232,11 @@
 </head>
 
 <body>
+    <!-- Capa de Fondo Animada -->
+    <div class="dynamic-background"></div>
+    <!-- Capa de Textura Sutil -->
+    <div class="noise-overlay"></div>
+
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
@@ -234,14 +263,14 @@
         </div>
 
         <div class="hero-image-container">
-            <!-- IMAGEN CORRECTA -->
+            <!-- IMAGEN DE RICCI -->
             <img src="https://e.snmc.io/i/1200/s/4f296b59611b91c0ba6b29605cc567ac/6878615" alt="Ricci Oriach" class="hero-image">
             <div class="floating-element fruit-1"></div>
             <div class="floating-element fruit-2"></div>
         </div>
     </header>
 
-    <!-- BANDA AMARILLA (CARRUSEL INFINITO) -->
+    <!-- BANDA AMARILLA (CARRUSEL) -->
     <div class="marquee-container">
         <div class="marquee-track">
             <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
@@ -302,10 +331,10 @@
     </footer>
 
     <script>
+        // Lógica del Menú Hamburguesa
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
-        // Menú móvil
         hamburger.addEventListener('click', () => {
             if (navLinks.style.display === 'flex') {
                 navLinks.style.display = 'none';
@@ -323,13 +352,23 @@
             }
         });
 
-        // Scroll suave
+        // Scroll Suave en enlaces
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) target.scrollIntoView({ behavior: 'smooth' });
             });
+        });
+
+        // EFECTO DE FONDO RÁPIDO CON SCROLL
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const background = document.querySelector('.dynamic-background');
+            
+            // Movemos el fondo verticalmente en sentido contrario al scroll para dar sensación de velocidad/profundidad
+            // El '0.5' define la velocidad. Puedes aumentarlo a '0.8' para que sea más rápido.
+            background.style.transform = `translateY(${scrolled * -0.5}px)`;
         });
     </script>
 </body>
