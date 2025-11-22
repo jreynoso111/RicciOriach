@@ -42,14 +42,6 @@
             pointer-events: none;
         }
 
-        /* --- TEXTURA SUTIL --- */
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1; 
-            opacity: 0.04; 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
         /* --- NAVBAR (A LA DERECHA SIN LOGO) --- */
         .navbar {
             display: flex; 
@@ -229,16 +221,15 @@
 </head>
 
 <body>
-    <!-- CANVAS DE FONDO -->
+    <!-- CANVAS DE FONDO (Sin textura extra) -->
     <canvas id="canvas-bg"></canvas>
-    <div class="noise-overlay"></div>
 
-    <!-- NAVBAR (Orden corregido: Merch antes que Blog) -->
+    <!-- NAVBAR -->
     <nav class="navbar">
         <ul class="nav-links">
             <li><a href="index.html" style="color: var(--color-accent);">Inicio</a></li>
             <li><a href="music.html">Música</a></li>
-            <li><a href="merch.html">Merch</a></li> <!-- Movido antes de Blog -->
+            <li><a href="merch.html">Merch</a></li>
             <li><a href="blog.html">Blog</a></li>
             <li><a href="contact.html">Contacto</a></li>
         </ul>
