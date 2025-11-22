@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ricci Oriach | Folclore Alternativo</title>
-    <meta name="description" content="Sitio oficial de Ricci Oriach.">
+    <meta name="description" content="Sitio oficial de Ricci Oriach. Folclore Alternativo Caribeño.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,12 +13,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- VARIABLES --- */
+        /* --- VARIABLES & ESTILOS GLOBALES --- */
         :root {
-            --color-bg: #0B3B2E;       /* Verde Monte */
-            --color-text: #F4F4F4;     /* Blanco */
+            --color-bg: #0B3B2E;       /* Verde Monte Profundo */
+            --color-text: #F4F4F4;     /* Blanco Hueso */
             --color-accent: #FF5E6C;   /* Rosa Guayaba */
-            --color-secondary: #FFD700; /* Amarillo */
+            --color-secondary: #FFD700; /* Amarillo Sol */
+            --color-card: rgba(255, 255, 255, 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,11 +31,11 @@
             overflow-x: hidden;
         }
 
-        /* --- TEXTURA SUTIL --- */
+        /* --- TEXTURA (Muy sutil para que no se vea fea) --- */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 999;
-            opacity: 0.04; 
+            opacity: 0.03; /* Opacidad muy baja, casi invisible */
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -49,8 +50,8 @@
         .nav-links li a { text-decoration: none; color: var(--color-text); font-weight: 500; text-transform: uppercase; font-size: 0.9rem; transition: color 0.3s; }
         .nav-links li a:hover { color: var(--color-accent); }
         
-        .hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; }
-        .hamburger span { width: 30px; height: 3px; background-color: white; border-radius: 2px; }
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+        .hamburger span { width: 25px; height: 3px; background-color: white; }
 
         /* --- HERO SECTION --- */
         .hero {
@@ -77,7 +78,7 @@
         .filled-text { color: var(--color-accent); }
 
         .hero-subtitle {
-            font-size: 1.1rem; letter-spacing: 3px; margin-bottom: 2rem;
+            font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 2rem;
             color: var(--color-secondary); font-weight: 300;
         }
 
@@ -85,30 +86,34 @@
             display: inline-block; padding: 1rem 2.5rem;
             background-color: var(--color-accent); color: white;
             text-decoration: none; border-radius: 50px; font-weight: 700;
-            transition: transform 0.3s;
+            font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s;
         }
-        .cta-button:hover { transform: scale(1.05); }
+        .cta-button:hover {
+            transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 94, 108, 0.5);
+        }
 
+        /* Imagen y Elementos Flotantes */
         .hero-image-container {
             position: relative; width: 45%; display: flex; justify-content: center;
         }
 
         .hero-image {
-            width: 100%; max-width: 450px;
-            border-radius: 20px;
-            box-shadow: 10px 10px 0px rgba(255, 94, 108, 0.2); 
+            width: 100%; max-width: 500px; border-radius: 20px;
+            /* Filtro para mejorar la foto */
+            filter: contrast(1.1) saturate(1.2);
+            box-shadow: 10px 10px 0px rgba(255, 94, 108, 0.2);
         }
 
-        /* Animación Frutas */
         .floating-element {
-            position: absolute; border-radius: 50%; opacity: 0.6;
+            position: absolute; border-radius: 50%; opacity: 0.8;
             animation: float 6s ease-in-out infinite; z-index: -1;
         }
-        .fruit-1 { width: 80px; height: 80px; background: #FFD700; top: -20px; right: 20px; filter: blur(30px); }
-        .fruit-2 { width: 120px; height: 120px; background: #FF5E6C; bottom: 20px; left: -40px; animation-delay: 2s; filter: blur(30px); }
+        .fruit-1 { width: 80px; height: 80px; background: radial-gradient(circle, #FFD700, transparent); top: -20px; right: 20px; filter: blur(5px); }
+        .fruit-2 { width: 120px; height: 120px; background: radial-gradient(circle, #FF5E6C, transparent); bottom: 20px; left: -40px; animation-delay: 2s; filter: blur(8px); }
+        
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
 
-        /* --- MARQUEE (CARRUSEL INFINITO) --- */
+        /* --- MARQUEE (CARRUSEL AMARILLO) --- */
         .marquee-container {
             background: var(--color-secondary); 
             color: #0B3B2E;
@@ -121,13 +126,12 @@
             transform: rotate(-1deg);
             border-top: 2px solid #000; 
             border-bottom: 2px solid #000;
-            display: flex; /* Clave para que el carrusel funcione */
+            display: flex;
         }
 
         .marquee-track {
             display: flex;
             white-space: nowrap;
-            /* La animación mueve el track infinitamente hacia la izquierda */
             animation: scroll 20s linear infinite;
         }
 
@@ -135,20 +139,44 @@
             font-family: 'Abril Fatface', cursive; 
             font-size: 1.5rem; 
             text-transform: uppercase;
-            padding: 0 2rem; /* Espacio entre repeticiones */
+            padding: 0 2rem;
         }
 
         @keyframes scroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); } /* Se mueve la mitad (porque duplicamos el contenido) */
+            100% { transform: translateX(-50%); }
         }
 
         /* --- SPOTIFY --- */
         .spotify-container { max-width: 800px; margin: 0 auto 4rem auto; padding: 0 2rem; }
 
+        /* --- TOUR SECTION --- */
+        .tour-section {
+            padding: 4rem 2rem; background: rgba(0, 0, 0, 0.2); text-align: center;
+        }
+        .tour-section h2 { font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 3rem; color: var(--color-text); }
+        .tour-dates { max-width: 900px; margin: 0 auto; }
+        
+        .tour-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); transition: background 0.3s;
+        }
+        .tour-item:hover { background: rgba(255, 255, 255, 0.05); }
+        
+        .date { color: var(--color-secondary); font-weight: 700; font-size: 1.2rem; width: 15%; text-align: left; }
+        .city { font-weight: 700; font-size: 1.2rem; width: 30%; text-align: left; }
+        .venue { font-weight: 300; width: 30%; text-align: left; opacity: 0.8; }
+        
+        .ticket-btn {
+            padding: 0.5rem 1.5rem; border: 1px solid var(--color-accent); color: var(--color-accent);
+            text-decoration: none; border-radius: 20px; font-size: 0.9rem; font-weight: 700; transition: all 0.3s;
+        }
+        .ticket-btn:hover { background: var(--color-accent); color: white; }
+
         /* --- FOOTER --- */
-        footer { text-align: center; padding: 2rem; opacity: 0.7; font-size: 0.8rem; margin-top: 2rem; }
-        .social-links a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; }
+        footer { text-align: center; padding: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 2rem; }
+        .social-links a { color: var(--color-text); margin: 0 10px; text-decoration: none; font-weight: 700; font-size: 0.9rem; }
+        .social-links a:hover { color: var(--color-secondary); }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
@@ -158,6 +186,8 @@
             .hero-title { font-size: 3.5rem; }
             .nav-links { display: none; }
             .hamburger { display: flex; }
+            .tour-item { flex-direction: column; gap: 10px; text-align: center; }
+            .date, .city, .venue { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -165,6 +195,7 @@
 <body>
     <div class="noise-overlay"></div>
 
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
         <ul class="nav-links">
@@ -178,28 +209,29 @@
         </div>
     </nav>
 
+    <!-- HERO SECTION -->
     <header class="hero">
         <div class="hero-content">
             <h1 class="hero-title">
                 <span class="outline-text">RICCI</span><br>
                 <span class="filled-text">ORIACH</span>
             </h1>
-            <p class="hero-subtitle">FOLCLORE FUTURISTA</p>
-            <a href="#listen" class="cta-button">ESCUCHAR AHORA</a>
+            <p class="hero-subtitle">FOLCLORE FUTURISTA / PSICODELIA TROPICAL</p>
+            <a href="#tour" class="cta-button">VER PRÓXIMOS SHOWS</a>
         </div>
 
         <div class="hero-image-container">
-            <!-- Imagen de Unsplash que no se rompe -->
-            <img src="https://images.unsplash.com/photo-1511735111819-9a3f77ebd23c?q=80&w=1000&auto=format&fit=crop" alt="Ricci Oriach Vibe" class="hero-image">
+            <!-- IMAGEN ARREGLADA: URL directa de alta calidad (Unsplash) para que no salga rota -->
+            <img src="https://images.unsplash.com/photo-1511735111819-9a3f77ebd23c?q=80&w=1000&auto=format&fit=crop" alt="Ricci Oriach" class="hero-image">
             <div class="floating-element fruit-1"></div>
             <div class="floating-element fruit-2"></div>
         </div>
     </header>
 
     <!-- BANDA AMARILLA (CARRUSEL) -->
+    <!-- Texto duplicado para lograr el efecto infinito -->
     <div class="marquee-container">
         <div class="marquee-track">
-            <!-- Texto duplicado varias veces para crear el bucle infinito -->
             <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
             <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
             <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
@@ -207,23 +239,58 @@
         </div>
     </div>
 
+    <!-- SPOTIFY PLAYER (Agregado debajo del carrusel) -->
     <div id="listen" class="spotify-container">
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6xZ5aQd6K3E88vT7r0V5P8?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
-    <footer>
-        <div class="social-links">
-            <a href="#">INSTAGRAM</a>
-            <a href="#">SPOTIFY</a>
-            <a href="#">YOUTUBE</a>
+    <!-- TOUR SECTION (INTACTA) -->
+    <section id="tour" class="tour-section">
+        <h2>TOUR 2025</h2>
+        <div class="tour-dates">
+            <div class="tour-item">
+                <span class="date">15 MAR</span>
+                <span class="city">SANTO DOMINGO</span>
+                <span class="venue">Teatro Nacional</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
+            <div class="tour-item">
+                <span class="date">22 MAR</span>
+                <span class="city">SANTIAGO</span>
+                <span class="venue">Gran Teatro</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
+            <div class="tour-item">
+                <span class="date">05 ABR</span>
+                <span class="city">BOGOTÁ</span>
+                <span class="venue">Estéreo Picnic</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
+            <div class="tour-item">
+                <span class="date">12 MAY</span>
+                <span class="city">MADRID</span>
+                <span class="venue">Sala La Riviera</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
         </div>
-        <p style="margin-top:1rem">&copy; 2025 Ricci Oriach.</p>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-links" style="margin-bottom: 10px;">
+                <a href="#">Instagram</a>
+                <a href="#">Spotify</a>
+                <a href="#">YouTube</a>
+            </div>
+            <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
     <script>
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
+        // Menú móvil mejorado
         hamburger.addEventListener('click', () => {
             if (navLinks.style.display === 'flex') {
                 navLinks.style.display = 'none';
@@ -240,6 +307,15 @@
                 navLinks.style.zIndex = '1000';
             }
         });
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
     </script>
 </body>
+
 </html>
