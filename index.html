@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricci Oriach | Folclore Alternativo</title>
-    <meta name="description" content="Sitio oficial de Ricci Oriach. Folclore Alternativo Caribeño.">
+    <title>Riccie Oriach | Folclore Alternativo</title>
+    <meta name="description" content="Sitio oficial de Riccie Oriach. Folclore Alternativo Caribeño.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,31 +31,37 @@
             margin: 0;
         }
 
-        /* --- CANVAS DE FONDO (CONSTELACIÓN) --- */
+        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
         #canvas-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Detrás de todo */
+            z-index: -1; 
             pointer-events: none;
         }
 
-        /* --- TEXTURA SUTIL (Encima del canvas) --- */
+        /* --- TEXTURA SUTIL --- */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1; /* Encima del canvas pero detrás del contenido */
+            pointer-events: none; z-index: -1; 
             opacity: 0.04; 
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- NAVBAR --- */
+        /* --- NAVBAR (A LA DERECHA SIN LOGO) --- */
         .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem 2rem; position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center;
+            padding: 1.5rem 2rem; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 100;
         }
-        .logo a { font-family: 'Abril Fatface', cursive; font-size: 1.5rem; color: white; text-decoration: none; letter-spacing: 1px; }
         
         .nav-links { list-style: none; display: flex; gap: 2rem; }
         .nav-links li a { text-decoration: none; color: var(--color-text); font-weight: 500; text-transform: uppercase; font-size: 0.9rem; transition: color 0.3s; }
@@ -175,7 +181,7 @@
         /* --- TOUR SECTION --- */
         .tour-section {
             padding: 4rem 2rem; 
-            background: rgba(11, 59, 46, 0.4); /* Fondo más suave */
+            background: rgba(11, 59, 46, 0.4); 
             backdrop-filter: blur(2px);
             text-align: center;
             margin: 0 2rem;
@@ -208,6 +214,7 @@
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
+            .navbar { justify-content: flex-end; }
             .hero { flex-direction: column-reverse; text-align: center; padding-top: 100px; justify-content: center; }
             .hero-content { max-width: 100%; margin-top: 2rem; }
             .hero-image-container { width: 80%; }
@@ -224,16 +231,14 @@
 <body>
     <!-- CANVAS DE FONDO -->
     <canvas id="canvas-bg"></canvas>
-    
-    <!-- TEXTURA SUAVE -->
     <div class="noise-overlay"></div>
 
-    <!-- NAVBAR -->
+    <!-- NAVBAR (Alineado a la derecha, sin logo) -->
     <nav class="navbar">
-        <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
         <ul class="nav-links">
             <li><a href="index.html" style="color: var(--color-accent);">Inicio</a></li>
             <li><a href="music.html">Música</a></li>
+            <li><a href="blog.html">Blog</a></li>
             <li><a href="merch.html">Merch</a></li>
             <li><a href="contact.html">Contacto</a></li>
         </ul>
@@ -246,7 +251,7 @@
     <header class="hero">
         <div class="hero-content">
             <h1 class="hero-title">
-                <span class="outline-text">RICCI</span><br>
+                <span class="outline-text">RICCIE</span><br>
                 <span class="filled-text">ORIACH</span>
             </h1>
             <p class="hero-subtitle">FOLCLORE FUTURISTA / PSICODELIA TROPICAL</p>
@@ -254,8 +259,7 @@
         </div>
 
         <div class="hero-image-container">
-            <!-- IMAGEN DE RICCI -->
-            <img src="https://e.snmc.io/i/1200/s/4f296b59611b91c0ba6b29605cc567ac/6878615" alt="Ricci Oriach" class="hero-image">
+            <img src="https://e.snmc.io/i/1200/s/4f296b59611b91c0ba6b29605cc567ac/6878615" alt="Riccie Oriach" class="hero-image">
             <div class="floating-element fruit-1"></div>
             <div class="floating-element fruit-2"></div>
         </div>
@@ -264,18 +268,20 @@
     <!-- BANDA AMARILLA (CARRUSEL) -->
     <div class="marquee-container">
         <div class="marquee-track">
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
+            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
         </div>
     </div>
 
-    <!-- SPOTIFY PLAYER -->
+    <!-- SPOTIFY PLAYER (CORREGIDO: ARTIST PROFILE) -->
+    <!-- Este enlace usa el perfil de artista que es más estable y muestra sus top hits -->
     <div id="listen" class="spotify-container">
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6xZ5aQd6K3E88vT7r0V5P8?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        
         <p class="spotify-fallback">
-            ¿No carga el reproductor? <a href="https://open.spotify.com/artist/6xZ5aQd6K3E88vT7r0V5P8" target="_blank">Escuchar en Spotify App</a>
+            ¿No carga el reproductor? <a href="https://open.spotify.com/artist/6xZ5aQd6K3E88vT7r0V5P8" target="_blank">Abrir perfil en Spotify</a>
         </p>
     </div>
 
@@ -317,12 +323,12 @@
                 <a href="#">Spotify</a>
                 <a href="#">YouTube</a>
             </div>
-            <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+            <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 Riccie Oriach. Todos los derechos reservados.</p>
         </div>
     </footer>
 
     <script>
-        // --- 1. SCRIPT DE FONDO DE ESTRELLAS/PUNTOS ---
+        // --- 1. SCRIPT DE PUNTOS FLOTANTES ---
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -330,36 +336,27 @@
 
         let particlesArray;
 
-        // Manejar cambio de tamaño de pantalla
         window.addEventListener('resize', function() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             initParticles();
         });
 
-        // Clase Partícula
         class Particle {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                // Velocidad aleatoria muy suave
-                this.directionX = (Math.random() * 0.4) - 0.2;
-                this.directionY = (Math.random() * 0.4) - 0.2;
-                // Tamaño aleatorio
-                this.size = Math.random() * 2.5 + 0.5; // Puntos entre 0.5px y 3px
-                // Opacidad aleatoria (blanco/amarillento con transparencia)
-                this.opacity = Math.random() * 0.5 + 0.1;
-                this.color = `rgba(240, 240, 200, ${this.opacity})`;
+                this.size = Math.random() * 3 + 0.5; 
+                const depthSpeed = this.size * 0.15; 
+                this.speedX = (Math.random() * 2 - 1) * depthSpeed;
+                this.speedY = (Math.random() * 2 - 1) * depthSpeed;
+                this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
             }
             update() {
-                this.x += this.directionX;
-                this.y += this.directionY;
-
-                // Si sale de la pantalla, vuelve a aparecer por el otro lado
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
             }
             draw() {
                 ctx.beginPath();
@@ -371,7 +368,6 @@
 
         function initParticles() {
             particlesArray = [];
-            // Densidad de puntos según el tamaño de pantalla
             let numberOfParticles = (canvas.height * canvas.width) / 9000;
             for (let i = 0; i < numberOfParticles; i++) {
                 particlesArray.push(new Particle());
@@ -380,20 +376,17 @@
 
         function animateParticles() {
             requestAnimationFrame(animateParticles);
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
-            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (let i = 0; i < particlesArray.length; i++) {
                 particlesArray[i].update();
                 particlesArray[i].draw();
             }
         }
 
-        // Iniciar fondo
         initParticles();
         animateParticles();
 
-
-        // --- 2. SCRIPT DE NAVEGACIÓN Y MENU ---
+        // --- 2. SCRIPT DE NAVEGACIÓN ---
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
