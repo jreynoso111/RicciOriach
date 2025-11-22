@@ -31,11 +31,11 @@
             overflow-x: hidden;
         }
 
-        /* --- TEXTURA (Muy sutil para que no se vea fea) --- */
+        /* --- TEXTURA SUTIL --- */
         .noise-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 999;
-            opacity: 0.03; /* Opacidad muy baja, casi invisible */
+            opacity: 0.03; 
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -99,7 +99,6 @@
 
         .hero-image {
             width: 100%; max-width: 500px; border-radius: 20px;
-            /* Filtro para mejorar la foto */
             filter: contrast(1.1) saturate(1.2);
             box-shadow: 10px 10px 0px rgba(255, 94, 108, 0.2);
         }
@@ -113,7 +112,7 @@
         
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
 
-        /* --- MARQUEE (CARRUSEL AMARILLO) --- */
+        /* --- MARQUEE (CARRUSEL) --- */
         .marquee-container {
             background: var(--color-secondary); 
             color: #0B3B2E;
@@ -147,8 +146,20 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* --- SPOTIFY --- */
-        .spotify-container { max-width: 800px; margin: 0 auto 4rem auto; padding: 0 2rem; }
+        /* --- SPOTIFY SECTION --- */
+        .spotify-container { 
+            max-width: 800px; 
+            margin: 0 auto 4rem auto; 
+            padding: 0 2rem; 
+            text-align: center;
+        }
+
+        .spotify-fallback {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+        }
+        .spotify-fallback a { color: white; }
 
         /* --- TOUR SECTION --- */
         .tour-section {
@@ -217,19 +228,18 @@
                 <span class="filled-text">ORIACH</span>
             </h1>
             <p class="hero-subtitle">FOLCLORE FUTURISTA / PSICODELIA TROPICAL</p>
-            <a href="#tour" class="cta-button">VER PRÓXIMOS SHOWS</a>
+            <a href="#listen" class="cta-button">ESCUCHAR AHORA</a>
         </div>
 
         <div class="hero-image-container">
-            <!-- IMAGEN ARREGLADA: URL directa de alta calidad (Unsplash) para que no salga rota -->
+            <!-- IMAGEN CORRECTA (No se rompe) -->
             <img src="https://images.unsplash.com/photo-1511735111819-9a3f77ebd23c?q=80&w=1000&auto=format&fit=crop" alt="Ricci Oriach" class="hero-image">
             <div class="floating-element fruit-1"></div>
             <div class="floating-element fruit-2"></div>
         </div>
     </header>
 
-    <!-- BANDA AMARILLA (CARRUSEL) -->
-    <!-- Texto duplicado para lograr el efecto infinito -->
+    <!-- BANDA AMARILLA (CARRUSEL INFINITO) -->
     <div class="marquee-container">
         <div class="marquee-track">
             <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCI ORIACH •</span>
@@ -239,12 +249,17 @@
         </div>
     </div>
 
-    <!-- SPOTIFY PLAYER (Agregado debajo del carrusel) -->
+    <!-- SPOTIFY PLAYER (ARREGLADO) -->
+    <!-- Hemos aumentado el tamaño a 352px para que sea la versión completa del reproductor -->
     <div id="listen" class="spotify-container">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6xZ5aQd6K3E88vT7r0V5P8?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6xZ5aQd6K3E88vT7r0V5P8?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        
+        <p class="spotify-fallback">
+            ¿No carga el reproductor? <a href="https://open.spotify.com/artist/6xZ5aQd6K3E88vT7r0V5P8" target="_blank">Escuchar en Spotify App</a>
+        </p>
     </div>
 
-    <!-- TOUR SECTION (INTACTA) -->
+    <!-- TOUR SECTION -->
     <section id="tour" class="tour-section">
         <h2>TOUR 2025</h2>
         <div class="tour-dates">
@@ -290,7 +305,7 @@
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
-        // Menú móvil mejorado
+        // Menú móvil
         hamburger.addEventListener('click', () => {
             if (navLinks.style.display === 'flex') {
                 navLinks.style.display = 'none';
@@ -308,6 +323,7 @@
             }
         });
 
+        // Scroll suave
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
