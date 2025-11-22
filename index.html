@@ -19,7 +19,6 @@
             --color-text: #F4F4F4;     /* Blanco Hueso */
             --color-accent: #FF5E6C;   /* Rosa Guayaba */
             --color-secondary: #FFD700; /* Amarillo Sol */
-            --color-card: rgba(255, 255, 255, 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,14 +28,12 @@
             color: var(--color-text);
             font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
-        }
 
-        /* --- TEXTURA SUTIL --- */
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 999;
-            opacity: 0.03; 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            /* --- FONDO ILUSTRADO (Generado por código SVG) --- */
+            /* Esto dibuja un patrón de ondas tropicales oscuras */
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231a5c4a' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            
+            background-attachment: fixed; /* Efecto Parallax */
         }
 
         /* --- NAVBAR --- */
@@ -99,7 +96,7 @@
 
         .hero-image {
             width: 100%; max-width: 500px; border-radius: 20px;
-            filter: contrast(1.1) saturate(1.1); /* Ajuste de color */
+            filter: contrast(1.1) saturate(1.1);
             box-shadow: 10px 10px 0px rgba(255, 94, 108, 0.2);
         }
 
@@ -163,7 +160,13 @@
 
         /* --- TOUR SECTION --- */
         .tour-section {
-            padding: 4rem 2rem; background: rgba(0, 0, 0, 0.2); text-align: center;
+            padding: 4rem 2rem; 
+            /* Fondo semitransparente para que el texto se lea sobre el patrón */
+            background: rgba(11, 59, 46, 0.7); 
+            backdrop-filter: blur(5px);
+            text-align: center;
+            margin: 0 2rem;
+            border-radius: 20px;
         }
         .tour-section h2 { font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 3rem; color: var(--color-text); }
         .tour-dates { max-width: 900px; margin: 0 auto; }
@@ -199,13 +202,12 @@
             .hamburger { display: flex; }
             .tour-item { flex-direction: column; gap: 10px; text-align: center; }
             .date, .city, .venue { width: 100%; text-align: center; }
+            .tour-section { margin: 0; border-radius: 0; }
         }
     </style>
 </head>
 
 <body>
-    <div class="noise-overlay"></div>
-
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
@@ -232,7 +234,7 @@
         </div>
 
         <div class="hero-image-container">
-            <!-- IMAGEN ACTUALIZADA -->
+            <!-- IMAGEN CORRECTA -->
             <img src="https://e.snmc.io/i/1200/s/4f296b59611b91c0ba6b29605cc567ac/6878615" alt="Ricci Oriach" class="hero-image">
             <div class="floating-element fruit-1"></div>
             <div class="floating-element fruit-2"></div>
@@ -249,10 +251,9 @@
         </div>
     </div>
 
-    <!-- SPOTIFY PLAYER (ARREGLADO) -->
+    <!-- SPOTIFY PLAYER -->
     <div id="listen" class="spotify-container">
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6xZ5aQd6K3E88vT7r0V5P8?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        
         <p class="spotify-fallback">
             ¿No carga el reproductor? <a href="https://open.spotify.com/artist/6xZ5aQd6K3E88vT7r0V5P8" target="_blank">Escuchar en Spotify App</a>
         </p>
