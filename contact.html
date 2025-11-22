@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricci Oriach | Contacto</title>
+    <meta name="description" content="Contacta con el equipo de Ricci Oriach. Booking y Management.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES DE COLOR (Vibe Ricci Oriach) --- */
+        :root {
+            --color-bg: #0B3B2E;
+            /* Verde Monte Oscuro */
+            --color-text: #F4F4F4;
+            /* Blanco Hueso */
+            --color-accent: #FF5E6C;
+            /* Rosa Guayaba */
+            --color-secondary: #FFD700;
+            /* Amarillo Sol */
+        }
+
+        /* --- ESTILOS GENERALES --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Efecto de Grano (Noise Overlay) */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- NAVBAR (Del código nuevo) --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            position: absolute;
+            /* Flotante sobre el contenido */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .logo a {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links li a:hover {
+            color: var(--color-accent);
+        }
+
+        /* Menú Hamburguesa (Visual) */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--color-text);
+        }
+
+        /* --- SECCIÓN DE CONTACTO --- */
+        .contact-hero {
+            padding-top: 150px;
+            /* Espacio para que no choque con el navbar */
+            padding-bottom: 50px;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .outline-text {
+            -webkit-text-stroke: 2px var(--color-accent);
+            color: transparent;
+        }
+
+        .filled-text {
+            color: var(--color-accent);
+        }
+
+        .tour-section {
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        /* Estilos del Formulario */
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: var(--color-secondary);
+            /* Amarillo para resaltar labels */
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--color-accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 94, 108, 0.4);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+        }
+
+        .social-links {
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--color-text);
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--color-secondary);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                /* Aquí iría la lógica de JS para abrir menú */
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+
+    <!-- HEADER / NAVBAR (Integrado del código nuevo) -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html">RICCI ORIACH</a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="music.html">Música</a></li>
+            <li><a href="merch.html">Merch</a></li>
+            <li><a href="contact.html" style="color: var(--color-accent);">Contacto</a></li>
+        </ul>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO DE LA PÁGINA -->
+    <div class="contact-hero">
+        <h1>
+            <span class="outline-text">CON</span><span class="filled-text">TACTO</span>
+        </h1>
+    </div>
+
+    <section class="tour-section">
+        <div class="tour-dates" style="text-align: center;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif; color: white;">
+                Booking & Management</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 3rem; opacity: 0.8; font-weight: 300;">
+                management@riccioriach.com</p>
+
+            <form action="#" method="POST">
+                <div>
+                    <label for="nombre">NOMBRE</label>
+                    <input type="text" id="nombre" required placeholder="Tu nombre o empresa">
+                </div>
+                <div>
+                    <label for="email">EMAIL</label>
+                    <input type="email" id="email" required placeholder="correo@ejemplo.com">
+                </div>
+                <div>
+                    <label for="mensaje">MENSAJE</label>
+                    <textarea id="mensaje" rows="5" required
+                        placeholder="Detalles del evento o propuesta..."></textarea>
+                </div>
+                <button type="submit" class="cta-button">ENVIAR MENSAJE</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#">Instagram</a>
+                <a href="#">Spotify</a>
+                <a href="#">YouTube</a>
+            </div>
+            <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Script simple para el menú hamburguesa en móviles -->
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            // Simple toggle para mostrar menú en móvil (puedes mejorarlo luego)
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '70px';
+                navLinks.style.right = '20px';
+                navLinks.style.backgroundColor = '#0B3B2E';
+                navLinks.style.padding = '20px';
+                navLinks.style.border = '1px solid #FF5E6C';
+                navLinks.style.borderRadius = '10px';
+            }
+        });
+    </script>
+</body>
+
+</html>

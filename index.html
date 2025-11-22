@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricci Oriach | Folclore Alternativo</title>
+    <meta name="description"
+        content="Sitio oficial de Ricci Oriach. Folclore Alternativo Caribeño fusionado con Psicodelia Tropical.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES & ESTILOS GLOBALES --- */
+        :root {
+            --color-bg: #0B3B2E;
+            /* Verde Monte Profundo */
+            --color-text: #F4F4F4;
+            /* Blanco Hueso */
+            --color-accent: #FF5E6C;
+            /* Rosa Guayaba */
+            --color-secondary: #FFD700;
+            /* Amarillo Sol */
+            --color-card: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Noise Overlay (Textura de papel/grano) */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .logo a {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 1.5rem;
+            color: white;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links li a:hover {
+            color: var(--color-accent);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5%;
+            position: relative;
+            padding-top: 80px;
+            /* Espacio para el navbar */
+        }
+
+        .hero-content {
+            max-width: 50%;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 5rem;
+            line-height: 0.9;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .outline-text {
+            -webkit-text-stroke: 2px var(--color-accent);
+            color: transparent;
+        }
+
+        .filled-text {
+            color: var(--color-accent);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin-bottom: 2rem;
+            color: var(--color-secondary);
+            font-weight: 300;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background-color: var(--color-accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 94, 108, 0.5);
+        }
+
+        /* Hero Image & Floating Elements */
+        .hero-image-container {
+            position: relative;
+            width: 45%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            /* Filtro para que la foto se vea más integrada si es muy brillante */
+            filter: contrast(1.1) saturate(1.2);
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        }
+
+        /* Elementos Flotantes (Animación) */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .fruit-1 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #FFD700, transparent);
+            top: -20px;
+            right: 20px;
+            filter: blur(5px);
+        }
+
+        .fruit-2 {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, #FF5E6C, transparent);
+            bottom: 20px;
+            left: -40px;
+            animation-delay: 2s;
+            filter: blur(8px);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* --- TOUR SECTION --- */
+        .tour-section {
+            padding: 4rem 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            /* Un poco más oscuro */
+            text-align: center;
+        }
+
+        .tour-section h2 {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: var(--color-text);
+        }
+
+        .tour-dates {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .tour-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s;
+        }
+
+        .tour-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .date {
+            color: var(--color-secondary);
+            font-weight: 700;
+            font-size: 1.2rem;
+            width: 15%;
+            text-align: left;
+        }
+
+        .city {
+            font-weight: 700;
+            font-size: 1.2rem;
+            width: 30%;
+            text-align: left;
+        }
+
+        .venue {
+            font-weight: 300;
+            width: 30%;
+            text-align: left;
+            opacity: 0.8;
+        }
+
+        .ticket-btn {
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--color-accent);
+            color: var(--color-accent);
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .ticket-btn:hover {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            color: var(--color-text);
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .social-links a:hover {
+            color: var(--color-secondary);
+        }
+
+        /* --- RESPONSIVE (Celulares) --- */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column-reverse;
+                text-align: center;
+                padding-top: 100px;
+                justify-content: center;
+            }
+
+            .hero-content {
+                max-width: 100%;
+                margin-top: 2rem;
+            }
+
+            .hero-image-container {
+                width: 80%;
+            }
+
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            /* Aquí entra el JS */
+            .hamburger {
+                display: flex;
+            }
+
+            .tour-item {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .date,
+            .city,
+            .venue {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
+        <ul class="nav-links">
+            <li><a href="index.html" style="color: var(--color-accent);">Inicio</a></li>
+            <li><a href="music.html">Música</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="merch.html">Merch</a></li>
+            <li><a href="contact.html">Contacto</a></li>
+        </ul>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="outline-text">RICCI</span><br>
+                <span class="filled-text">ORIACH</span>
+            </h1>
+            <p class="hero-subtitle">FOLCLORE FUTURISTA / PSICODELIA TROPICAL</p>
+            <a href="#tour" class="cta-button">VER PRÓXIMOS SHOWS</a>
+        </div>
+
+        <div class="hero-image-container">
+            <!-- Si no tienes la imagen aún, esto se verá bien igual -->
+            <img src="assets/hero.png" onerror="this.style.display='none'" alt="Ricci Oriach" class="hero-image">
+
+            <!-- Elementos decorativos psicodélicos (CSS puro) -->
+            <div class="floating-element fruit-1"></div>
+            <div class="floating-element fruit-2"></div>
+        </div>
+    </header>
+
+    <!-- TOUR SECTION -->
+    <section id="tour" class="tour-section">
+        <h2>TOUR 2025</h2>
+        <div class="tour-dates">
+            <div class="tour-item">
+                <span class="date">15 MAR</span>
+                <span class="city">SANTO DOMINGO</span>
+                <span class="venue">Teatro Nacional</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
+            <div class="tour-item">
+                <span class="date">22 MAR</span>
+                <span class="city">SANTIAGO</span>
+                <span class="venue">Gran Teatro</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
+            <div class="tour-item">
+                <span class="date">05 ABR</span>
+                <span class="city">BOGOTÁ</span>
+                <span class="venue">Estéreo Picnic</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
+            <div class="tour-item">
+                <span class="date">12 MAY</span>
+                <span class="city">MADRID</span>
+                <span class="venue">Sala La Riviera</span>
+                <a href="#" class="ticket-btn">TICKETS</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="social-links" style="margin-bottom: 10px;">
+                <a href="#">Instagram</a>
+                <a href="#">Spotify</a>
+                <a href="#">YouTube</a>
+            </div>
+            <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT FUNCIONAL -->
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        // Toggle del menú móvil
+        hamburger.addEventListener('click', () => {
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '70px';
+                navLinks.style.right = '20px';
+                navLinks.style.backgroundColor = '#0B3B2E'; // Fondo del menú
+                navLinks.style.padding = '2rem';
+                navLinks.style.border = '1px solid #FF5E6C'; // Borde rosa
+                navLinks.style.borderRadius = '10px';
+                navLinks.style.zIndex = '1000';
+            }
+        });
+
+        // Efecto suave al hacer scroll a la sección #tour
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

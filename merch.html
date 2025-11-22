@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricci Oriach | Mercadito Tropical</title>
+    <meta name="description" content="Merch oficial de Ricci Oriach. Camisetas, vinilos y accesorios.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES & ESTILOS GENERALES --- */
+        :root {
+            --color-bg: #0B3B2E;
+            /* Verde Monte */
+            --color-text: #F4F4F4;
+            /* Blanco Hueso */
+            --color-accent: #FF5E6C;
+            /* Rosa Guayaba */
+            --color-secondary: #FFD700;
+            /* Amarillo Sol */
+            --color-card: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .logo a {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--color-text);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links li a:hover {
+            color: var(--color-accent);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+        }
+
+        /* --- HERO SECTION --- */
+        .merch-hero {
+            padding-top: 150px;
+            padding-bottom: 30px;
+            text-align: center;
+        }
+
+        .merch-title {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 3.5rem;
+            margin: 0;
+            line-height: 1.1;
+            text-transform: uppercase;
+        }
+
+        .outline-text {
+            -webkit-text-stroke: 2px var(--color-accent);
+            color: transparent;
+        }
+
+        .filled-text {
+            color: var(--color-accent);
+        }
+
+        .merch-subtitle {
+            font-size: 1rem;
+            letter-spacing: 3px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        /* --- GRID DE PRODUCTOS --- */
+        .merch-container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 5rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: var(--color-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-accent);
+        }
+
+        /* Placeholder para imágenes (simula fotos artísticas) */
+        .product-image-placeholder {
+            width: 100%;
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            /* Gradiente por defecto si no hay imagen */
+            background: linear-gradient(45deg, #0B3B2E, #1a5c4a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 3rem;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-info h3 {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-text);
+        }
+
+        .price {
+            font-size: 1.1rem;
+            color: var(--color-secondary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background: transparent;
+            border: 2px solid var(--color-accent);
+            color: var(--color-accent);
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        .add-to-cart:hover {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+        }
+
+        .social-links {
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            color: var(--color-text);
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .merch-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="noise-overlay"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="music.html">Música</a></li>
+            <li><a href="merch.html" style="color: var(--color-accent);">Merch</a></li>
+            <li><a href="contact.html">Contacto</a></li>
+        </ul>
+        <div class="hamburger"><span></span><span></span><span></span></div>
+    </nav>
+
+    <!-- HEADER DE LA PÁGINA -->
+    <header class="merch-hero">
+        <h1 class="merch-title">
+            <span class="outline-text">MERCA</span><span class="filled-text">DITO</span>
+        </h1>
+        <p class="merch-subtitle">LLEVA EL RITMO TROPICAL CONTIGO</p>
+    </header>
+
+    <!-- PRODUCTOS -->
+    <section class="merch-container">
+        <div class="product-grid">
+            <!-- Producto 1 -->
+            <div class="product-card">
+                <!-- Simulamos imagen con degradado Rosa -->
+                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #FF5E6C, #b03e48);">
+                    <span>👕</span>
+                </div>
+                <div class="product-info">
+                    <h3>Camiseta "Maquiné"</h3>
+                    <p class="price">$25.00</p>
+                    <button class="add-to-cart">AGREGAR</button>
+                </div>
+            </div>
+
+            <!-- Producto 2 -->
+            <div class="product-card">
+                <!-- Simulamos imagen con degradado Amarillo -->
+                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #FFD700, #b39700);">
+                    <span>💿</span>
+                </div>
+                <div class="product-info">
+                    <h3>Vinilo "Mi Derriengue"</h3>
+                    <p class="price">$35.00</p>
+                    <button class="add-to-cart">AGREGAR</button>
+                </div>
+            </div>
+
+            <!-- Producto 3 -->
+            <div class="product-card">
+                <!-- Simulamos imagen con degradado Azul/Verde -->
+                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #2E8B57, #0B3B2E);">
+                    <span>🧢</span>
+                </div>
+                <div class="product-info">
+                    <h3>Gorra "La Guayaba"</h3>
+                    <p class="price">$20.00</p>
+                    <button class="add-to-cart">AGREGAR</button>
+                </div>
+            </div>
+
+            <!-- Producto 4 -->
+            <div class="product-card">
+                <!-- Simulamos imagen Neutral -->
+                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #555, #222);">
+                    <span>👜</span>
+                </div>
+                <div class="product-info">
+                    <h3>Tote Bag "Tropical"</h3>
+                    <p class="price">$15.00</p>
+                    <button class="add-to-cart">AGREGAR</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="social-links">
+            <a href="#">Instagram</a>
+            <a href="#">Spotify</a>
+            <a href="#">YouTube</a>
+        </div>
+        <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- SCRIPT MENÚ MÓVIL -->
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            if (navLinks.style.display === 'flex') {
+                navLinks.style.display = 'none';
+            } else {
+                navLinks.style.display = 'flex';
+                navLinks.style.flexDirection = 'column';
+                navLinks.style.position = 'absolute';
+                navLinks.style.top = '70px';
+                navLinks.style.right = '20px';
+                navLinks.style.backgroundColor = '#0B3B2E';
+                navLinks.style.padding = '20px';
+                navLinks.style.border = '1px solid #FF5E6C';
+                navLinks.style.borderRadius = '10px';
+                navLinks.style.zIndex = '1000';
+            }
+        });
+
+        // Efecto simple al botón de compra
+        const buttons = document.querySelectorAll('.add-to-cart');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                this.textContent = "¡AGREGADO!";
+                this.style.backgroundColor = "#FFD700"; // Amarillo
+                this.style.color = "#000";
+                setTimeout(() => {
+                    this.textContent = "AGREGAR";
+                    this.style.backgroundColor = "transparent";
+                    this.style.color = "#FF5E6C";
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+
+</html>
