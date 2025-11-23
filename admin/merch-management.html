@@ -63,12 +63,15 @@
                 </div>
             </section>
 
-            <section class="panels-grid">
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3>Agregar/editar</h3>
-                        <div class="pill">Catálogo</div>
+            <section class="panel wide-panel" id="editor-panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Editor de productos</h3>
+                        <p class="panel-subtitle">Completa los campos en esta ventana superior y guarda para publicarlo.</p>
                     </div>
+                    <div class="pill">Catálogo</div>
+                </div>
+                <div class="editor-layout">
                     <form id="product-form" class="form-grid">
                         <div class="form-group">
                             <label>Nombre</label>
@@ -87,6 +90,7 @@
                             <select id="product-status">
                                 <option value="Visible">Visible</option>
                                 <option value="Borrador">Borrador</option>
+                                <option value="Agotado">Agotado</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -103,42 +107,35 @@
                         </div>
                         <div class="form-group" style="grid-column: 1 / -1;">
                             <label>Descripción</label>
-                            <textarea id="product-description" rows="2" placeholder="Detalle breve para la tarjeta de producto"></textarea>
+                            <textarea id="product-description" rows="3" placeholder="Detalle breve para la tarjeta de producto"></textarea>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="action-btn primary">Guardar</button>
                             <button type="reset" class="action-btn ghost">Restablecer</button>
                         </div>
                     </form>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3>Automatizaciones</h3>
-                        <div class="pill soft">Backoffice</div>
+                    <div class="product-preview-card" id="product-preview">
+                        <p class="pill soft" style="align-self:flex-start;">Vista previa</p>
+                        <img id="preview-image" src="assets/hero.png" alt="Previsualización" class="preview-image">
+                        <div class="preview-meta">
+                            <h4 id="preview-name">Nombre del producto</h4>
+                            <p id="preview-desc">La descripción aparecerá aquí para validar el copy.</p>
+                            <div class="preview-footer">
+                                <span id="preview-price">$0.00</span>
+                                <span id="preview-stock" class="pill soft">Stock: 0</span>
+                            </div>
+                            <a id="preview-link" class="inline-link" href="#" target="_blank">Sin enlace</a>
+                        </div>
                     </div>
-                    <ul class="top-products-list">
-                        <li>Verificar inventario <span>Stock crítico</span></li>
-                        <li>Sincronizar precios <span>USD / DOP</span></li>
-                        <li>Etiquetas <span>Ropa, Accesorios, Vinilos</span></li>
-                        <li>Bundles <span>Upsell de conciertos</span></li>
-                        <li>Integraciones <span>Stripe / Paypal</span></li>
-                    </ul>
-                    <div class="form-group" style="margin-top:1rem;">
-                        <label>Modo de publicación</label>
-                        <select id="publish-mode">
-                            <option value="immediate">Inmediata</option>
-                            <option value="review">Revisión previa</option>
-                            <option value="schedule">Programada</option>
-                        </select>
-                    </div>
-                    <button id="apply-merch-automation" class="action-btn" style="margin-top:0.5rem; width:100%;">Aplicar</button>
                 </div>
             </section>
 
-            <section class="panel" style="margin-top:1.5rem;">
+            <section class="panel" id="inventory-panel" style="margin-top:1.25rem;">
                 <div class="panel-header">
-                    <h3>Inventario</h3>
+                    <div>
+                        <h3>Ítems en venta</h3>
+                        <p class="panel-subtitle">La ventana inferior lista todos los productos listos para el carrito.</p>
+                    </div>
                     <div class="section-actions">
                         <select id="merch-filter" class="action-btn ghost">
                             <option value="Todos">Todos</option>
@@ -163,6 +160,7 @@
                     </thead>
                     <tbody id="merch-table-body"></tbody>
                 </table>
+                <div class="inventory-grid" id="live-inventory"></div>
             </section>
         </main>
     </div>
@@ -175,12 +173,51 @@
                 return;
             }
 
-            const products = [
-                { id: 201, name: 'Sudadera "Ritmo Solar"', price: 55, stock: 8, status: 'Visible' },
-                { id: 202, name: 'Camiseta "Maquiné"', price: 35, stock: 30, status: 'Visible' },
-                { id: 203, name: 'Vinilo "Mi Derriengue"', price: 40, stock: 0, status: 'Agotado' },
-                { id: 204, name: 'Gorra Logo', price: 25, stock: 5, status: 'Borrador' }
+            const storageKey = 'merchCatalog';
+            const defaultProducts = [
+                {
+                    id: 201,
+                    name: 'Sudadera "Ritmo Solar"',
+                    price: 55,
+                    stock: 8,
+                    status: 'Visible',
+                    description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.',
+                    link: 'https://example.com/ritmo-solar',
+                    image: 'merch_nuevo_drop.jpg'
+                },
+                {
+                    id: 202,
+                    name: 'Camiseta "Maquiné"',
+                    price: 35,
+                    stock: 30,
+                    status: 'Visible',
+                    description: 'Camiseta suave de algodón orgánico con tipografía Maquiné.',
+                    link: 'https://example.com/maquine',
+                    image: 'merch_camiseta_maquine.jpg'
+                },
+                {
+                    id: 203,
+                    name: 'Vinilo "Mi Derriengue"',
+                    price: 40,
+                    stock: 0,
+                    status: 'Agotado',
+                    description: 'Prensado en 180g con arte alternativo y letras impresas.',
+                    link: 'https://example.com/derriengue',
+                    image: 'merch_vinilo_la_guayaba.jpg'
+                },
+                {
+                    id: 204,
+                    name: 'Gorra Logo',
+                    price: 25,
+                    stock: 5,
+                    status: 'Borrador',
+                    description: 'Gorra ajustable con logo psicodélico bordado.',
+                    link: 'https://example.com/gorra',
+                    image: 'merch_gorra_logo.jpg'
+                }
             ];
+
+            const products = JSON.parse(localStorage.getItem(storageKey) || 'null') || defaultProducts;
 
             const merchTableBody = document.getElementById('merch-table-body');
             const merchFilter = document.getElementById('merch-filter');
@@ -194,14 +231,30 @@
             const resetBtn = productForm.querySelector('button[type="reset"]');
             const productImageInput = document.getElementById('product-image');
             const productImagePreview = document.getElementById('product-image-preview');
+            const previewImage = document.getElementById('preview-image');
+            const previewName = document.getElementById('preview-name');
+            const previewDesc = document.getElementById('preview-desc');
+            const previewPrice = document.getElementById('preview-price');
+            const previewStock = document.getElementById('preview-stock');
+            const previewLink = document.getElementById('preview-link');
+            const liveInventory = document.getElementById('live-inventory');
+            const defaultImage = 'assets/hero.png';
+
             let editingIndex = null;
             let productImageData = '';
+
+            function saveCatalog() {
+                localStorage.setItem(storageKey, JSON.stringify(products));
+                syncDate.textContent = new Date().toLocaleString('es-DO');
+            }
 
             function updateStats() {
                 liveCount.textContent = products.filter(p => p.status === 'Visible').length;
                 pendingCount.textContent = products.filter(p => p.status === 'Borrador').length;
                 lowStockCount.textContent = products.filter(p => p.stock > 0 && p.stock <= 5).length;
-                syncDate.textContent = new Date().toLocaleString('es-DO');
+                if (!syncDate.textContent || syncDate.textContent === '--') {
+                    syncDate.textContent = new Date().toLocaleString('es-DO');
+                }
             }
 
             function renderProducts() {
@@ -212,23 +265,70 @@
                 products
                     .filter(product => filter === 'Todos' || product.status === filter)
                     .filter(product => product.name.toLowerCase().includes(term))
-                    .forEach((product, index) => {
+                    .forEach((product) => {
+                        const originalIndex = products.findIndex(item => item.id === product.id);
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>#${product.id}</td>
                             <td>${product.name}</td>
-                            <td>$${product.price.toFixed(2)}</td>
+                            <td>$${Number(product.price).toFixed(2)}</td>
                             <td>${product.stock}</td>
                             <td><span class="badge ${product.status === 'Visible' ? 'live' : product.status === 'Agotado' ? 'neutral' : 'hidden'}">${product.status}</span></td>
                             <td>${product.link ? `<a href="${product.link}" target="_blank">Abrir</a>` : '—'}</td>
                             <td class="table-actions">
-                                <button class="action-btn ghost" data-edit="${index}">Editar</button>
-                                <button class="action-btn" data-toggle="${index}">${product.status === 'Visible' ? 'Ocultar' : 'Publicar'}</button>
-                                <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" data-delete="${index}">Eliminar</button>
+                                <button class="action-btn ghost" data-edit-id="${originalIndex}">Editar</button>
+                                <button class="action-btn" data-toggle-id="${originalIndex}">${product.status === 'Visible' ? 'Ocultar' : 'Publicar'}</button>
+                                <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" data-delete-id="${originalIndex}">Eliminar</button>
                             </td>
                         `;
                         merchTableBody.appendChild(row);
                     });
+            }
+
+            function renderLiveGrid() {
+                liveInventory.innerHTML = '';
+                products
+                    .filter(product => product.status === 'Visible')
+                    .forEach((product) => {
+                        const originalIndex = products.findIndex(item => item.id === product.id);
+                        const card = document.createElement('div');
+                        card.className = 'inventory-card';
+                        card.innerHTML = `
+                            <img src="${product.image || defaultImage}" alt="${product.name}" class="inventory-thumb" />
+                            <div class="inventory-meta">
+                                <div class="inventory-title-row">
+                                    <h4>${product.name}</h4>
+                                    <span class="pill soft">$${Number(product.price).toFixed(2)}</span>
+                                </div>
+                                <p class="inventory-desc">${product.description || 'Sin descripción'}</p>
+                                <div class="inventory-actions">
+                                    <span class="pill ghost">Stock: ${product.stock}</span>
+                                    ${product.link ? `<a href="${product.link}" target="_blank" class="inline-link">Link</a>` : '<span class="inline-link muted">Sin link</span>'}
+                                    <button class="action-btn ghost" data-edit-card="${originalIndex}">Editar</button>
+                                </div>
+                            </div>
+                        `;
+                        liveInventory.appendChild(card);
+                    });
+            }
+
+            function updatePreviewFromForm() {
+                previewName.textContent = document.getElementById('product-name').value || 'Nombre del producto';
+                previewDesc.textContent = document.getElementById('product-description').value || 'La descripción aparecerá aquí para validar el copy.';
+                const priceValue = Number(document.getElementById('product-price').value || 0);
+                previewPrice.textContent = `$${priceValue.toFixed(2)}`;
+                const stockValue = Number(document.getElementById('product-stock').value || 0);
+                previewStock.textContent = `Stock: ${stockValue}`;
+                const linkValue = document.getElementById('product-link').value;
+                previewLink.textContent = linkValue ? 'Abrir link' : 'Sin enlace';
+                previewLink.href = linkValue || '#';
+                if (!linkValue) {
+                    previewLink.removeAttribute('target');
+                } else {
+                    previewLink.setAttribute('target', '_blank');
+                }
+                const chosenImage = productImageData || productImagePreview.dataset.src || defaultImage;
+                previewImage.src = chosenImage;
             }
 
             function resetFormState() {
@@ -236,6 +336,31 @@
                 productForm.removeAttribute('data-editing');
                 submitBtn.textContent = 'Guardar';
                 resetBtn.textContent = 'Restablecer';
+                productImageData = '';
+                productImagePreview.src = '';
+                productImagePreview.dataset.src = '';
+                productImagePreview.classList.add('hidden');
+                productForm.reset();
+                updatePreviewFromForm();
+            }
+
+            function loadProductToForm(item, index) {
+                editingIndex = index;
+                productForm.setAttribute('data-editing', String(index));
+                document.getElementById('product-name').value = item.name;
+                document.getElementById('product-price').value = item.price;
+                document.getElementById('product-stock').value = item.stock;
+                document.getElementById('product-status').value = item.status;
+                document.getElementById('product-description').value = item.description || '';
+                document.getElementById('product-link').value = item.link || '';
+                productImagePreview.src = item.image || defaultImage;
+                productImagePreview.dataset.src = item.image || defaultImage;
+                productImagePreview.classList.remove('hidden');
+                productImageData = item.image || '';
+                submitBtn.textContent = 'Actualizar';
+                resetBtn.textContent = 'Cancelar';
+                updatePreviewFromForm();
+                document.getElementById('product-name').focus();
             }
 
             productForm.addEventListener('submit', (event) => {
@@ -248,8 +373,12 @@
                     status: document.getElementById('product-status').value,
                     description: document.getElementById('product-description').value,
                     link: document.getElementById('product-link').value,
-                    image: productImageData || productImagePreview.dataset.src || 'assets/hero.png'
+                    image: productImageData || productImagePreview.dataset.src || defaultImage
                 };
+
+                if (newProduct.stock === 0) {
+                    newProduct.status = 'Agotado';
+                }
 
                 if (editingIndex !== null) {
                     products[editingIndex] = { ...products[editingIndex], ...newProduct };
@@ -257,64 +386,55 @@
                     products.unshift(newProduct);
                 }
 
-                productForm.reset();
-                productImageData = '';
-                productImagePreview.src = '';
-                productImagePreview.dataset.src = '';
-                productImagePreview.classList.add('hidden');
-                resetFormState();
+                saveCatalog();
                 renderProducts();
+                renderLiveGrid();
                 updateStats();
-                alert('Producto guardado en el catálogo (modo ' + document.getElementById('publish-mode').value + ').');
+                resetFormState();
+                alert('Producto guardado en el catálogo y listo para el carrito.');
             });
 
             merchTableBody.addEventListener('click', (event) => {
                 const target = event.target;
                 if (!(target instanceof HTMLElement)) return;
 
-                if (target.dataset.toggle) {
-                    const idx = Number(target.dataset.toggle);
+                if (target.dataset.toggleId) {
+                    const idx = Number(target.dataset.toggleId);
                     products[idx].status = products[idx].status === 'Visible' ? 'Borrador' : 'Visible';
+                    saveCatalog();
                     renderProducts();
+                    renderLiveGrid();
                     updateStats();
                 }
 
-                if (target.dataset.delete) {
-                    const idx = Number(target.dataset.delete);
+                if (target.dataset.deleteId) {
+                    const idx = Number(target.dataset.deleteId);
                     if (confirm('¿Eliminar producto?')) {
                         products.splice(idx, 1);
+                        saveCatalog();
                         renderProducts();
+                        renderLiveGrid();
                         updateStats();
                     }
                 }
 
-                if (target.dataset.edit) {
-                    const idx = Number(target.dataset.edit);
-                    const item = products[idx];
-                    editingIndex = idx;
-                    productForm.setAttribute('data-editing', String(idx));
-                    document.getElementById('product-name').value = item.name;
-                    document.getElementById('product-price').value = item.price;
-                    document.getElementById('product-stock').value = item.stock;
-                    document.getElementById('product-status').value = item.status;
-                    document.getElementById('product-description').value = item.description || '';
-                    document.getElementById('product-link').value = item.link || '';
-                    productImagePreview.src = item.image || '';
-                    productImagePreview.dataset.src = item.image || '';
-                    productImagePreview.classList.toggle('hidden', !item.image);
-                    productImageData = item.image || '';
-                    submitBtn.textContent = 'Actualizar';
-                    resetBtn.textContent = 'Cancelar';
-                    document.getElementById('product-name').focus();
+                if (target.dataset.editId) {
+                    const idx = Number(target.dataset.editId);
+                    loadProductToForm(products[idx], idx);
+                }
+            });
+
+            liveInventory.addEventListener('click', (event) => {
+                const target = event.target;
+                if (!(target instanceof HTMLElement)) return;
+                if (target.dataset.editCard) {
+                    const idx = Number(target.dataset.editCard);
+                    loadProductToForm(products[idx], idx);
                 }
             });
 
             productForm.addEventListener('reset', () => {
                 setTimeout(() => {
-                    productImageData = '';
-                    productImagePreview.src = '';
-                    productImagePreview.dataset.src = '';
-                    productImagePreview.classList.add('hidden');
                     resetFormState();
                 });
             });
@@ -328,29 +448,32 @@
                         productImagePreview.src = reader.result;
                         productImagePreview.dataset.src = reader.result;
                         productImagePreview.classList.remove('hidden');
+                        updatePreviewFromForm();
                     };
                     reader.readAsDataURL(file);
                 }
             });
 
+            ['product-name', 'product-price', 'product-stock', 'product-description', 'product-link'].forEach(id => {
+                document.getElementById(id).addEventListener('input', updatePreviewFromForm);
+            });
+
             merchFilter.addEventListener('change', renderProducts);
             searchMerch.addEventListener('input', renderProducts);
-            document.getElementById('publish-mode').addEventListener('change', () => {
-                syncDate.textContent = 'Listo para ' + document.getElementById('publish-mode').value;
-            });
-            document.getElementById('apply-merch-automation').addEventListener('click', () => {
-                alert('Automatización de inventario aplicada.');
-            });
             document.getElementById('publish-merch').addEventListener('click', () => {
-                alert('Sincronización enviada a merch.html (demo).');
+                saveCatalog();
+                alert('Sincronización enviada a merch.html y carrito (demo).');
             });
             document.getElementById('new-product-btn').addEventListener('click', () => {
+                resetFormState();
                 document.getElementById('product-name').focus();
             });
 
             resetFormState();
             updateStats();
             renderProducts();
+            renderLiveGrid();
+            updatePreviewFromForm();
         });
     </script>
 </body>
