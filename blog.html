@@ -14,17 +14,80 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        :root {
+            --color-bg: #300505;
+            --color-text: #F4F4F4;
+            --color-accent: #FF5E6C;
+            --color-secondary: #FFD700;
+            --color-outline: rgba(255, 94, 108, 0.7);
+        }
+
+        body {
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 2rem;
+        }
+
+        .logo a { color: var(--color-secondary); }
+
+        .nav-links li a { color: var(--color-text); }
+
+        .nav-links li a:hover { color: var(--color-accent); }
+
+        .hero-title .outline-text { -webkit-text-stroke: 2px var(--color-outline); }
+
+        .blog-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 20px;
+                background: var(--color-bg);
+                padding: 2rem;
+                border: 1px solid var(--color-accent);
+                border-radius: 10px;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                display: flex;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .hamburger { display: flex; }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="noise-overlay"></div>
-
     <nav class="navbar">
         <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">RICCI ORIACH</a></div>
         <ul class="nav-links">
             <li><a href="index.html">Inicio</a></li>
             <li><a href="music.html">Música</a></li>
-            <li><a href="blog.html">Blog</a></li>
+            <li><a href="blog.html" style="color: var(--color-accent);">Blog</a></li>
             <li><a href="merch.html">Merch</a></li>
             <li><a href="contact.html">Contacto</a></li>
         </ul>
@@ -140,6 +203,13 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    </script>
 </body>
 
 </html>
