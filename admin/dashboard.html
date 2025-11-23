@@ -3,21 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricci Oriach | Dashboard</title>
+    <title>Riccie Oriach | Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+    <canvas id="admin-canvas-bg"></canvas>
+    <div class="site-return-bar">
+        <a class="site-return-link" href="../index.html">⟵ Volver al sitio principal</a>
+    </div>
     <div class="admin-shell">
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <span class="brand-accent">Ricci</span> Admin
+                <span class="brand-accent">Riccie</span> Admin
             </div>
             <nav class="sidebar-nav">
                 <a href="#" data-section="overview" class="active">Resumen</a>
                 <a href="#" data-section="merch">Merch</a>
+                <a href="#" data-section="blog">Blog</a>
                 <a href="#" data-section="music">Música</a>
-                <a href="report.md" target="_blank">Report</a>
+                <a href="#" data-section="profiles">Perfiles</a>
+                <a href="#" data-section="reports">Reportes</a>
             </nav>
             <button id="logout-btn" class="logout-btn">Cerrar sesión</button>
         </aside>
@@ -56,6 +62,24 @@
                         <p class="metric-label">Tasa de conversión</p>
                         <div class="metric-value">3.2%</div>
                         <span class="metric-trend positive">+0.5 pts</span>
+                    </div>
+                </div>
+
+                <div class="quick-links">
+                    <div>
+                        <p class="metric-label">Accesos rápidos</p>
+                        <h3>Ver la web en vivo</h3>
+                        <p class="panel-subtitle">Abre las páginas públicas sin salir del dashboard.</p>
+                    </div>
+                    <div class="quick-links-actions">
+                        <a class="action-btn" href="../index.html" target="_blank" rel="noopener">Inicio</a>
+                        <a class="action-btn" href="../music.html" target="_blank" rel="noopener">Música</a>
+                        <a class="action-btn" href="../merch.html" target="_blank" rel="noopener">Merch</a>
+                        <a class="action-btn" href="../events.html" target="_blank" rel="noopener">Tickets</a>
+                        <a class="action-btn" href="../blog.html" target="_blank" rel="noopener">Blog</a>
+                        <a class="action-btn" href="../perfil.html" target="_blank" rel="noopener">Perfil</a>
+                        <a class="action-btn" href="../checkout.html" target="_blank" rel="noopener">Checkout</a>
+                        <a class="action-btn" href="../ordenes.html" target="_blank" rel="noopener">Órdenes</a>
                     </div>
                 </div>
 
@@ -114,68 +138,536 @@
                     </div>
                     <div class="section-actions">
                         <button id="sync-merch-btn" class="action-btn ghost">Publicar cambios</button>
-                        <button class="action-btn primary">Nuevo producto</button>
+                        <button id="new-dashboard-product" class="action-btn primary" type="button">Nuevo producto</button>
+                    </div>
+                </div>
+                <div class="panel wide-panel" id="dashboard-merch-editor">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Editor en página</h3>
+                            <p class="panel-subtitle">Completa todos los campos sin ventanas emergentes para crear o editar productos.</p>
+                        </div>
+                        <div class="pill">Catálogo</div>
+                    </div>
+                    <div class="editor-layout">
+                        <form id="dashboard-merch-form" class="form-grid">
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" id="dashboard-product-name" required placeholder="Sudadera Ritmo Solar">
+                            </div>
+                            <div class="form-group">
+                                <label>Slug / URL interna</label>
+                                <input type="text" id="dashboard-product-slug" placeholder="sudadera-ritmo-solar">
+                                <p class="field-hint">Necesario para la página de detalle. Se auto genera si queda vacío.</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Precio (USD)</label>
+                                <input type="number" id="dashboard-product-price" required min="0" step="0.01" placeholder="55">
+                            </div>
+                            <div class="form-group">
+                                <label>Stock</label>
+                                <input type="number" id="dashboard-product-stock" required min="0" placeholder="12">
+                            </div>
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="dashboard-product-status">
+                                    <option value="Visible">Visible</option>
+                                    <option value="Borrador">Borrador</option>
+                                    <option value="Agotado">Agotado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Link o destino</label>
+                                <input type="url" id="dashboard-product-link" placeholder="https://riccioriach.com/tienda/producto">
+                            </div>
+                            <div class="form-group">
+                                <label>Imagen</label>
+                                <div class="image-upload-row">
+                                    <input type="file" id="dashboard-product-image" accept="image/*">
+                                    <img id="dashboard-product-image-preview" class="image-preview hidden" alt="Foto del producto">
+                                </div>
+                                <p class="image-hint">Sube o reemplaza la foto antes de publicar.</p>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Descripción</label>
+                                <textarea id="dashboard-product-description" rows="3" placeholder="Detalle breve para la tarjeta de producto"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="action-btn primary">Guardar</button>
+                                <button type="reset" class="action-btn ghost">Cancelar</button>
+                            </div>
+                        </form>
+                        <div class="product-preview-card" id="dashboard-product-preview">
+                            <p class="pill soft" style="align-self:flex-start;">Vista previa</p>
+                            <img id="dashboard-preview-image" src="assets/hero.png" alt="Previsualización" class="preview-image">
+                            <div class="preview-meta">
+                                <h4 id="dashboard-preview-name">Nombre del producto</h4>
+                                <p id="dashboard-preview-desc">La descripción aparecerá aquí para validar el copy.</p>
+                                <div class="preview-footer">
+                                    <span id="dashboard-preview-price">$0.00</span>
+                                    <span id="dashboard-preview-stock" class="pill soft">Stock: 0</span>
+                                </div>
+                                <a id="dashboard-preview-link" class="inline-link" href="#" target="_blank">Sin enlace</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="merch-overview">
-                    <div class="merch-card">
-                        <p class="metric-label">Artículos activos</p>
-                        <div class="metric-value">18</div>
-                        <p class="card-note">Sincronizados con merch.html</p>
+                <div class="panel" style="margin-top:1rem;">
+                    <div class="panel-header">
+                        <div>
+                            <h3>Catálogo publicado</h3>
+                            <p class="panel-subtitle">Revisa lo que está en venta y edita desde la tabla.</p>
+                        </div>
+                        <div class="pill soft" id="dashboard-merch-sync">Vinculado al carrito</div>
                     </div>
-                    <div class="merch-card">
-                        <p class="metric-label">Stock bajo</p>
-                        <div class="metric-value">3</div>
-                        <p class="card-note">Revisa vinilos y gorras</p>
-                    </div>
-                    <div class="merch-card">
-                        <p class="metric-label">Nuevos en cola</p>
-                        <div class="metric-value">2</div>
-                        <p class="card-note">Lista de revisión antes de publicar</p>
-                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Visibilidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
                 </div>
-
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
-                            <th>Visibilidad</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="products-table-body">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
             </section>
 
-            <!-- Music Section -->
-            <section id="music" class="content-section">
+            <!-- Blog Section -->
+            <section id="blog" class="content-section">
                 <div class="section-header">
                     <div>
-                        <p class="eyebrow">Catálogo</p>
-                        <h2>Música</h2>
+                        <p class="eyebrow">Editorial</p>
+                        <h2>Blog</h2>
                     </div>
-                    <button class="action-btn primary" id="open-music-modal">Nueva Canción/Álbum</button>
+                    <div class="section-actions">
+                        <button id="export-dashboard-posts" class="action-btn ghost">Exportar posts</button>
+                        <button id="focus-blog-form" class="action-btn primary">Nuevo post</button>
+                    </div>
                 </div>
 
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Tipo</th>
-                            <th>Año</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="music-table-body">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
+                <div class="summary-grid">
+                    <div class="metric-card">
+                        <p class="metric-label">Publicados</p>
+                        <div class="metric-value" id="blog-published-count">0</div>
+                        <span class="metric-trend positive">en vivo</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Borradores</p>
+                        <div class="metric-value" id="blog-draft-count">0</div>
+                        <span class="metric-trend neutral">pendientes</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Programados</p>
+                        <div class="metric-value" id="blog-scheduled-count">0</div>
+                        <span class="metric-trend soft">calendario</span>
+                    </div>
+                    <div class="metric-card highlight">
+                        <p class="metric-label">Última sync</p>
+                        <div class="metric-value" id="blog-last-update">--</div>
+                        <span class="metric-trend">vinculado a blog.html</span>
+                    </div>
+                </div>
+
+                <div class="panels-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Flujo de contenido</h3>
+                            <div class="pill">Operaciones</div>
+                        </div>
+                        <form id="dashboard-blog-form" class="form-grid">
+                            <div class="form-group">
+                                <label>Título</label>
+                                <input type="text" id="dashboard-post-title" required placeholder="Nuevo sencillo en vivo...">
+                            </div>
+                            <div class="form-group">
+                                <label>Autor</label>
+                                <input type="text" id="dashboard-post-author" required placeholder="Riccie Oriach">
+                            </div>
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="dashboard-post-status">
+                                    <option value="Publicado">Publicado</option>
+                                    <option value="Borrador">Borrador</option>
+                                    <option value="Programado">Programado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de publicación</label>
+                                <input type="date" id="dashboard-post-date">
+                            </div>
+                            <div class="form-group">
+                                <label>Enlace o fuente</label>
+                                <input type="url" id="dashboard-post-link" placeholder="https://mi-blog.com/post">
+                            </div>
+                            <div class="form-group">
+                                <label>Portada</label>
+                                <div class="image-upload-row">
+                                    <input type="file" id="dashboard-post-image" accept="image/*">
+                                    <img id="dashboard-post-image-preview" class="image-preview hidden" alt="Previsualización del post">
+                                </div>
+                                <p class="image-hint">Adjunta o sustituye la imagen destacada del post.</p>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Extracto</label>
+                                <textarea id="dashboard-post-excerpt" rows="2" placeholder="Resumen breve para la tarjeta del blog"></textarea>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Contenido</label>
+                                <textarea id="dashboard-post-content" rows="8" placeholder="Cuerpo completo del artículo con formato y narrativa"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="action-btn primary">Guardar</button>
+                                <button type="reset" class="action-btn ghost">Limpiar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Herramientas</h3>
+                            <div class="pill soft">Automatización</div>
+                        </div>
+                        <ul class="top-products-list">
+                            <li>Checklist SEO <span>Meta + OG tags</span></li>
+                            <li>Adjuntar portada <span>.jpg/.png</span></li>
+                            <li>Activar comentarios <span>Disqus / nativo</span></li>
+                            <li>Sincronizar audio <span>SoundCloud/Spotify</span></li>
+                            <li>Enviar boletín <span>Suscriptores</span></li>
+                        </ul>
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label>Auto-publicar</label>
+                            <select id="dashboard-auto-publish">
+                                <option value="immediate">Publicar al guardar</option>
+                                <option value="schedule">Programar a la fecha</option>
+                                <option value="manual">Solo manual</option>
+                            </select>
+                        </div>
+                        <button id="apply-dashboard-automation" class="action-btn" style="margin-top:0.5rem; width:100%;">Aplicar automatización</button>
+                    </div>
+                </div>
+
+                <section class="panel" style="margin-top:1.5rem;">
+                    <div class="panel-header">
+                        <h3>Contenido</h3>
+                        <div class="section-actions">
+                            <select id="blog-filter" class="action-btn ghost">
+                                <option value="Todos">Todos</option>
+                                <option value="Publicado">Publicado</option>
+                                <option value="Borrador">Borrador</option>
+                                <option value="Programado">Programado</option>
+                            </select>
+                            <input type="search" id="blog-search" class="action-btn ghost" placeholder="Buscar título" style="width:200px;">
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Link</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blog-table-body"></tbody>
+                    </table>
+                </section>
+            </section>
+
+        <!-- Music Section -->
+        <section id="music" class="content-section">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Catálogo</p>
+                    <h2>Música</h2>
+                </div>
+                <button class="action-btn primary" id="music-new">Nueva Canción/Álbum</button>
+            </div>
+
+            <div class="panel wide-panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Editor de música</h3>
+                        <p class="panel-subtitle">Administra lanzamientos publicados sin salir del dashboard.</p>
+                    </div>
+                    <div class="pill soft">Sincronizado con music.html</div>
+                </div>
+                <div class="editor-layout">
+                    <form id="music-form" class="form-grid">
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" id="music-title" required placeholder="Nuevo single">
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="music-type">
+                                <option value="Single">Single</option>
+                                <option value="Álbum">Álbum</option>
+                                <option value="EP">EP</option>
+                                <option value="Colaboración">Colaboración</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Año</label>
+                            <input type="number" id="music-year" value="2025" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Link</label>
+                            <input type="url" id="music-link" placeholder="https://spotify.com/..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Portada</label>
+                            <div class="image-upload-row">
+                                <input type="file" id="music-cover" accept="image/*">
+                                <img id="music-cover-preview" class="image-preview hidden" alt="Carátula de música">
+                            </div>
+                            <p class="image-hint">Sube la portada para el hero y la tabla.</p>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Notas</label>
+                            <textarea id="music-notes" rows="3" placeholder="Detalles para la ficha"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="action-btn primary">Guardar</button>
+                            <button type="reset" class="action-btn ghost">Cancelar</button>
+                        </div>
+                    </form>
+                    <div class="panel soft" style="flex:1;">
+                        <h4>Lanzamientos publicados</h4>
+                        <p class="panel-subtitle">Selecciona un ítem para editarlo.</p>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Año</th>
+                                    <th>Link</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="music-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profiles Section -->
+        <section id="profiles" class="content-section">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Usuarios</p>
+                    <h2>Perfiles</h2>
+                </div>
+                <div class="section-actions">
+                    <button id="refresh-profiles" class="action-btn ghost">Actualizar</button>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="metric-card">
+                    <p class="metric-label">Total cuentas</p>
+                    <div class="metric-value" id="profile-count">0</div>
+                    <span class="metric-trend positive">guardadas</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Accesos por Google</p>
+                    <div class="metric-value" id="google-count">0</div>
+                    <span class="metric-trend soft">dev login</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Compleción de perfil</p>
+                    <div class="metric-value" id="profile-complete">0%</div>
+                    <span class="metric-trend neutral">campos clave</span>
+                </div>
+                <div class="metric-card highlight">
+                    <p class="metric-label">Sesión activa</p>
+                    <div class="metric-value" id="active-session">--</div>
+                    <span class="metric-trend">usuario loggeado</span>
+                </div>
+            </div>
+
+            <div class="panels-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Perfiles guardados</h3>
+                        <span class="pill soft">Riccie Auth</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Creado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profiles-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Editar perfil</h3>
+                        <span class="pill">Campos visibles en checkout</span>
+                    </div>
+                    <form id="profile-form" class="form-grid">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="profile-name" placeholder="Nombre del usuario">
+                        </div>
+                        <div class="form-group">
+                            <label>Email (bloqueado)</label>
+                            <input type="email" id="profile-email" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Rol</label>
+                            <select id="profile-role">
+                                <option value="user">Usuario</option>
+                                <option value="manager">Manager</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <input type="text" id="profile-address" placeholder="Calle, número, ciudad">
+                        </div>
+                        <div class="form-group">
+                            <label>Preferencia de pago</label>
+                            <select id="profile-payment">
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Efectivo">Efectivo</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Notas</label>
+                            <textarea id="profile-notes" rows="3" placeholder="Observaciones, alergias, etc."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="action-btn primary">Guardar perfil</button>
+                            <button type="reset" class="action-btn ghost">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel" style="margin-top:1rem;">
+                <div class="panel-header">
+                    <h3>Crear cuenta manual</h3>
+                    <span class="pill soft">Solo entorno dev</span>
+                </div>
+                <form id="create-user-form" class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="create-name" placeholder="Nuevo usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="create-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="create-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <select id="create-role">
+                            <option value="user">Usuario</option>
+                            <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="action-btn primary">Crear</button>
+                        <button type="reset" class="action-btn ghost">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Alertas y KPIs</p>
+                        <h2>Reportes</h2>
+                    </div>
+                    <div class="section-actions">
+                        <button id="refresh-reports" class="action-btn ghost">Refrescar</button>
+                        <button id="download-report" class="action-btn primary">Descargar PDF</button>
+                    </div>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="metric-card">
+                        <p class="metric-label">Ingresos este mes</p>
+                        <div class="metric-value" id="report-revenue">$0</div>
+                        <span class="metric-trend positive" id="report-revenue-trend">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Pedidos</p>
+                        <div class="metric-value" id="report-orders">0</div>
+                        <span class="metric-trend" id="report-orders-trend">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Conversiones</p>
+                        <div class="metric-value" id="report-conv">0%</div>
+                        <span class="metric-trend neutral" id="report-conv-trend">--</span>
+                    </div>
+                    <div class="metric-card highlight">
+                        <p class="metric-label">Estado</p>
+                        <div class="metric-value" id="report-health">Sincronizado</div>
+                        <span class="metric-trend soft" id="report-updated">Actualizado en vivo</span>
+                    </div>
+                </div>
+
+                <div class="panels-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Alertas críticas</h3>
+                            <span class="pill soft">Tiempo real</span>
+                        </div>
+                        <ul class="top-products-list" id="report-alerts"></ul>
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label>Filtro rápido</label>
+                            <select id="report-filter">
+                                <option value="all">Todo</option>
+                                <option value="ventas">Ventas</option>
+                                <option value="inventario">Inventario</option>
+                                <option value="pagos">Pagos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Resumen diario</h3>
+                            <span class="pill">Últimas 24h</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Ventas</th>
+                                    <th>Pedidos</th>
+                                    <th>Conversión</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
         </main>
     </div>
@@ -208,6 +700,14 @@
                     <label>Link</label>
                     <input type="text" id="music-link" placeholder="https://spotify.com/..." required>
                 </div>
+                <div class="form-group">
+                    <label>Carátula</label>
+                    <div class="image-upload-row">
+                        <input type="file" id="music-cover" accept="image/*">
+                        <img id="music-cover-preview" class="image-preview hidden" alt="Carátula de música">
+                    </div>
+                    <p class="image-hint">Sube o reemplaza la portada de este lanzamiento.</p>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="action-btn ghost" data-close-modal>Cancelar</button>
                     <button type="submit" class="action-btn primary">Guardar</button>
@@ -216,6 +716,7 @@
         </div>
     </div>
 
+    <script src="../auth/auth.js"></script>
     <script src="admin.js"></script>
 </body>
 </html>
