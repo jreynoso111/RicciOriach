@@ -106,18 +106,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('.content-section');
     const pageTitle = document.getElementById('page-title');
 
+    const activateSection = (sectionId) => {
+        const target = document.getElementById(sectionId);
+        if (!target) return;
+
+        navLinks.forEach((l) => {
+            const isActive = l.dataset.section === sectionId;
+            l.classList.toggle('active', isActive);
+            if (isActive && l.hash) {
+                history.replaceState(null, '', l.hash);
+            }
+        });
+
+        sections.forEach((s) => s.classList.toggle('active', s.id === sectionId));
+        pageTitle.textContent = document.querySelector(`.sidebar-nav a[data-section="${sectionId}"]`)?.textContent || 'Panel';
+    };
+
     navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-
-            const sectionId = link.getAttribute('data-section');
-            sections.forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-
-            pageTitle.textContent = link.textContent;
+            activateSection(link.getAttribute('data-section'));
         });
+    });
+
+    const hashSection = window.location.hash.replace('#', '');
+    if (hashSection) {
+        activateSection(hashSection);
+    }
+
+    const readFileAsDataURL = (file) => new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
     });
 
     const readFileAsDataURL = (file) => new Promise((resolve) => {
