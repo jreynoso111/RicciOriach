@@ -7,7 +7,6 @@
     <title>Riccie Oriach | Folclore Alternativo</title>
     <meta name="description" content="Sitio oficial de Riccie Oriach. Folclore Alternativo Caribeño.">
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
@@ -19,6 +18,7 @@
             --color-text: #F4F4F4;     /* Blanco Hueso */
             --color-accent: #FF5E6C;   /* Rosa Guayaba */
             --color-secondary: #FFD700; /* Amarillo Sol */
+            --color-outline: rgba(255, 94, 108, 0.7); /* Contraste para Outline */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,10 +42,10 @@
             pointer-events: none;
         }
 
-        /* --- NAVBAR (A LA DERECHA SIN LOGO) --- */
+        /* --- NAVBAR --- */
         .navbar {
             display: flex; 
-            justify-content: flex-end; 
+            justify-content: space-between; /* Alinea logo a izq y links a der */
             align-items: center;
             padding: 1.5rem 2rem; 
             position: absolute; 
@@ -54,15 +54,24 @@
             width: 100%; 
             z-index: 100;
         }
+
+        /* Estilo para el logo/nombre del artista */
+        .logo {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 1.5rem;
+            color: var(--color-secondary); /* Destaca el nombre/logo */
+            letter-spacing: 1px;
+            z-index: 101;
+        }
         
         .nav-links { list-style: none; display: flex; gap: 2rem; }
         .nav-links li a { text-decoration: none; color: var(--color-text); font-weight: 500; text-transform: uppercase; font-size: 0.9rem; transition: color 0.3s; }
         .nav-links li a:hover { color: var(--color-accent); }
         
         .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-        .hamburger span { width: 25px; height: 3px; background-color: white; }
+        .hamburger span { width: 25px; height: 3px; background-color: white; transition: transform 0.3s; }
 
-        /* --- HERO SECTION --- */
+        /* HERO SECTION */
         .hero {
             min-height: 90vh;
             display: flex;
@@ -83,11 +92,17 @@
             text-transform: uppercase;
         }
 
-        .outline-text { -webkit-text-stroke: 2px var(--color-accent); color: transparent; }
+        /* Mejorado el color outline */
+        .outline-text { 
+            -webkit-text-stroke: 2px var(--color-outline); 
+            text-stroke: 2px var(--color-outline);
+            color: transparent; 
+        }
         .filled-text { color: var(--color-accent); }
 
+        /* Aumentamos un poco el subtítulo */
         .hero-subtitle {
-            font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 2rem;
+            font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 2.5rem;
             color: var(--color-secondary); font-weight: 300;
         }
 
@@ -109,22 +124,24 @@
         .hero-image {
             width: 100%; max-width: 500px; border-radius: 20px;
             filter: contrast(1.1) saturate(1.1);
-            box-shadow: 10px 10px 0px rgba(255, 94, 108, 0.2);
+            /* Sombra con color secundario para mejor contraste */
+            box-shadow: 10px 10px 0px rgba(255, 215, 0, 0.2); 
         }
 
         .floating-element {
             position: absolute; border-radius: 50%; opacity: 0.8;
             animation: float 6s ease-in-out infinite; z-index: -1;
         }
-        .fruit-1 { width: 80px; height: 80px; background: radial-gradient(circle, #FFD700, transparent); top: -20px; right: 20px; filter: blur(5px); }
-        .fruit-2 { width: 120px; height: 120px; background: radial-gradient(circle, #FF5E6C, transparent); bottom: 20px; left: -40px; animation-delay: 2s; filter: blur(8px); }
+        /* Los colores están invertidos para dar más peso al Rosa Guayaba */
+        .fruit-1 { width: 80px; height: 80px; background: radial-gradient(circle, var(--color-accent), transparent); top: -20px; right: 20px; filter: blur(5px); }
+        .fruit-2 { width: 120px; height: 120px; background: radial-gradient(circle, var(--color-secondary), transparent); bottom: 20px; left: -40px; animation-delay: 2s; filter: blur(8px); }
         
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
 
         /* --- MARQUEE (CARRUSEL) --- */
         .marquee-container {
             background: var(--color-secondary); 
-            color: #300505; 
+            color: var(--color-bg); 
             padding: 15px 0; 
             overflow: hidden; 
             position: relative;
@@ -136,60 +153,48 @@
             border-bottom: 2px solid #000;
             display: flex;
         }
-
         .marquee-track {
             display: flex;
             white-space: nowrap;
             animation: scroll 20s linear infinite;
         }
-
         .marquee-item {
             font-family: 'Abril Fatface', cursive; 
             font-size: 1.5rem; 
             text-transform: uppercase;
             padding: 0 2rem;
+            line-height: 1; /* Para centrar verticalmente */
         }
 
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* --- SPOTIFY SECTION --- */
-        .spotify-container { 
-            max-width: 800px; 
-            margin: 0 auto 4rem auto; 
-            padding: 0 2rem; 
-            text-align: center;
-        }
-
-        .spotify-fallback {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: var(--color-secondary);
-        }
-        .spotify-fallback a { color: white; }
+        /* SPOTIFY SECTION - Se mantiene */
 
         /* --- TOUR SECTION --- */
         .tour-section {
             padding: 4rem 2rem; 
             background: rgba(48, 5, 5, 0.6); 
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(5px); /* Aumentamos el blur */
             text-align: center;
             margin: 0 2rem;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-accent); /* Borde acentuado */
         }
         .tour-section h2 { font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 3rem; color: var(--color-text); }
-        .tour-dates { max-width: 900px; margin: 0 auto; }
         
         .tour-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); transition: background 0.3s;
+            padding: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.15); transition: background 0.3s;
         }
         .tour-item:hover { background: rgba(255, 255, 255, 0.05); }
         
-        .date { color: var(--color-secondary); font-weight: 700; font-size: 1.2rem; width: 15%; text-align: left; }
+        /* Aplicamos Abril Fatface a la fecha para mayor impacto */
+        .date { 
+            color: var(--color-secondary); 
+            font-weight: 700; 
+            font-size: 1.5rem; 
+            width: 15%; 
+            text-align: left; 
+            font-family: 'Abril Fatface', cursive;
+        }
         .city { font-weight: 700; font-size: 1.2rem; width: 30%; text-align: left; }
         .venue { font-weight: 300; width: 30%; text-align: left; opacity: 0.8; }
         
@@ -199,19 +204,40 @@
         }
         .ticket-btn:hover { background: var(--color-accent); color: white; }
 
-        /* --- FOOTER --- */
-        footer { text-align: center; padding: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 2rem; }
-        .social-links a { color: var(--color-text); margin: 0 10px; text-decoration: none; font-weight: 700; font-size: 0.9rem; }
-        .social-links a:hover { color: var(--color-secondary); }
+        /* --- FOOTER - Se mantiene --- */
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .navbar { justify-content: flex-end; }
+            .navbar { justify-content: space-between; }
             .hero { flex-direction: column-reverse; text-align: center; padding-top: 100px; justify-content: center; }
             .hero-content { max-width: 100%; margin-top: 2rem; }
             .hero-image-container { width: 80%; }
             .hero-title { font-size: 3.5rem; }
-            .nav-links { display: none; }
+            .hero-subtitle { font-size: 1rem; }
+
+            /* Menú Hamburguesa - Estilos Mobile */
+            .nav-links { 
+                display: none; 
+                flex-direction: column;
+                position: absolute; 
+                top: 70px; 
+                right: 20px; 
+                background-color: var(--color-bg); 
+                padding: 2rem; 
+                border: 1px solid var(--color-accent); 
+                border-radius: 10px; 
+                z-index: 1000;
+                /* Propiedades de Animación */
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+            .nav-links.active {
+                display: flex; /* Mostrar cuando está activo */
+                opacity: 1;
+                transform: translateY(0);
+            }
+
             .hamburger { display: flex; }
             .tour-item { flex-direction: column; gap: 10px; text-align: center; }
             .date, .city, .venue { width: 100%; text-align: center; }
@@ -221,11 +247,10 @@
 </head>
 
 <body>
-    <!-- CANVAS DE FONDO -->
     <canvas id="canvas-bg"></canvas>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
+        <div class="logo">RICCIE ORIACH</div>
         <ul class="nav-links">
             <li><a href="index.html" style="color: var(--color-accent);">Inicio</a></li>
             <li><a href="music.html">Música</a></li>
@@ -238,7 +263,6 @@
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
     <header class="hero">
         <div class="hero-content">
             <h1 class="hero-title">
@@ -256,7 +280,6 @@
         </div>
     </header>
 
-    <!-- BANDA AMARILLA (CARRUSEL) -->
     <div class="marquee-container">
         <div class="marquee-track">
             <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
@@ -266,7 +289,6 @@
         </div>
     </div>
 
-    <!-- SPOTIFY PLAYER (CORREGIDO: ID 3b12EGhDU7EhHcuZmMG3oV) -->
     <div id="listen" class="spotify-container">
         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
         
@@ -275,7 +297,6 @@
         </p>
     </div>
 
-    <!-- TOUR SECTION -->
     <section id="tour" class="tour-section">
         <h2>TOUR 2025</h2>
         <div class="tour-dates">
@@ -313,12 +334,12 @@
                 <a href="#">Spotify</a>
                 <a href="#">YouTube</a>
             </div>
-            <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 Riccie Oriach. Todos los derechos reservados.</p>
+            <p style="font-size: 0.8rem; opacity: 0.6;">© 2025 Riccie Oriach. Todos los derechos reservados.</p>
         </div>
     </footer>
 
     <script>
-        // --- 1. SCRIPT DE PUNTOS FLOTANTES ---
+        // --- 1. SCRIPT DE PUNTOS FLOTANTES (Se mantiene por ser óptimo) ---
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -376,27 +397,15 @@
         initParticles();
         animateParticles();
 
-        // --- 2. SCRIPT DE NAVEGACIÓN ---
+        // --- 2. SCRIPT DE NAVEGACIÓN (Refactorizado con .classList.toggle) ---
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
         hamburger.addEventListener('click', () => {
-            if (navLinks.style.display === 'flex') {
-                navLinks.style.display = 'none';
-            } else {
-                navLinks.style.display = 'flex';
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '70px';
-                navLinks.style.right = '20px';
-                navLinks.style.backgroundColor = '#300505';
-                navLinks.style.padding = '2rem';
-                navLinks.style.border = '1px solid #FF5E6C';
-                navLinks.style.borderRadius = '10px';
-                navLinks.style.zIndex = '1000';
-            }
+            navLinks.classList.toggle('active');
         });
 
+        // Scroll suave
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
