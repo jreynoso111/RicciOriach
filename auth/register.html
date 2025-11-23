@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta | Riccie Oriach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <canvas id="canvas-bg"></canvas>
+    <nav class="navbar">
+        <div class="logo"><a href="../index.html">RICCIE ORIACH</a></div>
+        <ul class="nav-links">
+            <li><a href="../index.html">INICIO</a></li>
+            <li><a href="../music.html">MÚSICA</a></li>
+            <li><a href="../merch.html">MERCH</a></li>
+            <li><a href="../events.html">TICKETS</a></li>
+            <li><a href="../blog.html">BLOG</a></li>
+            <li><a href="../contact.html">CONTACTO</a></li>
+            <li><a href="../perfil.html">PERFIL</a></li>
+            <li><a class="active" href="register.html">REGISTRO</a></li>
+        </ul>
+    </nav>
+
+    <section class="page">
+        <div class="card" id="registro">
+            <p class="badge">Nuevo usuario</p>
+            <h1>Crea tu cuenta</h1>
+            <p class="subtitle">Conecta con Google o llena el formulario para guardar tu perfil, checkout y órdenes asociadas.</p>
+            <div class="actions" style="margin-top:1rem;">
+                <button class="btn" id="google-register">Registrarme con Google</button>
+                <a class="btn secondary" href="login.html">Ya tengo cuenta</a>
+            </div>
+        </div>
+        <div class="cards">
+            <div class="card">
+                <h3>Registro manual</h3>
+                <form id="register-form" class="form-grid">
+                    <label>Nombre completo<input id="reg-name" required></label>
+                    <label>Correo electrónico<input type="email" id="reg-email" required></label>
+                    <label>Contraseña<input type="password" id="reg-password" required></label>
+                    <label>Rol (solo desarrollo)
+                        <select id="reg-role">
+                            <option value="user">Usuario</option>
+                            <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </label>
+                    <label>Teléfono (opcional)<input id="reg-phone"></label>
+                    <div class="actions">
+                        <button class="btn" type="submit">Crear cuenta</button>
+                        <a class="btn secondary" href="../perfil.html">Pasar al perfil</a>
+                    </div>
+                </form>
+            </div>
+            <div class="card">
+                <h3>Estado</h3>
+                <p class="status" id="status">Cuenta no creada.</p>
+                <p class="muted">Guardaremos la sesión para reutilizarla en checkout, perfil y órdenes.</p>
+            </div>
+        </div>
+    </section>
+
+    <script src="auth.js"></script>
+    <script>
+        const status = document.getElementById('status');
+
+        function refreshStatus() {
+            const session = RicciAuth.getSession();
+            status.textContent = session?.email ? `Sesión activa: ${session.email}` : 'Cuenta no creada.';
+        }
+
+        document.getElementById('google-register').addEventListener('click', () => {
+            RicciAuth.googleLogin();
+            refreshStatus();
+            alert('Cuenta creada con Google (modo desarrollo).');
+        });
+
+        document.getElementById('register-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            try {
+                RicciAuth.registerUser({
+                    name: document.getElementById('reg-name').value.trim(),
+                    email: document.getElementById('reg-email').value.trim(),
+                    password: document.getElementById('reg-password').value.trim(),
+                    provider: 'password',
+                    role: document.getElementById('reg-role').value || 'user'
+                });
+                const phone = document.getElementById('reg-phone').value.trim();
+                if (phone) {
+                    const session = RicciAuth.getSession();
+                    RicciAuth.saveProfileForUser(session?.email, { phone });
+                }
+                refreshStatus();
+                alert('Cuenta creada. Puedes seguir al perfil para completar datos.');
+            } catch (err) {
+                alert(err.message || 'No se pudo crear la cuenta.');
+            }
+        });
+
+        refreshStatus();
+    </script>
+    <script>
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight; let particlesArray = []; let speedMultiplier = 1; let scrollTimeout; const hues=[90,110,135,155,180,210];
+        class Particle{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*3+0.5;this.speedX=(Math.random()*2-1)*this.size*0.18;this.speedY=(Math.random()*2-1)*this.size*0.18;const hue=hues[Math.floor(Math.random()*hues.length)];const light=45+Math.random()*35;const alpha=0.18+Math.random()*0.32;this.color=`hsla(${hue},70%,${light}%,${alpha})`;}
+            update(){this.x+=this.speedX*speedMultiplier;this.y+=this.speedY*speedMultiplier;if(this.x>canvas.width)this.x=0;else if(this.x<0)this.x=canvas.width;if(this.y>canvas.height)this.y=0;else if(this.y<0)this.y=canvas.height;}
+            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=this.color;ctx.fill();}}
+        function init(){particlesArray=[];const count=(canvas.width*canvas.height)/9000;for(let i=0;i<count;i++)particlesArray.push(new Particle());}
+        function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,canvas.width,canvas.height);particlesArray.forEach(p=>{p.update();p.draw();});}
+        window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;init();});
+        window.addEventListener('wheel',()=>{speedMultiplier=3;clearTimeout(scrollTimeout);scrollTimeout=setTimeout(()=>speedMultiplier=1,250);});
+        init(); animate();
+    </script>
+</body>
+</html>

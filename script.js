@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Ricci Oriach Official Site Loaded');
+    console.log('Riccie Oriach Official Site Loaded');
 
     // Navbar Scroll Effect
     const navbar = document.querySelector('.navbar');
