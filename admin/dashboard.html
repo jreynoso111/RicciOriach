@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+    <div class="site-return-bar">
+        <a class="site-return-link" href="../index.html">⟵ Volver al sitio principal</a>
+    </div>
     <div class="admin-shell">
         <aside class="sidebar">
             <div class="sidebar-brand">
@@ -16,6 +19,7 @@
             <nav class="sidebar-nav">
                 <a href="#" data-section="overview" class="active">Resumen</a>
                 <a href="#" data-section="merch">Merch</a>
+                <a href="#" data-section="blog">Blog</a>
                 <a href="#" data-section="music">Música</a>
                 <a href="report.md" target="_blank">Report</a>
             </nav>
@@ -151,6 +155,132 @@
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
+            </section>
+
+            <!-- Blog Section -->
+            <section id="blog" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Editorial</p>
+                        <h2>Blog</h2>
+                    </div>
+                    <div class="section-actions">
+                        <button id="export-dashboard-posts" class="action-btn ghost">Exportar posts</button>
+                        <button id="focus-blog-form" class="action-btn primary">Nuevo post</button>
+                    </div>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="metric-card">
+                        <p class="metric-label">Publicados</p>
+                        <div class="metric-value" id="blog-published-count">0</div>
+                        <span class="metric-trend positive">en vivo</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Borradores</p>
+                        <div class="metric-value" id="blog-draft-count">0</div>
+                        <span class="metric-trend neutral">pendientes</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Programados</p>
+                        <div class="metric-value" id="blog-scheduled-count">0</div>
+                        <span class="metric-trend soft">calendario</span>
+                    </div>
+                    <div class="metric-card highlight">
+                        <p class="metric-label">Última sync</p>
+                        <div class="metric-value" id="blog-last-update">--</div>
+                        <span class="metric-trend">vinculado a blog.html</span>
+                    </div>
+                </div>
+
+                <div class="panels-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Flujo de contenido</h3>
+                            <div class="pill">Operaciones</div>
+                        </div>
+                        <form id="dashboard-blog-form" class="form-grid">
+                            <div class="form-group">
+                                <label>Título</label>
+                                <input type="text" id="dashboard-post-title" required placeholder="Nuevo sencillo en vivo...">
+                            </div>
+                            <div class="form-group">
+                                <label>Autor</label>
+                                <input type="text" id="dashboard-post-author" required placeholder="Ricci Oriach">
+                            </div>
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select id="dashboard-post-status">
+                                    <option value="Publicado">Publicado</option>
+                                    <option value="Borrador">Borrador</option>
+                                    <option value="Programado">Programado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha de publicación</label>
+                                <input type="date" id="dashboard-post-date">
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label>Extracto</label>
+                                <textarea id="dashboard-post-excerpt" rows="2" placeholder="Resumen breve para la tarjeta del blog"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="action-btn primary">Guardar</button>
+                                <button type="reset" class="action-btn ghost">Limpiar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Herramientas</h3>
+                            <div class="pill soft">Automatización</div>
+                        </div>
+                        <ul class="top-products-list">
+                            <li>Checklist SEO <span>Meta + OG tags</span></li>
+                            <li>Adjuntar portada <span>.jpg/.png</span></li>
+                            <li>Activar comentarios <span>Disqus / nativo</span></li>
+                            <li>Sincronizar audio <span>SoundCloud/Spotify</span></li>
+                            <li>Enviar boletín <span>Suscriptores</span></li>
+                        </ul>
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label>Auto-publicar</label>
+                            <select id="dashboard-auto-publish">
+                                <option value="immediate">Publicar al guardar</option>
+                                <option value="schedule">Programar a la fecha</option>
+                                <option value="manual">Solo manual</option>
+                            </select>
+                        </div>
+                        <button id="apply-dashboard-automation" class="action-btn" style="margin-top:0.5rem; width:100%;">Aplicar automatización</button>
+                    </div>
+                </div>
+
+                <section class="panel" style="margin-top:1.5rem;">
+                    <div class="panel-header">
+                        <h3>Contenido</h3>
+                        <div class="section-actions">
+                            <select id="blog-filter" class="action-btn ghost">
+                                <option value="Todos">Todos</option>
+                                <option value="Publicado">Publicado</option>
+                                <option value="Borrador">Borrador</option>
+                                <option value="Programado">Programado</option>
+                            </select>
+                            <input type="search" id="blog-search" class="action-btn ghost" placeholder="Buscar título" style="width:200px;">
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blog-table-body"></tbody>
+                    </table>
+                </section>
             </section>
 
             <!-- Music Section -->

@@ -18,11 +18,55 @@
 
 body {
     font-family: 'Outfit', sans-serif;
-    background: radial-gradient(circle at 20% 20%, rgba(255, 77, 94, 0.08), transparent 35%),
-        radial-gradient(circle at 80% 0%, rgba(255, 209, 102, 0.1), transparent 30%),
+    background: radial-gradient(circle at 20% 20%, rgba(59, 128, 97, 0.15), transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(48, 196, 130, 0.12), transparent 30%),
         linear-gradient(135deg, #0b1210 0%, #0e1614 40%, #0c1412 100%);
     color: var(--admin-text);
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url('../assets/texture.png');
+    background-size: cover;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: -2;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(45deg, rgba(63, 173, 118, 0.12), transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.site-return-bar {
+    width: 100%;
+    background: rgba(18, 28, 26, 0.9);
+    border-bottom: 1px solid var(--admin-border);
+    backdrop-filter: blur(6px);
+    padding: 0.75rem 2.5rem;
+}
+
+.site-return-link {
+    color: var(--admin-text);
+    text-decoration: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.site-return-link:hover {
+    color: var(--admin-primary);
 }
 
 .admin-shell {

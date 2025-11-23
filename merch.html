@@ -460,9 +460,6 @@
             <button class="admin-gear" aria-haspopup="true" aria-expanded="false" aria-controls="admin-menu" title="Abrir opciones de admin">⚙</button>
             <div class="admin-menu" id="admin-menu">
                 <a href="admin/dashboard.html">Dashboard</a>
-                <a href="admin/COMPLETED_TASKS.md">Reportes</a>
-                <a href="admin/blog-management.html">Gestionar blog</a>
-                <a href="admin/merch-management.html">Gestionar merch</a>
             </div>
         </div>
         <div class="hamburger"><span></span><span></span><span></span></div>
@@ -577,6 +574,8 @@
         canvas.height = window.innerHeight;
 
         let particlesArray;
+        let speedMultiplier = 1;
+        let scrollTimeout;
 
         window.addEventListener('resize', function () {
             canvas.width = window.innerWidth;
@@ -595,8 +594,8 @@
                 this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
             }
             update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+                this.x += this.speedX * speedMultiplier;
+                this.y += this.speedY * speedMultiplier;
                 if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
                 if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
             }
@@ -627,6 +626,14 @@
 
         initParticles();
         animateParticles();
+
+        const resetMultiplier = () => speedMultiplier = 1;
+
+        window.addEventListener('wheel', () => {
+            speedMultiplier = 3;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(resetMultiplier, 250);
+        });
     </script>
 </body>
 
