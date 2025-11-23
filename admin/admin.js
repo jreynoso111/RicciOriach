@@ -140,12 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
-    const readFileAsDataURL = (file) => new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.readAsDataURL(file);
-    });
-
     // --- Logout ---
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
@@ -188,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const MERCH_STORAGE_KEY = 'merchCatalog';
     const merchSlugInput = document.getElementById('dashboard-product-slug');
 
-    const slugify = (text) => (text || '')
+    const slugifyGeneral = (text = '') => (text || '')
         .toString()
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
@@ -206,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     const ensureMerchSlugs = (items) => items.map((item, idx) => {
-        const baseSlug = item.slug || slugify(item.name || `articulo-${idx + 1}`);
+        const baseSlug = item.slug || slugifyGeneral(item.name || `articulo-${idx + 1}`);
         return { ...item, slug: baseSlug };
     });
 
@@ -275,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         merchEditingIndex = index;
         merchForm?.setAttribute('data-editing', 'true');
         document.getElementById('dashboard-product-name').value = product.name;
-        if (merchSlugInput) merchSlugInput.value = product.slug || slugify(product.name);
+        if (merchSlugInput) merchSlugInput.value = product.slug || slugifyGeneral(product.name);
         document.getElementById('dashboard-product-price').value = product.price;
         document.getElementById('dashboard-product-stock').value = product.stock;
         document.getElementById('dashboard-product-status').value = product.status;
@@ -315,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: document.getElementById('dashboard-product-name').value,
             slug: (() => {
                 const typed = merchSlugInput?.value.trim();
-                const base = typed || slugify(document.getElementById('dashboard-product-name').value);
+                const base = typed || slugifyGeneral(document.getElementById('dashboard-product-name').value);
                 const exists = merchProducts.some((p, idx) => p.slug === base && idx !== merchEditingIndex);
                 return exists ? `${base}-${Math.floor(Math.random() * 900 + 100)}` : base;
             })(),
@@ -559,16 +553,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    const slugify = (text = '') => text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9ñáéíóúü\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
-
     let dashboardBlogPosts = (JSON.parse(localStorage.getItem(BLOG_STORAGE_KEY)) || defaultBlogPosts)
-        .map(post => ({ ...post, slug: post.slug || slugify(post.title) }));
+        .map(post => ({ ...post, slug: post.slug || slugifyGeneral(post.title) }));
 
     const blogTableBody = document.getElementById('blog-table-body');
     const blogFilter = document.getElementById('blog-filter');
@@ -589,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function syncPublicBlogPosts() {
         localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(dashboardBlogPosts.map(post => ({
             ...post,
-            slug: post.slug || slugify(post.title)
+            slug: post.slug || slugifyGeneral(post.title)
         }))));
     }
 
@@ -648,7 +634,7 @@ document.addEventListener('DOMContentLoaded', () => {
     blogForm?.addEventListener('submit', (event) => {
         event.preventDefault();
         const titleValue = document.getElementById('dashboard-post-title').value;
-        const computedSlug = slugify(titleValue);
+        const computedSlug = slugifyGeneral(titleValue);
         const newPost = {
             title: titleValue,
             author: document.getElementById('dashboard-post-author').value,
@@ -754,6 +740,239 @@ document.addEventListener('DOMContentLoaded', () => {
     resetBlogFormState();
     updateBlogStats();
     renderBlogPosts();
+
+    // --- Events Management ---
+    const EVENTS_KEY = 'ricciEvents';
+    const defaultEvents = [
+        { slug: 'gira-santo-domingo', title: 'Gira Santo Domingo', date: '2025-04-12', city: 'Santo Domingo', venue: 'Teatro Nacional', price: 45, capacity: 350, status: 'Activo', image: 'assets/hero.png', description: 'Show extendido con banda completa y visuales caribe futuristas.' },
+        { slug: 'noche-acustica-miami', title: 'Noche acústica Miami', date: '2025-05-03', city: 'Miami', venue: 'Flamingo Room', price: 55, capacity: 200, status: 'Activo', image: 'assets/texture.png', description: 'Set íntimo con invitados sorpresa y merch limitado.' }
+    ];
+
+    const eventForm = document.getElementById('dashboard-event-form');
+    const eventsTableBody = document.getElementById('events-table-body');
+    const eventActiveCount = document.getElementById('event-active-count');
+    const eventDraftCount = document.getElementById('event-draft-count');
+    const eventNextDate = document.getElementById('event-next-date');
+    const eventImageInput = document.getElementById('dashboard-event-image');
+    const eventImagePreview = document.getElementById('dashboard-event-image-preview');
+    const newEventBtn = document.getElementById('new-event-btn');
+
+    const ensureEvents = (list = []) => (list.length ? list : defaultEvents).map(ev => ({
+        ...ev,
+        slug: ev.slug || slugifyGeneral(ev.title)
+    }));
+
+    let eventsCatalog = ensureEvents(JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]'));
+    let editingEventSlug = null;
+    let eventImageData = '';
+
+    const persistEvents = () => {
+        localStorage.setItem(EVENTS_KEY, JSON.stringify(eventsCatalog));
+        renderEventsTable();
+        updateEventStats();
+    };
+
+    const updateEventStats = () => {
+        if (!eventActiveCount || !eventDraftCount || !eventNextDate) return;
+        const active = eventsCatalog.filter(ev => ev.status === 'Activo');
+        eventActiveCount.textContent = active.length;
+        eventDraftCount.textContent = eventsCatalog.filter(ev => ev.status === 'Borrador').length;
+        const next = active
+            .filter(ev => ev.date)
+            .sort((a, b) => new Date(a.date) - new Date(b.date))[0];
+        eventNextDate.textContent = next?.date ? new Date(next.date).toLocaleDateString('es-DO') : 'Sin fecha';
+    };
+
+    const loadEventToForm = (eventItem) => {
+        if (!eventForm) return;
+        eventForm.dataset.editing = eventItem.slug;
+        document.getElementById('event-title').value = eventItem.title || '';
+        document.getElementById('event-slug').value = eventItem.slug || '';
+        document.getElementById('event-date').value = eventItem.date || '';
+        document.getElementById('event-city').value = eventItem.city || '';
+        document.getElementById('event-venue').value = eventItem.venue || '';
+        document.getElementById('event-price').value = eventItem.price || '';
+        document.getElementById('event-capacity').value = eventItem.capacity || '';
+        document.getElementById('event-status').value = eventItem.status || 'Activo';
+        document.getElementById('event-description').value = eventItem.description || '';
+        eventImageData = eventItem.image || '';
+        if (eventImagePreview) {
+            eventImagePreview.src = eventImageData || '';
+            eventImagePreview.classList.toggle('hidden', !eventImageData);
+        }
+        editingEventSlug = eventItem.slug;
+    };
+
+    const renderEventsTable = () => {
+        if (!eventsTableBody) return;
+        eventsTableBody.innerHTML = '';
+        eventsCatalog.forEach((ev, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${ev.title}</td>
+                <td>${ev.date || 'TBD'}</td>
+                <td>${ev.city || ''}</td>
+                <td><span class="badge ${ev.status === 'Activo' ? 'live' : 'neutral'}">${ev.status}</span></td>
+                <td class="table-actions">
+                    <button class="action-btn ghost" data-edit-event="${index}">Editar</button>
+                    <button class="action-btn" data-delete-event="${index}">Eliminar</button>
+                    <a class="action-btn" href="../ticket-event.html?slug=${encodeURIComponent(ev.slug)}" target="_blank">Ver</a>
+                </td>`;
+            eventsTableBody.appendChild(row);
+        });
+    };
+
+    eventImageInput?.addEventListener('change', async () => {
+        const file = eventImageInput.files?.[0];
+        if (file) {
+            eventImageData = await readFileAsDataURL(file);
+            if (eventImagePreview) {
+                eventImagePreview.src = eventImageData;
+                eventImagePreview.classList.remove('hidden');
+            }
+        }
+    });
+
+    newEventBtn?.addEventListener('click', () => {
+        eventForm?.reset();
+        editingEventSlug = null;
+        eventForm?.removeAttribute('data-editing');
+        eventImageData = '';
+        eventImagePreview?.classList.add('hidden');
+        document.getElementById('event-title')?.focus();
+    });
+
+    eventForm?.addEventListener('reset', () => {
+        setTimeout(() => {
+            editingEventSlug = null;
+            eventForm?.removeAttribute('data-editing');
+            eventImageData = '';
+            eventImagePreview?.classList.add('hidden');
+        });
+    });
+
+    eventsTableBody?.addEventListener('click', (e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.dataset.editEvent) {
+            const idx = Number(target.dataset.editEvent);
+            loadEventToForm(eventsCatalog[idx]);
+        }
+        if (target.dataset.deleteEvent) {
+            const idx = Number(target.dataset.deleteEvent);
+            if (confirm('¿Eliminar este evento?')) {
+                eventsCatalog.splice(idx, 1);
+                persistEvents();
+            }
+        }
+    });
+
+    eventForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('event-title').value;
+        const slug = document.getElementById('event-slug').value || slugifyGeneral(title);
+        const baseEvent = {
+            slug,
+            title,
+            date: document.getElementById('event-date').value,
+            city: document.getElementById('event-city').value,
+            venue: document.getElementById('event-venue').value,
+            price: Number(document.getElementById('event-price').value) || 0,
+            capacity: Number(document.getElementById('event-capacity').value) || 0,
+            status: document.getElementById('event-status').value,
+            description: document.getElementById('event-description').value,
+            image: eventImageData
+        };
+
+        const file = eventImageInput?.files?.[0];
+        if (file) {
+            baseEvent.image = await readFileAsDataURL(file);
+        }
+
+        const existingIndex = eventsCatalog.findIndex(ev => ev.slug === editingEventSlug);
+        if (existingIndex >= 0) {
+            eventsCatalog[existingIndex] = { ...eventsCatalog[existingIndex], ...baseEvent };
+        } else {
+            eventsCatalog.push(baseEvent);
+        }
+        eventForm.reset();
+        editingEventSlug = null;
+        eventImageData = '';
+        eventImagePreview?.classList.add('hidden');
+        persistEvents();
+    });
+
+    renderEventsTable();
+    updateEventStats();
+
+    // --- Ticket Orders ---
+    const TICKET_ORDERS_KEY = 'ricciTicketOrders';
+    const ticketOrdersTableBody = document.getElementById('ticket-orders-table-body');
+    const ticketOrderCount = document.getElementById('ticket-order-count');
+    const ticketPendingCount = document.getElementById('ticket-pending-count');
+    const ticketLastUpdate = document.getElementById('ticket-last-update');
+
+    const loadTicketOrders = () => JSON.parse(localStorage.getItem(TICKET_ORDERS_KEY) || '[]');
+    const saveTicketOrders = (orders) => {
+        localStorage.setItem(TICKET_ORDERS_KEY, JSON.stringify(orders));
+        renderTicketOrders(orders);
+    };
+
+    const renderTicketOrders = (orders = loadTicketOrders()) => {
+        if (!ticketOrdersTableBody) return;
+        ticketOrdersTableBody.innerHTML = '';
+        ticketOrderCount && (ticketOrderCount.textContent = orders.length);
+        ticketPendingCount && (ticketPendingCount.textContent = orders.filter(o => o.status === 'Pendiente').length);
+        ticketLastUpdate && (ticketLastUpdate.textContent = orders.length ? new Date().toLocaleString('es-DO') : '--');
+
+        orders.forEach((order, index) => {
+            const items = order.items || [];
+            const summary = items.map(item => {
+                const eventTitle = eventsCatalog.find(ev => ev.slug === item.slug)?.title || item.slug;
+                return `${item.qty || 1}x ${eventTitle}`;
+            }).join(', ');
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${order.id || `T-${index + 1}`}</td>
+                <td>${order.buyer?.name || 'Sin nombre'}<br><small>${order.buyer?.email || order.userEmail || ''}</small></td>
+                <td>${summary || 'Sin items'}<br><small>${order.createdAt ? new Date(order.createdAt).toLocaleString('es-DO') : ''}</small></td>
+                <td><span class="badge ${order.status === 'Pendiente' ? 'soft' : order.status === 'Completado' ? 'live' : 'neutral'}">${order.status || 'Pendiente'}</span></td>
+                <td class="table-actions">
+                    <select data-order-index="${index}" class="inline-select">
+                        <option value="Pendiente" ${order.status === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                        <option value="Procesando" ${order.status === 'Procesando' ? 'selected' : ''}>Procesando</option>
+                        <option value="Completado" ${order.status === 'Completado' ? 'selected' : ''}>Completado</option>
+                        <option value="Cancelado" ${order.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                    </select>
+                    <button class="action-btn ghost" data-delete-order="${index}">Eliminar</button>
+                </td>`;
+            ticketOrdersTableBody.appendChild(row);
+        });
+    };
+
+    ticketOrdersTableBody?.addEventListener('change', (e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLSelectElement) || !target.dataset.orderIndex) return;
+        const orders = loadTicketOrders();
+        const idx = Number(target.dataset.orderIndex);
+        if (!orders[idx]) return;
+        orders[idx].status = target.value;
+        saveTicketOrders(orders);
+    });
+
+    ticketOrdersTableBody?.addEventListener('click', (e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLElement) || !target.dataset.deleteOrder) return;
+        const orders = loadTicketOrders();
+        const idx = Number(target.dataset.deleteOrder);
+        if (orders[idx] && confirm('¿Eliminar esta orden de tickets?')) {
+            orders.splice(idx, 1);
+            saveTicketOrders(orders);
+        }
+    });
+
+    renderTicketOrders();
 
     // --- User Profiles Dashboard ---
     const profilesTableBody = document.getElementById('profiles-table-body');

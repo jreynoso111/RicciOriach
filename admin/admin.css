@@ -533,6 +533,14 @@ body::after {
     resize: vertical;
 }
 
+.inline-select {
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--admin-border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--admin-text);
+}
+
 .modal-footer {
     display: flex;
     justify-content: flex-end;

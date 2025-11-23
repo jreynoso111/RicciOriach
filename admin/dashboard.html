@@ -22,6 +22,8 @@
                 <a href="#merch" data-section="merch">Merch</a>
                 <a href="#blog" data-section="blog">Blog</a>
                 <a href="#music" data-section="music">Música</a>
+                <a href="#events" data-section="events">Eventos</a>
+                <a href="#tickets" data-section="tickets">Tickets</a>
                 <a href="#profiles" data-section="profiles">Perfiles</a>
                 <a href="#reports" data-section="reports">Reportes</a>
             </nav>
@@ -457,6 +459,171 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events" class="content-section">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Ticketing</p>
+                    <h2>Eventos</h2>
+                </div>
+                <div class="section-actions">
+                    <a class="action-btn ghost" href="../events.html" target="_blank" rel="noopener">Ver página</a>
+                    <button id="new-event-btn" class="action-btn primary" type="button">Nuevo evento</button>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="metric-card">
+                    <p class="metric-label">Activos</p>
+                    <div class="metric-value" id="event-active-count">0</div>
+                    <span class="metric-trend positive">listados</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Borradores</p>
+                    <div class="metric-value" id="event-draft-count">0</div>
+                    <span class="metric-trend neutral">en revisión</span>
+                </div>
+                <div class="metric-card highlight">
+                    <p class="metric-label">Próximo evento</p>
+                    <div class="metric-value" id="event-next-date">--</div>
+                    <span class="metric-trend soft">sincronizado con tickets</span>
+                </div>
+            </div>
+
+            <div class="panel wide-panel" id="events-editor">
+                <div class="panel-header">
+                    <div>
+                        <h3>Editor en página</h3>
+                        <p class="panel-subtitle">Gestiona los eventos que alimentan la venta de tickets.</p>
+                    </div>
+                    <div class="pill">Eventos en vivo</div>
+                </div>
+                <div class="editor-layout">
+                    <form id="dashboard-event-form" class="form-grid">
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" id="event-title" required placeholder="Show Santo Domingo">
+                        </div>
+                        <div class="form-group">
+                            <label>Slug / URL</label>
+                            <input type="text" id="event-slug" placeholder="show-santo-domingo">
+                            <p class="field-hint">Se usa en events.html y ticket-event.html</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="event-date">
+                        </div>
+                        <div class="form-group">
+                            <label>Ciudad</label>
+                            <input type="text" id="event-city" placeholder="Santo Domingo">
+                        </div>
+                        <div class="form-group">
+                            <label>Venue</label>
+                            <input type="text" id="event-venue" placeholder="Teatro Nacional">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio (USD)</label>
+                            <input type="number" id="event-price" min="0" step="0.01" placeholder="45">
+                        </div>
+                        <div class="form-group">
+                            <label>Cupo</label>
+                            <input type="number" id="event-capacity" min="0" placeholder="300">
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select id="event-status">
+                                <option value="Activo">Activo</option>
+                                <option value="Borrador">Borrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Imagen</label>
+                            <div class="image-upload-row">
+                                <input type="file" id="dashboard-event-image" accept="image/*">
+                                <img id="dashboard-event-image-preview" class="image-preview hidden" alt="Previsualización del evento">
+                            </div>
+                            <p class="image-hint">Sube portada o mantén la anterior.</p>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Descripción</label>
+                            <textarea id="event-description" rows="3" placeholder="Detalles del show, invitados, horarios"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="action-btn primary">Guardar</button>
+                            <button type="reset" class="action-btn ghost">Cancelar</button>
+                        </div>
+                    </form>
+                    <div class="panel soft" style="flex:1;">
+                        <h4>Agenda publicada</h4>
+                        <p class="panel-subtitle">Lo que verán los fans en events.html</p>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Fecha</th>
+                                    <th>Ciudad</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="events-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tickets Section -->
+        <section id="tickets" class="content-section">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">Ventas</p>
+                    <h2>Tickets</h2>
+                </div>
+                <div class="section-actions">
+                    <a class="action-btn ghost" href="../ticket-checkout.html" target="_blank" rel="noopener">Checkout</a>
+                    <a class="action-btn" href="../events.html" target="_blank" rel="noopener">Catálogo</a>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="metric-card">
+                    <p class="metric-label">Órdenes</p>
+                    <div class="metric-value" id="ticket-order-count">0</div>
+                    <span class="metric-trend">registradas</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Pendientes</p>
+                    <div class="metric-value" id="ticket-pending-count">0</div>
+                    <span class="metric-trend neutral">por cobrar</span>
+                </div>
+                <div class="metric-card highlight">
+                    <p class="metric-label">Última actualización</p>
+                    <div class="metric-value" id="ticket-last-update">--</div>
+                    <span class="metric-trend soft">sincronizado</span>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>Órdenes de tickets</h3>
+                    <span class="pill soft">Ticket-checkout</span>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Resumen</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticket-orders-table-body"></tbody>
+                </table>
             </div>
         </section>
 
