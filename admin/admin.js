@@ -8,26 +8,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('error-msg');
 
-            // Mock Auth (Demo Only)
-            if (username === 'admin' && password === 'admin123') {
+            if (username === 'admin' && password === 'adminricci') {
                 localStorage.setItem('isLoggedIn', 'true');
                 window.location.href = 'dashboard.html';
             } else {
-                errorMsg.textContent = 'Credenciales incorrectas. Intenta admin / admin123';
+                errorMsg.textContent = 'Credenciales incorrectas. Intenta admin / adminricci';
             }
         });
-        return; // Stop execution if on login page
+        return;
     }
 
-    // --- Dashboard Logic ---
-
-    // Check Auth
+    // --- Auth check for Dashboard ---
     if (localStorage.getItem('isLoggedIn') !== 'true') {
         window.location.href = 'index.html';
         return;
     }
 
-    // Logout
+    // --- Navigation ---
+    const navLinks = document.querySelectorAll('.sidebar-nav a[data-section]');
+    const sections = document.querySelectorAll('.content-section');
+    const pageTitle = document.getElementById('page-title');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+
+            const sectionId = link.getAttribute('data-section');
+            sections.forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            pageTitle.textContent = link.textContent;
+        });
+    });
+
+    // --- Logout ---
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
@@ -37,88 +53,89 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Navigation
-    const navLinks = document.querySelectorAll('.sidebar-nav a[data-section]');
-    const sections = document.querySelectorAll('.content-section');
-    const pageTitle = document.getElementById('page-title');
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-
-            // Update Nav
-            navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-
-            // Update Section
-            const sectionId = link.getAttribute('data-section');
-            sections.forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-
-            // Update Title
-            pageTitle.textContent = link.textContent;
+    // --- Visits sparkline ---
+    const visitSparkline = document.getElementById('visit-sparkline');
+    const visitsData = [5800, 6400, 6100, 7200, 7050, 6900, 6460];
+    const maxVisit = Math.max(...visitsData);
+    if (visitSparkline) {
+        visitsData.forEach(value => {
+            const bar = document.createElement('span');
+            const height = Math.max(20, (value / maxVisit) * 80);
+            bar.style.height = `${height}px`;
+            bar.title = `${value.toLocaleString('es-DO')} visitas`;
+            visitSparkline.appendChild(bar);
         });
-    });
+    }
 
-    // Populate Products Table (Mock Data)
+    // --- Products Table ---
     const products = [
-        { id: 101, name: 'Camiseta "Maquiné"', price: 25.00, stock: 150 },
-        { id: 102, name: 'Vinilo "Mi Derriengue"', price: 35.00, stock: 45 },
-        { id: 103, name: 'Gorra "La Guayaba"', price: 20.00, stock: 80 },
-        { id: 104, name: 'Tote Bag "Tropical"', price: 15.00, stock: 200 }
+        { id: 101, name: 'Camiseta "Maquiné"', price: 25.00, stock: 150, live: true },
+        { id: 102, name: 'Vinilo "Mi Derriengue"', price: 35.00, stock: 45, live: true },
+        { id: 103, name: 'Gorra "La Guayaba"', price: 20.00, stock: 18, live: false },
+        { id: 104, name: 'Tote Bag "Tropical"', price: 15.00, stock: 200, live: true }
     ];
 
     const tableBody = document.getElementById('products-table-body');
-    if (tableBody) {
-        products.forEach(product => {
+    function renderProducts() {
+        if (!tableBody) return;
+        tableBody.innerHTML = '';
+        products.forEach((product, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>#${product.id}</td>
                 <td>${product.name}</td>
                 <td>$${product.price.toFixed(2)}</td>
                 <td>${product.stock}</td>
-                <td>
-                    <button class="action-btn" onclick="alert('Editar producto ${product.id}')">Editar</button>
-                    <button class="action-btn" style="background: #dc3545;" onclick="alert('Eliminar producto ${product.id}')">Eliminar</button>
+                <td><span class="badge ${product.live ? 'live' : 'hidden'}">${product.live ? 'Visible' : 'Oculto'}</span></td>
+                <td class="table-actions">
+                    <button class="action-btn" data-toggle-index="${index}">${product.live ? 'Ocultar' : 'Publicar'}</button>
+                    <button class="action-btn ghost" data-edit-index="${index}">Editar</button>
+                    <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" data-delete-index="${index}">Eliminar</button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
     }
 
-    // Export to CSV Logic
-    const exportBtn = document.getElementById('export-report-btn');
-    if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
-            const data = [
-                ['Mes', 'Ventas', 'Ordenes'],
-                ['Enero', 10500, 120],
-                ['Febrero', 11200, 135],
-                ['Marzo', 9800, 110],
-                ['Abril', 12450, 156],
-                ['Mayo', 11800, 140]
-            ];
+    renderProducts();
 
-            let csvContent = "data:text/csv;charset=utf-8,";
-            data.forEach(rowArray => {
-                let row = rowArray.join(",");
-                csvContent += row + "\r\n";
-            });
+    tableBody?.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "reporte_ventas_ricci_oriach.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (target.dataset.toggleIndex) {
+            const idx = Number(target.dataset.toggleIndex);
+            products[idx].live = !products[idx].live;
+            renderProducts();
+            alert(`Producto #${products[idx].id} ahora está ${products[idx].live ? 'visible' : 'oculto'}.`);
+        }
+        if (target.dataset.editIndex) {
+            const idx = Number(target.dataset.editIndex);
+            alert(`Editar producto ${products[idx].name}`);
+        }
+        if (target.dataset.deleteIndex) {
+            const idx = Number(target.dataset.deleteIndex);
+            if (confirm(`¿Eliminar el producto ${products[idx].name}?`)) {
+                products.splice(idx, 1);
+                renderProducts();
+            }
+        }
+    });
+
+    const syncMerchBtn = document.getElementById('sync-merch-btn');
+    if (syncMerchBtn) {
+        syncMerchBtn.addEventListener('click', () => {
+            alert('Cambios publicados en merch.html (demo).');
         });
     }
-    // --- Music Management Logic ---
+
+    // --- Music Management ---
     const musicTableBody = document.getElementById('music-table-body');
     const addMusicForm = document.getElementById('add-music-form');
+    const musicModal = document.getElementById('add-music-modal');
+    const openMusicModal = document.getElementById('open-music-modal');
+    const closeModalTriggers = document.querySelectorAll('[data-close-modal]');
 
-    // Load Music Data
     function loadMusic() {
         const musicData = JSON.parse(localStorage.getItem('site_music_data')) || [];
         if (musicTableBody) {
@@ -130,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${item.type}</td>
                     <td>${item.year}</td>
                     <td>
-                        <button class="action-btn" style="background: #dc3545;" onclick="deleteMusic(${index})">Eliminar</button>
+                        <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" onclick="deleteMusic(${index})">Eliminar</button>
                     </td>
                 `;
                 musicTableBody.appendChild(row);
@@ -138,7 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Add Music
+    openMusicModal?.addEventListener('click', () => {
+        musicModal?.classList.remove('hidden');
+    });
+
+    closeModalTriggers.forEach(btn => btn.addEventListener('click', () => {
+        musicModal?.classList.add('hidden');
+    }));
+
     if (addMusicForm) {
         addMusicForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -147,20 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const year = document.getElementById('music-year').value;
             const link = document.getElementById('music-link').value;
 
-            const newItem = { title, type, year, link, cover: 'assets/hero.png' }; // Default cover for now
-
+            const newItem = { title, type, year, link, cover: 'assets/hero.png' };
             const musicData = JSON.parse(localStorage.getItem('site_music_data')) || [];
             musicData.push(newItem);
             localStorage.setItem('site_music_data', JSON.stringify(musicData));
 
-            document.getElementById('add-music-modal').style.display = 'none';
+            musicModal?.classList.add('hidden');
             addMusicForm.reset();
             loadMusic();
             alert('Música agregada correctamente');
         });
     }
 
-    // Delete Music (Global function to be accessible from onclick)
     window.deleteMusic = (index) => {
         if (confirm('¿Estás seguro de eliminar este item?')) {
             const musicData = JSON.parse(localStorage.getItem('site_music_data')) || [];
@@ -170,7 +192,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Initial Load
     loadMusic();
-
 });
