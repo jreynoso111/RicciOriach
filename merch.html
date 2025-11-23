@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricci Oriach | Mercadito Tropical</title>
-    <meta name="description" content="Merch oficial de Ricci Oriach. Camisetas, vinilos y accesorios.">
+    <title>Ricci Oriach | Colección Oficial</title>
+    <meta name="description" content="Merch oficial de Ricci Oriach inspirada en el Folclore Futurista.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,15 +16,12 @@
     <style>
         /* --- VARIABLES & ESTILOS GENERALES --- */
         :root {
-            --color-bg: #0B3B2E;
-            /* Verde Monte */
+            --color-bg: #300505;
             --color-text: #F4F4F4;
-            /* Blanco Hueso */
             --color-accent: #FF5E6C;
-            /* Rosa Guayaba */
             --color-secondary: #FFD700;
-            /* Amarillo Sol */
             --color-card: rgba(255, 255, 255, 0.05);
+            --color-outline: rgba(255, 94, 108, 0.7);
         }
 
         * {
@@ -40,17 +37,15 @@
             overflow-x: hidden;
         }
 
-        /* Noise Overlay */
-        .noise-overlay {
+        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
+        #canvas-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: -1;
             pointer-events: none;
-            z-index: 999;
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* --- NAVBAR --- */
@@ -70,7 +65,7 @@
             font-family: 'Abril Fatface', cursive;
             font-size: 1.5rem;
             text-decoration: none;
-            color: white;
+            color: var(--color-secondary);
             text-transform: uppercase;
         }
 
@@ -106,18 +101,9 @@
             background-color: white;
         }
 
-        /* --- HERO SECTION --- */
-        .merch-hero {
-            padding-top: 150px;
-            padding-bottom: 30px;
-            text-align: center;
-        }
-
-        .merch-title {
+        /* --- BASE HERO --- */
+        .hero-title {
             font-family: 'Abril Fatface', cursive;
-            font-size: 3.5rem;
-            margin: 0;
-            line-height: 1.1;
             text-transform: uppercase;
         }
 
@@ -130,102 +116,163 @@
             color: var(--color-accent);
         }
 
+        .cta-button {
+            display: inline-block;
+            background-color: transparent;
+            color: var(--color-accent);
+            border: 2px solid var(--color-accent);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: var(--color-accent);
+            color: #111;
+        }
+
+        /* --- MERCH PAGE STYLES --- */
+
+        .merch-content-wrapper {
+            max-width: 1300px;
+            margin: 120px auto 4rem auto;
+            padding: 0 5%;
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .merch-hero {
+            padding: 80px 0 40px;
+        }
+
+        .merch-title {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            line-height: 0.85;
+        }
+
         .merch-subtitle {
-            font-size: 1rem;
-            letter-spacing: 3px;
-            margin-top: 10px;
-            opacity: 0.8;
+            color: var(--color-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 4rem;
+            font-weight: 300;
+            letter-spacing: 1px;
         }
 
-        /* --- GRID DE PRODUCTOS --- */
-        .merch-container {
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-bottom: 5rem;
+        .category-heading {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 2.5rem;
+            color: var(--color-accent);
+            margin: 3rem 0 2rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .product-grid {
+        /* Destacado Nuevo Lanzamiento */
+        .new-release {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 94, 108, 0.15));
+            border: 2px solid var(--color-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: 1fr 2fr;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+        }
+
+        .new-release img {
+            width: 100%;
+            border-radius: 12px;
+            border: 4px solid var(--color-accent);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .new-release h3 {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 2rem;
+            color: var(--color-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .new-release p {
+            text-align: left;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Grid y Tarjetas de Producto */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
         }
 
         .product-card {
-            background: var(--color-card);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(48, 5, 5, 0.8);
             border-radius: 15px;
             overflow: hidden;
-            transition: transform 0.3s ease, border-color 0.3s;
-            display: flex;
-            flex-direction: column;
+            border: 2px solid var(--color-outline);
+            transition: box-shadow 0.3s, transform 0.3s;
         }
 
         .product-card:hover {
+            box-shadow: 0 0 30px var(--color-accent);
             transform: translateY(-5px);
-            border-color: var(--color-accent);
         }
 
-        /* Placeholder para imágenes (simula fotos artísticas) */
-        .product-image-placeholder {
+        .product-image-container {
+            overflow: hidden;
+            height: 350px;
+        }
+
+        .product-image {
             width: 100%;
-            height: 250px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-            /* Gradiente por defecto si no hay imagen */
-            background: linear-gradient(45deg, #0B3B2E, #1a5c4a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 3rem;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease-in-out;
         }
 
-        .product-info {
-            padding: 1.5rem;
-            text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        .product-card:hover .product-image {
+            transform: scale(1.05);
         }
 
-        .product-info h3 {
+        .product-details {
+            padding: 20px;
+            text-align: left;
+        }
+
+        .product-name {
             font-family: 'Abril Fatface', cursive;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--color-text);
-        }
-
-        .price {
-            font-size: 1.1rem;
+            font-size: 1.5rem;
             color: var(--color-secondary);
-            font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 10px;
         }
 
-        .add-to-cart {
-            width: 100%;
-            padding: 0.8rem;
-            background: transparent;
-            border: 2px solid var(--color-accent);
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: 700;
             color: var(--color-accent);
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Outfit', sans-serif;
-            text-transform: uppercase;
-            font-size: 0.8rem;
+            margin-bottom: 15px;
         }
 
-        .add-to-cart:hover {
-            background: var(--color-accent);
+        .buy-button {
+            display: block;
+            text-align: center;
+            padding: 0.8rem 1.5rem;
+            width: 100%;
+            border-radius: 5px;
+            background-color: var(--color-accent);
             color: white;
+            border: none;
         }
 
-        /* --- FOOTER --- */
+        /* FOOTER */
         footer {
             text-align: center;
             padding: 2rem;
@@ -246,9 +293,34 @@
             font-size: 0.9rem;
         }
 
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .new-release {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 20px;
+                background-color: var(--color-bg);
+                padding: 2rem;
+                border: 1px solid var(--color-accent);
+                border-radius: 10px;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                display: flex;
+                opacity: 1;
+                transform: translateY(0);
             }
 
             .hamburger {
@@ -256,14 +328,18 @@
             }
 
             .merch-title {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
+            }
+
+            .product-image-container {
+                height: 300px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="noise-overlay"></div>
+    <canvas id="canvas-bg"></canvas>
 
     <!-- NAVBAR -->
     <nav class="navbar">
@@ -277,70 +353,67 @@
         <div class="hamburger"><span></span><span></span><span></span></div>
     </nav>
 
-    <!-- HEADER DE LA PÁGINA -->
-    <header class="merch-hero">
-        <h1 class="merch-title">
-            <span class="outline-text">MERCA</span><span class="filled-text">DITO</span>
-        </h1>
-        <p class="merch-subtitle">LLEVA EL RITMO TROPICAL CONTIGO</p>
-    </header>
+    <main class="merch-content-wrapper">
+        <section class="merch-hero">
+            <h1 class="hero-title merch-title">
+                <span class="outline-text">COLECCIÓN</span><br>
+                <span class="filled-text">OFICIAL</span>
+            </h1>
+            <p class="merch-subtitle">Productos de edición limitada inspirados en el Folclore Futurista.</p>
+        </section>
 
-    <!-- PRODUCTOS -->
-    <section class="merch-container">
-        <div class="product-grid">
-            <!-- Producto 1 -->
-            <div class="product-card">
-                <!-- Simulamos imagen con degradado Rosa -->
-                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #FF5E6C, #b03e48);">
-                    <span>👕</span>
+        <section class="products-section">
+            <div class="new-release">
+                <div class="product-image-container">
+                    <img src="merch_nuevo_drop.jpg" alt="Sudadera edición limitada" class="product-image">
                 </div>
-                <div class="product-info">
-                    <h3>Camiseta "Maquiné"</h3>
-                    <p class="price">$25.00</p>
-                    <button class="add-to-cart">AGREGAR</button>
+                <div class="product-details">
+                    <h3>Nuevo Lanzamiento: Sudadera "RITMO SOLAR"</h3>
+                    <p>Edición limitada con gráficos psicodélicos y bordes en hilo dorado. Perfecta para lucir el ritmo tropical en
+                        noches frescas de concierto.</p>
+                    <p class="product-price">$55.00 USD</p>
+                    <a href="#" class="cta-button">Añadir al carrito</a>
                 </div>
             </div>
 
-            <!-- Producto 2 -->
-            <div class="product-card">
-                <!-- Simulamos imagen con degradado Amarillo -->
-                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #FFD700, #b39700);">
-                    <span>💿</span>
-                </div>
-                <div class="product-info">
-                    <h3>Vinilo "Mi Derriengue"</h3>
-                    <p class="price">$35.00</p>
-                    <button class="add-to-cart">AGREGAR</button>
-                </div>
-            </div>
+            <h2 class="category-heading">Camisetas y Ropa</h2>
 
-            <!-- Producto 3 -->
-            <div class="product-card">
-                <!-- Simulamos imagen con degradado Azul/Verde -->
-                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #2E8B57, #0B3B2E);">
-                    <span>🧢</span>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="merch_camiseta_maquine.jpg" alt="Camiseta Maquiné" class="product-image">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-name">Camiseta 'MAQUINÉ' (Negra)</h3>
+                        <p class="product-price">$35.00 USD</p>
+                        <a href="#" class="cta-button buy-button">COMPRAR AHORA</a>
+                    </div>
                 </div>
-                <div class="product-info">
-                    <h3>Gorra "La Guayaba"</h3>
-                    <p class="price">$20.00</p>
-                    <button class="add-to-cart">AGREGAR</button>
-                </div>
-            </div>
 
-            <!-- Producto 4 -->
-            <div class="product-card">
-                <!-- Simulamos imagen Neutral -->
-                <div class="product-image-placeholder" style="background: linear-gradient(135deg, #555, #222);">
-                    <span>👜</span>
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="merch_gorra_logo.jpg" alt="Gorra Logo" class="product-image">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-name">Gorra Logo Psicodélico</h3>
+                        <p class="product-price">$25.00 USD</p>
+                        <a href="#" class="cta-button buy-button">COMPRAR AHORA</a>
+                    </div>
                 </div>
-                <div class="product-info">
-                    <h3>Tote Bag "Tropical"</h3>
-                    <p class="price">$15.00</p>
-                    <button class="add-to-cart">AGREGAR</button>
+
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="merch_vinilo_la_guayaba.jpg" alt="Vinilo La Guayaba" class="product-image">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-name">Vinilo 'La Guayaba'</h3>
+                        <p class="product-price">$40.00 USD</p>
+                        <a href="#" class="cta-button buy-button">COMPRAR AHORA</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer>
         <div class="social-links">
@@ -357,36 +430,67 @@
         const navLinks = document.querySelector('.nav-links');
 
         hamburger.addEventListener('click', () => {
-            if (navLinks.style.display === 'flex') {
-                navLinks.style.display = 'none';
-            } else {
-                navLinks.style.display = 'flex';
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '70px';
-                navLinks.style.right = '20px';
-                navLinks.style.backgroundColor = '#0B3B2E';
-                navLinks.style.padding = '20px';
-                navLinks.style.border = '1px solid #FF5E6C';
-                navLinks.style.borderRadius = '10px';
-                navLinks.style.zIndex = '1000';
-            }
+            navLinks.classList.toggle('active');
+        });
+    </script>
+    <script>
+        // --- SCRIPT DE PUNTOS FLOTANTES ---
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        window.addEventListener('resize', function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
         });
 
-        // Efecto simple al botón de compra
-        const buttons = document.querySelectorAll('.add-to-cart');
-        buttons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                this.textContent = "¡AGREGADO!";
-                this.style.backgroundColor = "#FFD700"; // Amarillo
-                this.style.color = "#000";
-                setTimeout(() => {
-                    this.textContent = "AGREGAR";
-                    this.style.backgroundColor = "transparent";
-                    this.style.color = "#FF5E6C";
-                }, 2000);
-            });
-        });
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 0.5;
+                const depthSpeed = this.size * 0.15;
+                this.speedX = (Math.random() * 2 - 1) * depthSpeed;
+                this.speedY = (Math.random() * 2 - 1) * depthSpeed;
+                this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+        }
+
+        initParticles();
+        animateParticles();
     </script>
 </body>
 
