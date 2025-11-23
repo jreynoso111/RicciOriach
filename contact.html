@@ -16,14 +16,11 @@
     <style>
         /* --- VARIABLES DE COLOR (Vibe Ricci Oriach) --- */
         :root {
-            --color-bg: #0B3B2E;
-            /* Verde Monte Oscuro */
+            --color-bg: #300505;
             --color-text: #F4F4F4;
-            /* Blanco Hueso */
             --color-accent: #FF5E6C;
-            /* Rosa Guayaba */
             --color-secondary: #FFD700;
-            /* Amarillo Sol */
+            --color-outline: rgba(255, 94, 108, 0.7);
         }
 
         /* --- ESTILOS GENERALES --- */
@@ -40,17 +37,15 @@
             overflow-x: hidden;
         }
 
-        /* Efecto de Grano (Noise Overlay) */
-        .noise-overlay {
+        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
+        #canvas-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: -1;
             pointer-events: none;
-            z-index: 999;
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         /* --- NAVBAR (Del código nuevo) --- */
@@ -125,7 +120,7 @@
         }
 
         .outline-text {
-            -webkit-text-stroke: 2px var(--color-accent);
+            -webkit-text-stroke: 2px var(--color-outline);
             color: transparent;
         }
 
@@ -135,6 +130,11 @@
 
         .tour-section {
             padding: 0 1rem 4rem 1rem;
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+            background: rgba(48, 5, 5, 0.6);
+            border: 1px solid var(--color-accent);
+            border-radius: 20px;
         }
 
         /* Estilos del Formulario */
@@ -201,6 +201,11 @@
             margin-top: auto;
         }
 
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         .social-links {
             margin-bottom: 1.5rem;
         }
@@ -223,7 +228,23 @@
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
-                /* Aquí iría la lógica de JS para abrir menú */
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 20px;
+                background-color: var(--color-bg);
+                padding: 2rem;
+                border: 1px solid var(--color-accent);
+                border-radius: 10px;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+            }
+
+            .nav-links.active {
+                display: flex;
+                opacity: 1;
+                transform: translateY(0);
             }
 
             .hamburger {
@@ -238,18 +259,18 @@
 </head>
 
 <body>
-    <div class="noise-overlay"></div>
-
+    <canvas id="canvas-bg"></canvas>
     <!-- HEADER / NAVBAR (Integrado del código nuevo) -->
     <nav class="navbar">
         <div class="logo">
             <a href="index.html">RICCI ORIACH</a>
         </div>
         <ul class="nav-links">
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="music.html">Música</a></li>
-            <li><a href="merch.html">Merch</a></li>
-            <li><a href="contact.html" style="color: var(--color-accent);">Contacto</a></li>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="music.html">MÚSICA</a></li>
+            <li><a href="merch.html">MERCH</a></li>
+            <li><a href="blog.html">BLOG</a></li>
+            <li><a href="contact.html" style="color: var(--color-accent);">CONTACTO</a></li>
         </ul>
         <div class="hamburger">
             <span></span>
@@ -298,7 +319,7 @@
                 <a href="#">Spotify</a>
                 <a href="#">YouTube</a>
             </div>
-            <p style="font-size: 0.8rem; opacity: 0.6;">&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
         </div>
     </footer>
 
@@ -308,21 +329,67 @@
         const navLinks = document.querySelector('.nav-links');
 
         hamburger.addEventListener('click', () => {
-            // Simple toggle para mostrar menú en móvil (puedes mejorarlo luego)
-            if (navLinks.style.display === 'flex') {
-                navLinks.style.display = 'none';
-            } else {
-                navLinks.style.display = 'flex';
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '70px';
-                navLinks.style.right = '20px';
-                navLinks.style.backgroundColor = '#0B3B2E';
-                navLinks.style.padding = '20px';
-                navLinks.style.border = '1px solid #FF5E6C';
-                navLinks.style.borderRadius = '10px';
-            }
+            navLinks.classList.toggle('active');
         });
+    </script>
+    <script>
+        // --- SCRIPT DE PUNTOS FLOTANTES ---
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        window.addEventListener('resize', function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 0.5;
+                const depthSpeed = this.size * 0.15;
+                this.speedX = (Math.random() * 2 - 1) * depthSpeed;
+                this.speedY = (Math.random() * 2 - 1) * depthSpeed;
+                this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+        }
+
+        initParticles();
+        animateParticles();
     </script>
 </body>
 
