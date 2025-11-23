@@ -1,34 +1,26 @@
-# Ricci Oriach Website Walkthrough
+# Ricci Oriach Website
 
-I have successfully created the high-fidelity landing page for Ricci Oriach using Vanilla HTML, CSS, and JS.
+Static multi-page site for the Dominican artist Riccie Oriach, built with vanilla HTML, CSS, and a sprinkle of JS for background animation and navigation toggles.
 
-## Features Implemented
+## Pages
+- **Homepage (`index.html`)**: Hero with Spotify embed, tour callout, and quick links.
+- **Music (`music.html`)**: Featured album highlight plus discography grid.
+- **Merch (`merch.html`)**: Product gallery with hover zoom and CTA buttons.
+- **Blog (`blog.html`)**: Articles list with the FOLCLORE/BITÁCORA hero.
+- **Contact (`contact.html`)**: Booking info and social links.
 
-### 1. Tropical Brutalism Design
-- **Visuals**: Used a generated collage-style hero image and a dark, textured background to match the "Folclore Alternativo" aesthetic.
-- **Typography**: Implemented `Abril Fatface` for that retro 70s serif look and `Outfit` for modern readability.
-- **Colors**:
-  - Primary: Guava Pink (#FF5E6C)
-  - Background: Deep Forest Green (#0B3B2E)
-  - Accents: Sun Yellow & Turquoise
+## Visual System
+- Palette: Rojo Vino background with Rosa Guayaba accents and Amarillo Sol highlights.
+- Typography: `Abril Fatface` for display, `Outfit` for body text.
+- Effects: Glassmorphic panels, outlined/filled headings, and a floating particle canvas background on every page.
 
-### 2. Core Sections
-- **Hero**: Large typography with outline/fill effects, floating tropical elements, and a clear CTA.
-- **Navigation**: Fixed, glassmorphism-style navbar.
-- **Tour Dates**: A stylish list of upcoming shows.
-- **Footer**: Social links and copyright.
+## Running Locally
+Open any HTML file directly in your browser; no build step or server is required.
 
-### 3. Interactivity
-- **Parallax Effect**: The hero image moves slightly with the mouse cursor (desktop only).
-- **Smooth Scroll**: Navigation links scroll smoothly to sections.
-- **Hover Effects**: Buttons and links have dynamic hover states (glows, lifts).
+## Customizing
+- **Brand colors**: Adjust CSS variables (`--color-primary`, `--color-secondary`, `--color-accent`, etc.) in the `<style>` blocks near the top of each HTML file.
+- **Background animation**: The particle canvas script sits before each page’s closing `</body>` tag; tweak particle counts or speeds there.
+- **Navigation**: Update header links in the `<nav>` element if you add or rename pages.
 
-## How to View
-Simply open `index.html` in your web browser. No installation or server is required.
-
-## Screenshots
-*(Note: Since this is a code-only generation, please open the file to see the live result. Below are the assets used.)*
-
-### Assets Generated
-- **Hero Collage**: `assets/hero.png`
-- **Background Texture**: `assets/texture.png`
+## Assets
+Key images live in the `assets/` folder and can be swapped for new art or photography as desired.

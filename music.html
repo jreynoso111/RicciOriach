@@ -6,22 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ricci Oriach | Música</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     <style>
-        /* --- ESTILOS VISUALES (Ricci Vibe) --- */
+        /* --- VARIABLES DE COLOR (ROJO VINO, ROSA GUAYABA, AMARILLO SOL) --- */
         :root {
-            --color-bg: #0B3B2E;
-            /* Verde Monte */
+            --color-bg: #300505;
             --color-text: #F4F4F4;
-            /* Blanco */
             --color-accent: #FF5E6C;
-            /* Rosa Guayaba */
+            --color-secondary: #FFD700;
             --color-card: rgba(255, 255, 255, 0.05);
+            --color-outline: rgba(255, 94, 108, 0.7);
         }
 
         * {
@@ -32,21 +31,48 @@
 
         body {
             background-color: var(--color-bg);
+            background: radial-gradient(circle at 50% 50%, #3a0a0a 0%, #180303 100%);
             color: var(--color-text);
             font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Noise Overlay */
-        .noise-overlay {
+        body::before {
+            content: "";
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-image: url('assets/texture.png');
+            background-size: cover;
+            opacity: 0.2;
+            z-index: -2;
             pointer-events: none;
-            z-index: 999;
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 94, 108, 0.08), transparent);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
 
         /* --- NAVBAR --- */
@@ -66,8 +92,9 @@
             font-family: 'Abril Fatface', cursive;
             font-size: 1.5rem;
             text-decoration: none;
-            color: white;
+            color: var(--color-secondary);
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .nav-links {
@@ -79,7 +106,7 @@
         .nav-links li a {
             text-decoration: none;
             color: var(--color-text);
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             font-size: 0.9rem;
             transition: color 0.3s;
@@ -102,22 +129,15 @@
             background-color: white;
         }
 
-        /* --- CABECERA DE PÁGINA --- */
-        .page-header {
-            padding-top: 150px;
-            padding-bottom: 50px;
-            text-align: center;
-        }
-
-        h1 {
+        /* --- TIPOGRAFÍA HERO --- */
+        .hero-title {
             font-family: 'Abril Fatface', cursive;
-            font-size: 4rem;
-            margin: 0;
-            line-height: 1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .outline-text {
-            -webkit-text-stroke: 2px var(--color-accent);
+            -webkit-text-stroke: 2px var(--color-outline);
             color: transparent;
         }
 
@@ -125,195 +145,394 @@
             color: var(--color-accent);
         }
 
-        /* --- GRID DE DISCOGRAFÍA --- */
-        .music-section {
-            padding: 0 2rem 4rem 2rem;
+        /* --- MUSIC PAGE STYLES --- */
+
+        .music-content-wrapper {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 120px auto 4rem auto;
+            padding: 0 5%;
+            position: relative;
+            z-index: 10;
         }
 
-        .music-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-        }
-
-        /* Tarjeta de Álbum */
-        .album-card {
-            background: var(--color-card);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
+        /* Título Hero de Música */
+        .music-title {
+            font-size: 4rem;
             text-align: center;
-            padding-bottom: 1.5rem;
+            margin-bottom: 3rem;
+            line-height: 0.85;
         }
 
-        .album-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--color-accent);
+        /* Álbum Destacado */
+        .featured-album {
+            margin-bottom: 2rem;
         }
 
-        .album-image {
-            width: 100%;
-            aspect-ratio: 1/1;
+        .album-highlight {
+            display: flex;
+            align-items: center;
+            gap: 5rem;
+            background: rgba(48, 5, 5, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid var(--color-accent);
+            margin-bottom: 5rem;
+        }
+
+        .cover-image-container {
+            flex-shrink: 0;
+        }
+
+        .featured-cover {
+            width: 350px;
+            height: 350px;
             object-fit: cover;
-            background-color: #000;
-            /* Fallback si no hay imagen */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 5px solid var(--color-secondary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .album-info {
-            padding: 1.5rem 1rem;
+        .album-details {
+            color: var(--color-text);
         }
 
-        .album-info h3 {
-            font-size: 1.8rem;
-            font-family: 'Abril Fatface', cursive;
+        .featured-year {
+            color: var(--color-secondary);
+            font-weight: 700;
+            letter-spacing: 2px;
             margin-bottom: 0.5rem;
         }
 
-        .album-info p {
-            color: #aaa;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+        .featured-name {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 3rem;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+        }
+
+        .featured-description {
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 0.9rem 2.4rem;
+            border-radius: 999px;
+            font-weight: 700;
+            text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 1px;
-        }
-
-        .listen-btn {
-            display: inline-block;
-            padding: 0.8rem 2rem;
+            background: var(--color-accent);
+            color: var(--color-bg);
             border: 2px solid var(--color-accent);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 94, 108, 0.35);
+            background: var(--color-secondary);
+            border-color: var(--color-secondary);
+        }
+
+        /* Discografía en Cuadrícula */
+        .discography-section {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .section-heading {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 2.5rem;
             color: var(--color-accent);
+            margin-bottom: 3rem;
+        }
+
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .album-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-cover {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-family: 'Abril Fatface', cursive;
+            font-size: 1.5rem;
+            color: var(--color-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-year {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        .card-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .icon-link {
+            color: var(--color-text);
             text-decoration: none;
-            border-radius: 50px;
+            font-size: 0.9rem;
             font-weight: 700;
-            transition: all 0.3s;
+            transition: color 0.3s;
         }
 
-        .listen-btn:hover {
-            background-color: var(--color-accent);
-            color: white;
+        .icon-link:hover {
+            color: var(--color-accent);
         }
 
-        /* Footer Simple */
+        /* FOOTER */
         footer {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: auto;
-            opacity: 0.6;
-            font-size: 0.8rem;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--color-text);
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--color-secondary);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .album-highlight {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .featured-cover {
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                right: 20px;
+                background-color: var(--color-bg);
+                padding: 2rem;
+                border: 1px solid var(--color-accent);
+                border-radius: 10px;
+                opacity: 0;
+                transform: translateY(-20px);
+                transition: opacity 0.3s ease, transform 0.3s ease;
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                display: flex;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .music-title {
+                font-size: 3rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="noise-overlay"></div>
+    <canvas id="canvas-bg"></canvas>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
         <ul class="nav-links">
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="music.html" style="color: var(--color-accent);">Música</a></li>
-            <li><a href="merch.html">Merch</a></li>
-            <li><a href="contact.html">Contacto</a></li>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="music.html" style="color: var(--color-accent);">MÚSICA</a></li>
+            <li><a href="merch.html">MERCH</a></li>
+            <li><a href="blog.html">BLOG</a></li>
+            <li><a href="contact.html">CONTACTO</a></li>
         </ul>
         <div class="hamburger"><span></span><span></span><span></span></div>
     </nav>
 
-    <!-- TÍTULO -->
-    <header class="page-header">
-        <h1>
-            <span class="outline-text">DISCO</span><span class="filled-text">GRAFÍA</span>
-        </h1>
-    </header>
+    <main class="music-content-wrapper">
 
-    <!-- CONTENIDO -->
-    <section class="music-section">
-        <div class="music-grid" id="music-grid">
-            <!-- Aquí se insertan los álbumes con JS -->
-        </div>
-    </section>
+        <section class="featured-album">
+            <h1 class="hero-title music-title">
+                <span class="outline-text">PSICODELIA</span><br>
+                <span class="filled-text">TROPICAL</span>
+            </h1>
+
+            <div class="album-highlight">
+                <div class="cover-image-container">
+                    <img src="album_reciente.jpg" alt="Portada del Álbum Reciente" class="featured-cover">
+                </div>
+                <div class="album-details">
+                    <p class="featured-year">2024</p>
+                    <h2 class="featured-name">MAQUINÉ</h2>
+                    <p class="featured-description">
+                        El folclore se fusiona con ritmos electrónicos futuristas en el disco que redefine el sonido
+                        caribeño alternativo.
+                    </p>
+                    <a href="#" class="cta-button listen-button">ESCUCHAR AHORA</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="discography-section">
+            <h2 class="section-heading">Discografía</h2>
+            <div class="albums-grid">
+
+                <div class="album-card">
+                    <img src="album_la_guayaba.jpg" alt="La Guayaba" class="card-cover">
+                    <h3 class="card-title">LA GUAYABA</h3>
+                    <p class="card-year">2020</p>
+                    <div class="card-links">
+                        <a href="#" class="icon-link">Spotify</a>
+                        <a href="#" class="icon-link">YouTube</a>
+                    </div>
+                </div>
+
+                <div class="album-card">
+                    <img src="album_prima_tecata.jpg" alt="Prima Tecata" class="card-cover">
+                    <h3 class="card-title">PRIMA TECATA</h3>
+                    <p class="card-year">2018</p>
+                    <div class="card-links">
+                        <a href="#" class="icon-link">Spotify</a>
+                        <a href="#" class="icon-link">Bandcamp</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
 
     <footer>
-        <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#">Instagram</a>
+                <a href="#">Spotify</a>
+                <a href="#">YouTube</a>
+            </div>
+            <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
-    <!-- JAVASCRIPT CORREGIDO -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const musicGrid = document.getElementById('music-grid');
-
-            // DATOS DE EJEMPLO (Hardcoded para que funcione inmediatamente)
-            // Puedes cambiar 'assets/hero.png' por las portadas reales.
-            const defaultMusic = [
-                {
-                    title: 'Maquiné',
-                    type: 'ÁLBUM',
-                    year: '2022',
-                    cover: 'https://i.scdn.co/image/ab67616d0000b273a956125380165982202f4580', // Portada real de Spotify
-                    link: 'https://open.spotify.com/album/MaquineLink'
-                },
-                {
-                    title: 'Mi Derriengue',
-                    type: 'EP',
-                    year: '2020',
-                    cover: 'https://i.scdn.co/image/ab67616d0000b273710e4699630390b457088580', // Portada real
-                    link: '#'
-                },
-                {
-                    title: 'Viaje al Infinito',
-                    type: 'SENCILLO',
-                    year: '2017',
-                    cover: 'https://i.scdn.co/image/ab67616d0000b273c6715648df89635857548729', // Portada real
-                    link: '#'
-                }
-            ];
-
-            // Intentamos leer del localStorage, si no hay nada, usamos los datos por defecto
-            const storedData = JSON.parse(localStorage.getItem('site_music_data'));
-            const musicData = (storedData && storedData.length > 0) ? storedData : defaultMusic;
-
-            // Limpiar grid
-            musicGrid.innerHTML = '';
-
-            // Crear tarjetas
-            musicData.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'album-card';
-
-                card.innerHTML = `
-                    <img src="${item.cover}" alt="${item.title}" class="album-image">
-                    <div class="album-info">
-                        <h3>${item.title}</h3>
-                        <p>${item.type} • ${item.year}</p>
-                        <a href="${item.link}" class="listen-btn" target="_blank">ESCUCHAR</a>
-                    </div>
-                `;
-                musicGrid.appendChild(card);
-            });
-        });
-
         // Script del menú móvil
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
         hamburger.addEventListener('click', () => {
-            if (navLinks.style.display === 'flex') {
-                navLinks.style.display = 'none';
-            } else {
-                navLinks.style.display = 'flex';
-                navLinks.style.flexDirection = 'column';
-                navLinks.style.position = 'absolute';
-                navLinks.style.top = '70px';
-                navLinks.style.right = '20px';
-                navLinks.style.backgroundColor = '#0B3B2E';
-                navLinks.style.padding = '20px';
-                navLinks.style.border = '1px solid #FF5E6C';
-            }
+            navLinks.classList.toggle('active');
         });
+    </script>
+    <script>
+        // --- SCRIPT DE PUNTOS FLOTANTES ---
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray;
+
+        window.addEventListener('resize', function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 0.5;
+                const depthSpeed = this.size * 0.15;
+                this.speedX = (Math.random() * 2 - 1) * depthSpeed;
+                this.speedY = (Math.random() * 2 - 1) * depthSpeed;
+                this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+        }
+
+        initParticles();
+        animateParticles();
     </script>
 </body>
 
