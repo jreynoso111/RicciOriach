@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <canvas id="admin-canvas-bg"></canvas>
     <div class="site-return-bar">
         <a class="site-return-link" href="../index.html">⟵ Volver al sitio principal</a>
     </div>
@@ -89,9 +90,25 @@
                             <label>Fecha de publicación</label>
                             <input type="date" id="post-date">
                         </div>
+                        <div class="form-group">
+                            <label>Link de referencia</label>
+                            <input type="url" id="post-link" placeholder="https://riccioriach.com/blog/...">
+                        </div>
+                        <div class="form-group">
+                            <label>Portada</label>
+                            <div class="image-upload-row">
+                                <input type="file" id="post-image" accept="image/*">
+                                <img id="post-image-preview" class="image-preview hidden" alt="Portada del post">
+                            </div>
+                            <p class="image-hint">Sube o sustituye la imagen destacada del artículo.</p>
+                        </div>
                         <div class="form-group" style="grid-column: 1 / -1;">
                             <label>Extracto</label>
                             <textarea id="post-excerpt" rows="2" placeholder="Resumen breve para la tarjeta del blog"></textarea>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Contenido</label>
+                            <textarea id="post-content" rows="8" placeholder="Cuerpo completo del artículo con formato y narrativa"></textarea>
                         </div>
                         <div class="form-actions">
                             <button type="submit" class="action-btn primary">Guardar flujo</button>
@@ -144,6 +161,7 @@
                             <th>Autor</th>
                             <th>Estado</th>
                             <th>Fecha</th>
+                            <th>Link</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -153,6 +171,7 @@
         </main>
     </div>
 
+    <script src="admin.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const storedLogin = localStorage.getItem('isLoggedIn');
@@ -162,9 +181,9 @@
             }
 
             const posts = [
-                { title: 'Sesión en vivo desde Santo Domingo', author: 'Ricci Oriach', status: 'Publicado', date: '2024-05-12', excerpt: 'Nuevas versiones con ritmos tropicales.' },
-                { title: 'Gira Caribe 2024', author: 'Equipo Ricci', status: 'Programado', date: '2024-06-03', excerpt: 'Fechas confirmadas para Puerto Rico y RD.' },
-                { title: 'Merch drop "Ritmo Solar"', author: 'Staff', status: 'Borrador', date: '2024-04-27', excerpt: 'Edición limitada inspirada en folclore futurista.' }
+                { title: 'Sesión en vivo desde Santo Domingo', author: 'Ricci Oriach', status: 'Publicado', date: '2024-05-12', excerpt: 'Nuevas versiones con ritmos tropicales.', content: 'Revive la presentación completa con arreglos acústicos y percusión caribeña.', link: 'https://riccioriach.com/blog/sesion-sd', image: 'assets/hero.png' },
+                { title: 'Gira Caribe 2024', author: 'Equipo Ricci', status: 'Programado', date: '2024-06-03', excerpt: 'Fechas confirmadas para Puerto Rico y RD.', content: 'El tour incluirá sets íntimos, colaboraciones locales y merch exclusivo para cada parada.', link: 'https://riccioriach.com/blog/gira-caribe', image: 'assets/texture.png' },
+                { title: 'Merch drop "Ritmo Solar"', author: 'Staff', status: 'Borrador', date: '2024-04-27', excerpt: 'Edición limitada inspirada en folclore futurista.', content: 'Línea de camisetas y accesorios con colores neón, prints inspirados en carnaval y detalles bordados.', link: '', image: 'assets/hero.png' }
             ];
 
             const postsTableBody = document.getElementById('posts-table-body');
@@ -176,6 +195,12 @@
             const searchInput = document.getElementById('search-posts');
             const quickPostForm = document.getElementById('quick-post-form');
             const autoPublishRule = document.getElementById('auto-publish-rule');
+            const submitBtn = quickPostForm.querySelector('button[type="submit"]');
+            const resetBtn = quickPostForm.querySelector('button[type="reset"]');
+            const postImageInput = document.getElementById('post-image');
+            const postImagePreview = document.getElementById('post-image-preview');
+            let editingIndex = null;
+            let postImageData = '';
 
             function updateStats() {
                 publishedCount.textContent = posts.filter(p => p.status === 'Publicado').length;
@@ -199,6 +224,7 @@
                             <td>${post.author}</td>
                             <td><span class="badge ${post.status === 'Publicado' ? 'live' : post.status === 'Programado' ? 'soft' : 'hidden'}">${post.status}</span></td>
                             <td>${post.date || '—'}</td>
+                            <td>${post.link ? `<a href="${post.link}" target="_blank">Abrir</a>` : '—'}</td>
                             <td class="table-actions">
                                 <button class="action-btn ghost" data-edit="${index}">Editar</button>
                                 <button class="action-btn" data-toggle="${index}">${post.status === 'Publicado' ? 'Mover a borrador' : 'Publicar'}</button>
@@ -209,6 +235,13 @@
                     });
             }
 
+            function resetFormState() {
+                editingIndex = null;
+                quickPostForm.removeAttribute('data-editing');
+                submitBtn.textContent = 'Guardar flujo';
+                resetBtn.textContent = 'Limpiar';
+            }
+
             quickPostForm.addEventListener('submit', (event) => {
                 event.preventDefault();
                 const newPost = {
@@ -216,10 +249,24 @@
                     author: document.getElementById('post-author').value,
                     status: document.getElementById('post-status').value,
                     date: document.getElementById('post-date').value || 'Sin fecha',
-                    excerpt: document.getElementById('post-excerpt').value
+                    excerpt: document.getElementById('post-excerpt').value,
+                    content: document.getElementById('post-content').value,
+                    link: document.getElementById('post-link').value,
+                    image: postImageData || postImagePreview.dataset.src || 'assets/hero.png'
                 };
-                posts.unshift(newPost);
+
+                if (editingIndex !== null) {
+                    posts[editingIndex] = { ...posts[editingIndex], ...newPost };
+                } else {
+                    posts.unshift(newPost);
+                }
+
                 quickPostForm.reset();
+                postImageData = '';
+                postImagePreview.src = '';
+                postImagePreview.dataset.src = '';
+                postImagePreview.classList.add('hidden');
+                resetFormState();
                 renderPosts();
                 updateStats();
                 alert(`Post "${newPost.title}" guardado bajo regla: ${autoPublishRule.value}`);
@@ -248,11 +295,46 @@
                 if (target.dataset.edit) {
                     const idx = Number(target.dataset.edit);
                     const existing = posts[idx];
-                    const newTitle = prompt('Editar título', existing.title);
-                    if (newTitle) {
-                        posts[idx].title = newTitle;
-                        renderPosts();
-                    }
+                    editingIndex = idx;
+                    quickPostForm.setAttribute('data-editing', String(idx));
+                    document.getElementById('post-title').value = existing.title;
+                    document.getElementById('post-author').value = existing.author;
+                    document.getElementById('post-status').value = existing.status;
+                    document.getElementById('post-date').value = existing.date !== 'Sin fecha' ? existing.date : '';
+                    document.getElementById('post-excerpt').value = existing.excerpt || '';
+                    document.getElementById('post-content').value = existing.content || '';
+                    document.getElementById('post-link').value = existing.link || '';
+                    postImagePreview.src = existing.image || '';
+                    postImagePreview.dataset.src = existing.image || '';
+                    postImagePreview.classList.toggle('hidden', !existing.image);
+                    postImageData = existing.image || '';
+                    submitBtn.textContent = 'Actualizar post';
+                    resetBtn.textContent = 'Cancelar';
+                    document.getElementById('post-title').focus();
+                }
+            });
+
+            quickPostForm.addEventListener('reset', () => {
+                setTimeout(() => {
+                    postImageData = '';
+                    postImagePreview.src = '';
+                    postImagePreview.dataset.src = '';
+                    postImagePreview.classList.add('hidden');
+                    resetFormState();
+                });
+            });
+
+            postImageInput.addEventListener('change', () => {
+                const file = postImageInput.files?.[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        postImageData = reader.result;
+                        postImagePreview.src = reader.result;
+                        postImagePreview.dataset.src = reader.result;
+                        postImagePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
                 }
             });
 
@@ -268,6 +350,7 @@
                 document.getElementById('post-title').focus();
             });
 
+            resetFormState();
             updateStats();
             renderPosts();
         });

@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <canvas id="admin-canvas-bg"></canvas>
     <div class="site-return-bar">
         <a class="site-return-link" href="../index.html">⟵ Volver al sitio principal</a>
     </div>
@@ -88,6 +89,18 @@
                                 <option value="Borrador">Borrador</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label>Link o destino</label>
+                            <input type="url" id="product-link" placeholder="https://riccioriach.com/tienda/producto">
+                        </div>
+                        <div class="form-group">
+                            <label>Imagen</label>
+                            <div class="image-upload-row">
+                                <input type="file" id="product-image" accept="image/*">
+                                <img id="product-image-preview" class="image-preview hidden" alt="Foto del producto">
+                            </div>
+                            <p class="image-hint">Adjunta o reemplaza la foto del artículo.</p>
+                        </div>
                         <div class="form-group" style="grid-column: 1 / -1;">
                             <label>Descripción</label>
                             <textarea id="product-description" rows="2" placeholder="Detalle breve para la tarjeta de producto"></textarea>
@@ -144,6 +157,7 @@
                             <th>Precio</th>
                             <th>Stock</th>
                             <th>Estado</th>
+                            <th>Link</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -153,6 +167,7 @@
         </main>
     </div>
 
+    <script src="admin.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -175,6 +190,12 @@
             const lowStockCount = document.getElementById('low-stock-count');
             const syncDate = document.getElementById('sync-date');
             const productForm = document.getElementById('product-form');
+            const submitBtn = productForm.querySelector('button[type="submit"]');
+            const resetBtn = productForm.querySelector('button[type="reset"]');
+            const productImageInput = document.getElementById('product-image');
+            const productImagePreview = document.getElementById('product-image-preview');
+            let editingIndex = null;
+            let productImageData = '';
 
             function updateStats() {
                 liveCount.textContent = products.filter(p => p.status === 'Visible').length;
@@ -199,6 +220,7 @@
                             <td>$${product.price.toFixed(2)}</td>
                             <td>${product.stock}</td>
                             <td><span class="badge ${product.status === 'Visible' ? 'live' : product.status === 'Agotado' ? 'neutral' : 'hidden'}">${product.status}</span></td>
+                            <td>${product.link ? `<a href="${product.link}" target="_blank">Abrir</a>` : '—'}</td>
                             <td class="table-actions">
                                 <button class="action-btn ghost" data-edit="${index}">Editar</button>
                                 <button class="action-btn" data-toggle="${index}">${product.status === 'Visible' ? 'Ocultar' : 'Publicar'}</button>
@@ -209,18 +231,38 @@
                     });
             }
 
+            function resetFormState() {
+                editingIndex = null;
+                productForm.removeAttribute('data-editing');
+                submitBtn.textContent = 'Guardar';
+                resetBtn.textContent = 'Restablecer';
+            }
+
             productForm.addEventListener('submit', (event) => {
                 event.preventDefault();
                 const newProduct = {
-                    id: Math.floor(Math.random() * 500) + 300,
+                    id: editingIndex !== null ? products[editingIndex].id : Math.floor(Math.random() * 500) + 300,
                     name: document.getElementById('product-name').value,
                     price: Number(document.getElementById('product-price').value),
                     stock: Number(document.getElementById('product-stock').value),
                     status: document.getElementById('product-status').value,
-                    description: document.getElementById('product-description').value
+                    description: document.getElementById('product-description').value,
+                    link: document.getElementById('product-link').value,
+                    image: productImageData || productImagePreview.dataset.src || 'assets/hero.png'
                 };
-                products.unshift(newProduct);
+
+                if (editingIndex !== null) {
+                    products[editingIndex] = { ...products[editingIndex], ...newProduct };
+                } else {
+                    products.unshift(newProduct);
+                }
+
                 productForm.reset();
+                productImageData = '';
+                productImagePreview.src = '';
+                productImagePreview.dataset.src = '';
+                productImagePreview.classList.add('hidden');
+                resetFormState();
                 renderProducts();
                 updateStats();
                 alert('Producto guardado en el catálogo (modo ' + document.getElementById('publish-mode').value + ').');
@@ -249,11 +291,45 @@
                 if (target.dataset.edit) {
                     const idx = Number(target.dataset.edit);
                     const item = products[idx];
-                    const newPrice = prompt('Actualizar precio', item.price);
-                    if (newPrice !== null) {
-                        products[idx].price = Number(newPrice);
-                        renderProducts();
-                    }
+                    editingIndex = idx;
+                    productForm.setAttribute('data-editing', String(idx));
+                    document.getElementById('product-name').value = item.name;
+                    document.getElementById('product-price').value = item.price;
+                    document.getElementById('product-stock').value = item.stock;
+                    document.getElementById('product-status').value = item.status;
+                    document.getElementById('product-description').value = item.description || '';
+                    document.getElementById('product-link').value = item.link || '';
+                    productImagePreview.src = item.image || '';
+                    productImagePreview.dataset.src = item.image || '';
+                    productImagePreview.classList.toggle('hidden', !item.image);
+                    productImageData = item.image || '';
+                    submitBtn.textContent = 'Actualizar';
+                    resetBtn.textContent = 'Cancelar';
+                    document.getElementById('product-name').focus();
+                }
+            });
+
+            productForm.addEventListener('reset', () => {
+                setTimeout(() => {
+                    productImageData = '';
+                    productImagePreview.src = '';
+                    productImagePreview.dataset.src = '';
+                    productImagePreview.classList.add('hidden');
+                    resetFormState();
+                });
+            });
+
+            productImageInput.addEventListener('change', () => {
+                const file = productImageInput.files?.[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        productImageData = reader.result;
+                        productImagePreview.src = reader.result;
+                        productImagePreview.dataset.src = reader.result;
+                        productImagePreview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
                 }
             });
 
@@ -272,6 +348,7 @@
                 document.getElementById('product-name').focus();
             });
 
+            resetFormState();
             updateStats();
             renderProducts();
         });
