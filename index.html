@@ -167,6 +167,29 @@
         }
 
         /* SPOTIFY SECTION - Se mantiene */
+        .spotify-container {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .spotify-embed {
+            width: 25vw;
+            min-width: 280px;
+            max-width: 420px;
+        }
+
+        .spotify-fallback {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .spotify-fallback a {
+            color: var(--color-secondary);
+            font-weight: 700;
+        }
 
         /* --- TOUR SECTION --- */
         .tour-section {
@@ -242,6 +265,11 @@
             .tour-item { flex-direction: column; gap: 10px; text-align: center; }
             .date, .city, .venue { width: 100%; text-align: center; }
             .tour-section { margin: 0; border-radius: 0; }
+
+            .spotify-embed {
+                width: 100%;
+                max-width: none;
+            }
         }
     </style>
 </head>
@@ -290,11 +318,13 @@
     </div>
 
     <div id="listen" class="spotify-container">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        
-        <p class="spotify-fallback">
-            ¿No carga el reproductor? <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank">Abrir perfil en Spotify</a>
-        </p>
+        <div>
+            <iframe class="spotify-embed" style="border-radius:12px" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+            <p class="spotify-fallback">
+                ¿No carga el reproductor? <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank">Abrir perfil en Spotify</a>
+            </p>
+        </div>
     </div>
 
     <section id="tour" class="tour-section">
