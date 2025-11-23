@@ -257,6 +257,32 @@ body::after {
     gap: 1rem;
 }
 
+.quick-links {
+    margin: 1.25rem 0;
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.quick-links-actions {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.quick-links .action-btn {
+    padding: 0.6rem 0.9rem;
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
 .panel {
     background: var(--admin-panel);
     border: 1px solid var(--admin-border);
