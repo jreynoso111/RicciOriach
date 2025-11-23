@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tickets de eventos | Riccie Oriach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --color-bg:#300505; --color-text:#F4F4F4; --color-accent:#FF5E6C; --color-secondary:#FFD700; --card:rgba(255,255,255,0.06); }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at 50% 50%,#3a0a0a 0%,#180303 100%);color:var(--color-text);min-height:100vh;overflow-x:hidden;position:relative;}
+    body::before{content:"";position:fixed;inset:0;background-image:url('assets/texture.png');background-size:cover;opacity:0.2;z-index:-2;pointer-events:none;}
+    body::after{content:"";position:fixed;inset:0;background:linear-gradient(45deg,rgba(255,94,108,0.1),transparent);z-index:-1;pointer-events:none;}
+    #canvas-bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
+    .navbar{display:flex;align-items:center;gap:1rem;padding:1.25rem 2rem;position:absolute;top:0;left:0;width:100%;z-index:10;}
+    .logo a{font-family:'Abril Fatface',cursive;font-size:1.5rem;letter-spacing:1px;color:var(--color-secondary);text-decoration:none;}
+    .nav-links{list-style:none;display:flex;gap:1.5rem;margin-left:auto;}
+    .nav-links a{color:var(--color-text);text-decoration:none;font-weight:600;letter-spacing:0.5px;}
+    .nav-links a.active{color:var(--color-accent);}
+    .hero{padding:7rem 2rem 3rem;max-width:1100px;margin:0 auto;display:grid;gap:0.7rem;}
+    .hero h1{font-size:3rem;letter-spacing:1px;}
+    .hero p{color:rgba(244,244,244,0.82);}
+    .grid{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;display:grid;gap:1rem;}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.2rem;box-shadow:0 12px 30px rgba(0,0,0,0.28);}
+    .event-card{display:grid;gap:0.6rem;border:1px solid rgba(255,255,255,0.08);padding:1rem;border-radius:12px;background:rgba(0,0,0,0.25);}
+    .event-meta{display:flex;gap:0.8rem;flex-wrap:wrap;color:rgba(244,244,244,0.76);font-size:0.95rem;}
+    .cta{display:inline-flex;align-items:center;gap:0.35rem;padding:0.6rem 0.9rem;border-radius:10px;border:1px solid var(--color-accent);color:var(--color-text);text-decoration:none;font-weight:700;background:rgba(255,94,108,0.16);cursor:pointer;}
+    .cta.secondary{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);}
+    .list-actions{display:flex;gap:0.6rem;flex-wrap:wrap;}
+    .admin-inline{margin-top:0.5rem;border:1px dashed rgba(255,255,255,0.3);padding:0.65rem;border-radius:12px;background:rgba(0,0,0,0.25);}
+    .admin-inline summary{cursor:pointer;color:var(--color-secondary);font-weight:700;}
+    .admin-inline form{display:grid;gap:0.35rem;}
+    .admin-inline label{display:flex;flex-direction:column;gap:0.15rem;font-size:0.9rem;}
+    .admin-inline input,.admin-inline select,.admin-inline textarea{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:var(--color-text);padding:0.45rem 0.55rem;border-radius:10px;}
+    .tickets-badge{display:inline-flex;gap:0.4rem;align-items:center;padding:0.25rem 0.6rem;border-radius:999px;background:rgba(255,94,108,0.18);color:var(--color-accent);font-weight:800;font-size:0.85rem;}
+  </style>
+</head>
+<body>
+  <canvas id="canvas-bg"></canvas>
+  <nav class="navbar">
+    <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
+    <ul class="nav-links">
+      <li><a href="index.html">INICIO</a></li>
+      <li><a href="music.html">MÚSICA</a></li>
+      <li><a href="merch.html">MERCH</a></li>
+      <li><a class="active" href="events.html">TICKETS</a></li>
+      <li><a href="blog.html">BLOG</a></li>
+      <li><a href="contact.html">CONTACTO</a></li>
+      <li><a href="perfil.html">PERFIL</a></li>
+      <li><a href="auth/login.html">ACCESO</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <div class="tickets-badge">Ticketing</div>
+    <h1>Compra tus boletos oficiales</h1>
+    <p>Selecciona fecha, ciudad y cantidad. Tu sesión se conserva para que puedas continuar desde perfil u órdenes.</p>
+    <div class="list-actions">
+      <a class="cta" href="ticket-checkout.html">Ir al checkout de tickets</a>
+      <a class="cta secondary" href="ordenes.html">Ver mis órdenes</a>
+    </div>
+  </section>
+
+  <section class="grid" id="events-grid"></section>
+
+  <script src="auth/auth.js"></script>
+  <script>
+    const EVENTS_KEY = 'ricciEvents';
+    const TICKET_CART_KEY = 'ricciTicketCart';
+    const defaultEvents = [
+      { slug:'gira-santo-domingo', title:'Gira Santo Domingo', date:'2025-04-12', city:'Santo Domingo', venue:'Teatro Nacional', price:45, capacity:350, status:'Activo', image:'assets/hero.png', description:'Show extendido con banda completa y visuales caribe futuristas.' },
+      { slug:'noche-acustica-miami', title:'Noche acústica Miami', date:'2025-05-03', city:'Miami', venue:'Flamingo Room', price:55, capacity:200, status:'Activo', image:'assets/texture.png', description:'Set íntimo con invitados sorpresa y merch limitado.' }
+    ];
+
+    const session = window.RicciAuth?.getSession?.();
+    const isManager = ['admin','manager'].includes(session?.role);
+
+    const slugify = (text='') => text.toString().toLowerCase().trim().replace(/[^a-z0-9ñáéíóúü\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-');
+    const loadEvents = () => (JSON.parse(localStorage.getItem(EVENTS_KEY)) || defaultEvents).map(ev => ({ ...ev, slug: ev.slug || slugify(ev.title) }));
+    const saveEvents = (events) => localStorage.setItem(EVENTS_KEY, JSON.stringify(events));
+
+    let ticketCart = JSON.parse(localStorage.getItem(TICKET_CART_KEY) || '[]');
+
+    function addTicket(slug) {
+      const catalog = loadEvents();
+      const event = catalog.find(ev => ev.slug === slug);
+      if (!event) return;
+      const existing = ticketCart.find(item => item.slug === slug);
+      if (existing) existing.qty += 1; else ticketCart.push({ slug, qty:1 });
+      localStorage.setItem(TICKET_CART_KEY, JSON.stringify(ticketCart));
+      alert('Ticket añadido. Puedes completar la compra en el checkout de tickets.');
+    }
+
+    function buildAdminEditor(ev) {
+      if (!isManager) return '';
+      return `
+      <div class="admin-inline">
+        <details open>
+          <summary>Editar evento</summary>
+          <form class="event-inline-form" data-slug="${ev.slug}">
+            <label>Título<input name="title" value="${ev.title}"></label>
+            <label>Slug<input name="slug" value="${ev.slug}"></label>
+            <label>Fecha<input type="date" name="date" value="${ev.date || ''}"></label>
+            <label>Ciudad<input name="city" value="${ev.city || ''}"></label>
+            <label>Venue<input name="venue" value="${ev.venue || ''}"></label>
+            <label>Precio<input type="number" step="0.01" name="price" value="${ev.price || 0}"></label>
+            <label>Cupo<input type="number" name="capacity" value="${ev.capacity || 0}"></label>
+            <label>Estado<select name="status">
+              <option value="Activo" ${ev.status==='Activo'?'selected':''}>Activo</option>
+              <option value="Borrador" ${ev.status==='Borrador'?'selected':''}>Borrador</option>
+            </select></label>
+            <label>Imagen<input name="image" value="${ev.image || ''}"></label>
+            <label>Descripción<textarea name="description">${ev.description || ''}</textarea></label>
+            <button class="cta" type="submit">Guardar</button>
+          </form>
+        </details>
+      </div>`;
+    }
+
+    function renderEvents() {
+      const grid = document.getElementById('events-grid');
+      const events = loadEvents().filter(ev => isManager || ev.status !== 'Borrador');
+      grid.innerHTML = '';
+      events.forEach(ev => {
+        const card = document.createElement('article');
+        card.className = 'event-card';
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+            <h3>${ev.title}</h3>
+            <a class="cta secondary" href="ticket-event.html?slug=${encodeURIComponent(ev.slug)}">Ver detalles</a>
+          </div>
+          <div class="event-meta">
+            <span>📍 ${ev.city} · ${ev.venue || 'Lugar por anunciar'}</span>
+            <span>📅 ${ev.date || 'TBD'}</span>
+            <span>💵 $${Number(ev.price||0).toFixed(2)} USD</span>
+            <span>🎟️ ${ev.capacity || 'Cupo abierto'}</span>
+          </div>
+          <p>${ev.description || ''}</p>
+          <div class="list-actions">
+            <button class="cta" data-ticket="${ev.slug}">Comprar ticket</button>
+            <a class="cta secondary" href="ticket-checkout.html">Ir al checkout</a>
+          </div>
+          ${buildAdminEditor(ev)}
+        `;
+        grid.appendChild(card);
+      });
+      attachEventActions(events);
+    }
+
+    function attachEventActions(events){
+      document.querySelectorAll('[data-ticket]').forEach(btn => {
+        btn.addEventListener('click', () => addTicket(btn.dataset.ticket));
+      });
+      if (!isManager) return;
+      document.querySelectorAll('.event-inline-form').forEach(form => {
+        form.addEventListener('submit', (e)=>{
+          e.preventDefault();
+          const slug = form.dataset.slug;
+          const updated = events.map(ev => ev.slug === slug ? {
+            ...ev,
+            title: form.title.value,
+            slug: form.slug.value || slugify(form.title.value),
+            date: form.date.value,
+            city: form.city.value,
+            venue: form.venue.value,
+            price: Number(form.price.value)||0,
+            capacity: Number(form.capacity.value)||0,
+            status: form.status.value,
+            image: form.image.value,
+            description: form.description.value
+          } : ev);
+          saveEvents(updated);
+          renderEvents();
+        });
+      });
+    }
+
+    renderEvents();
+  </script>
+  <script>
+    const canvas = document.getElementById('canvas-bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight; let particlesArray = []; let speedMultiplier = 1; let scrollTimeout; const hues=[90,110,135,155,180,210];
+    class Particle{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*3+0.5;const depth=this.size*0.18;this.speedX=(Math.random()*2-1)*depth;this.speedY=(Math.random()*2-1)*depth;const hue=hues[Math.floor(Math.random()*hues.length)];const light=45+Math.random()*35;const alpha=0.18+Math.random()*0.32;this.color=`hsla(${hue},70%,${light}%,${alpha})`;}
+      update(){this.x+=this.speedX*speedMultiplier;this.y+=this.speedY*speedMultiplier;if(this.x>canvas.width)this.x=0;else if(this.x<0)this.x=canvas.width;if(this.y>canvas.height)this.y=0;else if(this.y<0)this.y=canvas.height;}
+      draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=this.color;ctx.fill();}}
+    function init(){particlesArray=[];const count=(canvas.width*canvas.height)/9000;for(let i=0;i<count;i++)particlesArray.push(new Particle());}
+    function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,canvas.width,canvas.height);particlesArray.forEach(p=>{p.update();p.draw();});}
+    window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;init();});
+    window.addEventListener('wheel',()=>{speedMultiplier=3;clearTimeout(scrollTimeout);scrollTimeout=setTimeout(()=>speedMultiplier=1,250);});
+    init();animate();
+  </script>
+</body>
+</html>

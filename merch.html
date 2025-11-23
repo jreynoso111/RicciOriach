@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricci Oriach | Colección Oficial</title>
-    <meta name="description" content="Merch oficial de Ricci Oriach inspirada en el Folclore Futurista.">
+    <title>Riccie Oriach | Colección Oficial</title>
+    <meta name="description" content="Merch oficial de Riccie Oriach inspirada en el Folclore Futurista.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,8 +79,8 @@
         /* --- NAVBAR --- */
         .navbar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 1rem;
             padding: 1.5rem 2rem;
             position: absolute;
             top: 0;
@@ -101,13 +101,20 @@
             list-style: none;
             display: flex;
             gap: 2rem;
+            margin-left: auto;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-left: 1rem;
         }
 
         .admin-gear-wrapper {
             position: relative;
             display: flex;
             align-items: center;
-            margin-left: 1rem;
         }
 
         .admin-gear {
@@ -173,6 +180,34 @@
 
         .admin-menu.open {
             display: flex;
+        }
+
+        .cart-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--color-text);
+            border: 1px solid var(--color-outline);
+            border-radius: 999px;
+            padding: 0.55rem 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cart-toggle:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-count {
+            background: var(--color-accent);
+            color: #100202;
+            border-radius: 999px;
+            padding: 0.2rem 0.55rem;
+            font-size: 0.85rem;
+            font-weight: 800;
         }
 
         .nav-links li a {
@@ -271,6 +306,17 @@
             margin: 3rem 0 2rem;
             padding-bottom: 10px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .category-heading small {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(244, 244, 244, 0.7);
+            letter-spacing: 1px;
         }
 
         /* Destacado Nuevo Lanzamiento */
@@ -440,7 +486,180 @@
                 height: 300px;
             }
         }
-    </style>
+    
+
+        /* --- CARRITO --- */
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 360px;
+            height: 100vh;
+            background: rgba(24, 3, 3, 0.95);
+            border-left: 2px solid rgba(255, 94, 108, 0.4);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        .cart-panel.open { right: 0; }
+
+        .cart-header, .cart-footer {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cart-title { font-size: 1.2rem; letter-spacing: 1px; }
+
+        .cart-close {
+            background: none;
+            color: var(--color-text);
+            border: 1px solid var(--color-outline);
+            border-radius: 8px;
+            padding: 0.35rem 0.65rem;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            overflow-y: auto;
+            padding: 0.5rem 1rem;
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 72px 1fr auto;
+            gap: 0.65rem;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 0.65rem;
+        }
+
+        .cart-thumb {
+            width: 72px;
+            height: 72px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .cart-info { display: grid; gap: 0.25rem; }
+
+        .qty-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 999px;
+            padding: 0.25rem 0.6rem;
+            font-weight: 700;
+        }
+
+        .qty-btn {
+            background: none;
+            color: var(--color-text);
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .cart-remove {
+            background: none;
+            border: none;
+            color: #ff7b92;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .cart-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: none;
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .cta-secondary {
+            background: none;
+            border: 1px solid var(--color-outline);
+            color: var(--color-text);
+            padding: 0.65rem;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .admin-inline {
+            margin-top: 0.6rem;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 0.65rem;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .admin-inline summary {
+            cursor: pointer;
+            color: var(--color-secondary);
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+
+        .admin-inline form {
+            display: grid;
+            gap: 0.4rem;
+        }
+
+        .admin-inline label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .admin-inline input,
+        .admin-inline textarea,
+        .admin-inline select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: var(--color-text);
+            padding: 0.45rem 0.6rem;
+            border-radius: 10px;
+        }
+
+        .admin-inline textarea {
+            min-height: 70px;
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .empty-cart {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-top: 2rem;
+        }
+</style>
 </head>
 
 <body>
@@ -448,25 +667,50 @@
 
     <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
+        <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
         <ul class="nav-links">
             <li><a href="index.html">INICIO</a></li>
             <li><a href="music.html">MÚSICA</a></li>
             <li><a href="merch.html" style="color: var(--color-accent);">MERCH</a></li>
+            <li><a href="events.html">TICKETS</a></li>
             <li><a href="blog.html">BLOG</a></li>
             <li><a href="contact.html">CONTACTO</a></li>
+            <li><a href="perfil.html">PERFIL</a></li>
+            <li><a href="checkout.html">CHECKOUT</a></li>
+            <li><a href="auth/login.html">ACCESO</a></li>
         </ul>
-        <div class="admin-gear-wrapper">
-            <button class="admin-gear" aria-haspopup="true" aria-expanded="false" aria-controls="admin-menu" title="Abrir opciones de admin">⚙</button>
-            <div class="admin-menu" id="admin-menu">
-                <a href="admin/dashboard.html">Dashboard</a>
-                <a href="admin/index.html">Iniciar sesión</a>
-                <a href="admin/COMPLETED_TASKS.md">Reportes</a>
-                <a href="admin/">Carpeta admin</a>
+        <div class="nav-actions">
+            <button class="cart-toggle" id="cart-toggle" aria-controls="cart-panel">🛒 <span class="cart-count" id="cart-count">0</span></button>
+            <div class="admin-gear-wrapper">
+                <button class="admin-gear" aria-haspopup="true" aria-expanded="false" aria-controls="admin-menu" title="Abrir opciones de admin">⚙</button>
+                <div class="admin-menu" id="admin-menu">
+                    <a href="admin/dashboard.html">Dashboard</a>
+                    <a href="admin/blog-management.html">Blog</a>
+                    <a href="admin/merch-management.html">Merch</a>
+                    <a href="admin/pedidos.html">Pedidos</a>
+                </div>
             </div>
+            <div class="hamburger"><span></span><span></span><span></span></div>
         </div>
-        <div class="hamburger"><span></span><span></span><span></span></div>
     </nav>
+
+    <div class="cart-panel" id="cart-panel" aria-label="Carrito de compras">
+        <div class="cart-header">
+            <div class="cart-title">Carrito</div>
+            <button class="cart-close" id="cart-close">Cerrar</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="empty-cart">Tu carrito está vacío.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="cta-button" id="checkout-btn">Ir a pago</button>
+            <button class="cta-secondary" id="clear-cart">Vaciar carrito</button>
+        </div>
+    </div>
 
     <main class="merch-content-wrapper">
         <section class="merch-hero">
@@ -478,55 +722,11 @@
         </section>
 
         <section class="products-section">
-            <div class="new-release">
-                <div class="product-image-container">
-                    <img src="merch_nuevo_drop.jpg" alt="Sudadera edición limitada" class="product-image">
-                </div>
-                <div class="product-details">
-                    <h3>Nuevo Lanzamiento: Sudadera "RITMO SOLAR"</h3>
-                    <p>Edición limitada con gráficos psicodélicos y bordes en hilo dorado. Perfecta para lucir el ritmo tropical en
-                        noches frescas de concierto.</p>
-                    <p class="product-price">$55.00 USD</p>
-                    <a href="#" class="cta-button">Añadir al carrito</a>
-                </div>
-            </div>
+            <div id="featured-product" class="new-release"></div>
 
-            <h2 class="category-heading">Camisetas y Ropa</h2>
+            <h2 class="category-heading">Camisetas y Ropa <small id="catalog-count"></small></h2>
 
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="product-image-container">
-                        <img src="merch_camiseta_maquine.jpg" alt="Camiseta Maquiné" class="product-image">
-                    </div>
-                    <div class="product-details">
-                        <h3 class="product-name">Camiseta 'MAQUINÉ' (Negra)</h3>
-                        <p class="product-price">$35.00 USD</p>
-                        <a href="#" class="cta-button buy-button">COMPRAR AHORA</a>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="product-image-container">
-                        <img src="merch_gorra_logo.jpg" alt="Gorra Logo" class="product-image">
-                    </div>
-                    <div class="product-details">
-                        <h3 class="product-name">Gorra Logo Psicodélico</h3>
-                        <p class="product-price">$25.00 USD</p>
-                        <a href="#" class="cta-button buy-button">COMPRAR AHORA</a>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="product-image-container">
-                        <img src="merch_vinilo_la_guayaba.jpg" alt="Vinilo La Guayaba" class="product-image">
-                    </div>
-                    <div class="product-details">
-                        <h3 class="product-name">Vinilo 'La Guayaba'</h3>
-                        <p class="product-price">$40.00 USD</p>
-                        <a href="#" class="cta-button buy-button">COMPRAR AHORA</a>
-                    </div>
-                </div>
-            </div>
+            <div id="products-grid" class="products-grid"></div>
         </section>
     </main>
 
@@ -537,16 +737,98 @@
                 <a href="#">Spotify</a>
                 <a href="#">YouTube</a>
             </div>
-            <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Riccie Oriach. Todos los derechos reservados.</p>
         </div>
     </footer>
 
+    <script src="auth/auth.js"></script>
     <!-- SCRIPT MENÚ MÓVIL -->
     <script>
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
         const adminGear = document.querySelector('.admin-gear');
         const adminMenu = document.getElementById('admin-menu');
+        const cartPanel = document.getElementById('cart-panel');
+        const cartToggle = document.getElementById('cart-toggle');
+        const cartClose = document.getElementById('cart-close');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const cartCount = document.getElementById('cart-count');
+        const clearCartBtn = document.getElementById('clear-cart');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const featuredProduct = document.getElementById('featured-product');
+        const productsGrid = document.getElementById('products-grid');
+        const catalogCount = document.getElementById('catalog-count');
+
+        const catalogKey = 'merchCatalog';
+        const cartKey = 'ricciCart';
+        const session = window.RicciAuth?.getSession?.();
+        const isManager = ['admin', 'manager'].includes(session?.role);
+        const defaultCatalog = [
+            {
+                id: 201,
+                name: 'Sudadera "Ritmo Solar"',
+                slug: 'sudadera-ritmo-solar',
+                    price: 55,
+                    stock: 8,
+                    status: 'Visible',
+                    description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.',
+                    link: 'https://example.com/ritmo-solar',
+                image: 'merch_nuevo_drop.jpg'
+            },
+                {
+                    id: 202,
+                    name: 'Camiseta "Maquiné"',
+                    slug: 'camiseta-maquine',
+                    price: 35,
+                    stock: 30,
+                    status: 'Visible',
+                    description: 'Camiseta suave de algodón orgánico con tipografía Maquiné.',
+                    link: 'https://example.com/maquine',
+                image: 'merch_camiseta_maquine.jpg'
+            },
+                {
+                    id: 203,
+                    name: 'Vinilo "Mi Derriengue"',
+                    slug: 'vinilo-mi-derriengue',
+                    price: 40,
+                    stock: 0,
+                    status: 'Agotado',
+                    description: 'Prensado en 180g con arte alternativo y letras impresas.',
+                    link: 'https://example.com/derriengue',
+                image: 'merch_vinilo_la_guayaba.jpg'
+            },
+                {
+                    id: 204,
+                    name: 'Gorra Logo',
+                    slug: 'gorra-logo',
+                    price: 25,
+                    stock: 5,
+                    status: 'Visible',
+                    description: 'Gorra ajustable con logo psicodélico bordado.',
+                link: 'https://example.com/gorra',
+                image: 'merch_gorra_logo.jpg'
+            }
+        ];
+
+        const slugify = (text) => (text || '')
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '')
+            .replace(/-{2,}/g, '-')
+            || 'item';
+
+        const readFileAsDataURL = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+
+        let cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
 
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
@@ -568,8 +850,242 @@
         adminMenu.addEventListener('click', (event) => {
             event.stopPropagation();
         });
+
+        function getCatalog() {
+            const stored = localStorage.getItem(catalogKey);
+            const parsed = stored ? JSON.parse(stored) : defaultCatalog;
+            const normalized = parsed.map((item, idx) => ({ ...item, slug: item.slug || slugify(item.name || `articulo-${idx + 1}`) }));
+            return isManager ? normalized : normalized.filter(item => item.status !== 'Borrador');
+        }
+
+        function buildAdminEditor(product) {
+            if (!isManager) return '';
+            return `
+            <div class="admin-inline">
+                <details open>
+                    <summary>Editar este producto</summary>
+                    <form class="merch-inline-form" data-id="${product.id}">
+                        <label>Nombre<input name="name" value="${product.name || ''}"></label>
+                        <label>Slug<input name="slug" value="${product.slug || ''}"></label>
+                        <label>Precio<input type="number" step="0.01" name="price" value="${product.price || 0}"></label>
+                        <label>Stock<input type="number" name="stock" value="${product.stock || 0}"></label>
+                        <label>Estado<select name="status">
+                            <option value="Visible" ${product.status === 'Visible' ? 'selected' : ''}>Visible</option>
+                            <option value="Borrador" ${product.status === 'Borrador' ? 'selected' : ''}>Borrador</option>
+                            <option value="Agotado" ${product.status === 'Agotado' ? 'selected' : ''}>Agotado</option>
+                        </select></label>
+                        <label>Link de compra<input name="link" value="${product.link || ''}"></label>
+                        <label>Imagen (URL o carga)<input name="image" value="${product.image || ''}"><input type="file" class="inline-file"></label>
+                        <label>Descripción<textarea name="description">${product.description || ''}</textarea></label>
+                        <button type="submit" class="cta-button" style="justify-self:start;">Guardar cambios</button>
+                    </form>
+                </details>
+            </div>`;
+        }
+
+        function buildFeatured(product) {
+            const available = product.stock > 0 && product.status === 'Visible';
+            const detailUrl = `merch-item.html?slug=${encodeURIComponent(product.slug || slugify(product.name))}`;
+            return `
+                <div class="product-image-container">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                </div>
+                <div class="product-details">
+                    <h3>${product.name}</h3>
+                    <p>${product.description || 'Nuevo drop de la tienda oficial.'}</p>
+                    <p class="product-price">$${Number(product.price).toFixed(2)} USD</p>
+                    <div class="cta-row">
+                        <button class="cta-button buy-button" data-add-cart="${product.id}" ${available ? '' : 'disabled'}>${available ? 'Añadir al carrito' : 'Agotado'}</button>
+                        <a class="cta-secondary" href="${detailUrl}">Ver detalles</a>
+                    </div>
+                    ${buildAdminEditor(product)}
+                </div>
+            `;
+        }
+
+        function buildCard(product) {
+            const available = product.stock > 0 && product.status === 'Visible';
+            const detailUrl = `merch-item.html?slug=${encodeURIComponent(product.slug || slugify(product.name))}`;
+            return `
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.name}" class="product-image">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-name">${product.name}</h3>
+                        <p class="product-price">$${Number(product.price).toFixed(2)} USD</p>
+                        <p>${product.description || ''}</p>
+                        <div class="cta-row">
+                            <button class="cta-button buy-button" data-add-cart="${product.id}" ${available ? '' : 'disabled'}>${available ? 'Comprar ahora' : 'Agotado'}</button>
+                            <a class="cta-secondary" href="${detailUrl}">Ver detalles</a>
+                        </div>
+                        ${buildAdminEditor(product)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachBuyButtons() {
+            document.querySelectorAll('[data-add-cart]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    addToCart(btn.dataset.addCart);
+                });
+            });
+        }
+
+        function attachMerchEditors(catalog) {
+            if (!isManager) return;
+            document.querySelectorAll('.merch-inline-form').forEach(form => {
+                const fileInput = form.querySelector('.inline-file');
+                const imageInput = form.querySelector('input[name="image"]');
+                fileInput?.addEventListener('change', async () => {
+                    const file = fileInput.files?.[0];
+                    if (file) {
+                        imageInput.value = await readFileAsDataURL(file);
+                    }
+                });
+
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const id = form.dataset.id;
+                    const updated = catalog.map(item => {
+                        if (String(item.id) !== String(id)) return item;
+                        return {
+                            ...item,
+                            name: form.name.value,
+                            slug: form.slug.value || slugify(form.name.value),
+                            price: Number(form.price.value) || 0,
+                            stock: Number(form.stock.value) || 0,
+                            status: form.status.value,
+                            link: form.link.value,
+                            image: imageInput?.value || item.image,
+                            description: form.description.value
+                        };
+                    });
+                    localStorage.setItem(catalogKey, JSON.stringify(updated));
+                    renderCatalog();
+                });
+            });
+        }
+
+        function renderCatalog() {
+            const catalog = getCatalog();
+            catalogCount.textContent = catalog.length ? `${catalog.length} artículos en venta` : 'Catálogo en preparación';
+            if (!catalog.length) {
+                featuredProduct.innerHTML = '<div class="product-details"><h3>Catálogo en preparación</h3><p>Pronto podrás comprar los nuevos drops.</p></div>';
+                productsGrid.innerHTML = '';
+                return;
+            }
+
+            const [first, ...rest] = catalog;
+            featuredProduct.innerHTML = buildFeatured(first);
+            productsGrid.innerHTML = rest.map(buildCard).join('');
+            attachBuyButtons();
+            attachMerchEditors(catalog);
+        }
+
+        function saveCart() {
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            cartCount.textContent = totalItems;
+        }
+
+        function renderCart() {
+            if (!cart.length) {
+                cartItems.innerHTML = '<p class="empty-cart">Tu carrito está vacío.</p>';
+                cartTotal.textContent = '$0.00';
+                updateCartBadge();
+                return;
+            }
+
+            const catalog = getCatalog();
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                const product = catalog.find(p => p.id === item.id) || defaultCatalog.find(p => p.id === item.id);
+                const price = product ? Number(product.price) : 0;
+                total += price * item.qty;
+                const detailUrl = product ? `merch-item.html?slug=${encodeURIComponent(product.slug || slugify(product.name))}` : '#';
+
+                const row = document.createElement('div');
+                row.className = 'cart-item';
+                row.innerHTML = `
+                    <img src="${product?.image || 'assets/hero.png'}" alt="${product?.name || 'Producto'}" class="cart-thumb">
+                    <div class="cart-info">
+                        <strong>${product?.name || 'Producto'}</strong>
+                        <span>$${price.toFixed(2)} USD</span>
+                        <a class="inline-link" href="${detailUrl}">Ver detalles</a>
+                        <div class="qty-controls" data-index="${index}">
+                            <button class="qty-btn" data-action="dec">-</button>
+                            <span>${item.qty}</span>
+                            <button class="qty-btn" data-action="inc">+</button>
+                        </div>
+                    </div>
+                    <button class="cart-remove" data-remove="${index}">✕</button>
+                `;
+                cartItems.appendChild(row);
+            });
+
+            cartTotal.textContent = `$${total.toFixed(2)}`;
+            updateCartBadge();
+        }
+
+        function addToCart(productId) {
+            const catalog = getCatalog();
+            const product = catalog.find(p => String(p.id) === String(productId));
+            if (!product) return;
+            const existing = cart.find(item => item.id === product.id);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ id: product.id, qty: 1 });
+            }
+            saveCart();
+            renderCart();
+            cartPanel.classList.add('open');
+        }
+
+        cartItems.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+            if (target.dataset.remove) {
+                const idx = Number(target.dataset.remove);
+                cart.splice(idx, 1);
+                saveCart();
+                renderCart();
+            }
+            if (target.dataset.action) {
+                const controls = target.closest('.qty-controls');
+                const idx = Number(controls?.dataset.index);
+                if (Number.isInteger(idx)) {
+                    if (target.dataset.action === 'inc') cart[idx].qty += 1;
+                    if (target.dataset.action === 'dec') cart[idx].qty = Math.max(1, cart[idx].qty - 1);
+                    saveCart();
+                    renderCart();
+                }
+            }
+        });
+
+        cartToggle.addEventListener('click', () => cartPanel.classList.toggle('open'));
+        cartClose.addEventListener('click', () => cartPanel.classList.remove('open'));
+        clearCartBtn.addEventListener('click', () => {
+            cart = [];
+            saveCart();
+            renderCart();
+        });
+        checkoutBtn.addEventListener('click', () => {
+            window.location.href = 'checkout.html';
+        });
+
+        renderCatalog();
+        renderCart();
     </script>
-    <script>
+<script>
         // --- SCRIPT DE PUNTOS FLOTANTES ---
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
@@ -577,6 +1093,8 @@
         canvas.height = window.innerHeight;
 
         let particlesArray;
+        let speedMultiplier = 1;
+        let scrollTimeout;
 
         window.addEventListener('resize', function () {
             canvas.width = window.innerWidth;
@@ -586,17 +1104,21 @@
 
         class Particle {
             constructor() {
+                const hues = [90, 110, 135, 155, 180];
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 3 + 0.5;
                 const depthSpeed = this.size * 0.15;
                 this.speedX = (Math.random() * 2 - 1) * depthSpeed;
                 this.speedY = (Math.random() * 2 - 1) * depthSpeed;
-                this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
+                const hue = hues[Math.floor(Math.random() * hues.length)];
+                const lightness = 45 + Math.random() * 35;
+                const alpha = 0.18 + Math.random() * 0.32;
+                this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
             }
             update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+                this.x += this.speedX * speedMultiplier;
+                this.y += this.speedY * speedMultiplier;
                 if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
                 if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
             }
@@ -627,6 +1149,14 @@
 
         initParticles();
         animateParticles();
+
+        const resetMultiplier = () => speedMultiplier = 1;
+
+        window.addEventListener('wheel', () => {
+            speedMultiplier = 3;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(resetMultiplier, 250);
+        });
     </script>
 </body>
 

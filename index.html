@@ -72,30 +72,30 @@
 
         /* --- NAVBAR --- */
         .navbar {
-            display: flex; 
+            display: flex;
             justify-content: space-between; /* Alinea logo a izq y links a der */
             align-items: center;
-            padding: 1.5rem 2rem; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
+            padding: 1.5rem 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             z-index: 100;
         }
 
         /* Estilo para el logo/nombre del artista */
-        .logo {
+        .logo a {
             font-family: 'Abril Fatface', cursive;
             font-size: 1.5rem;
             color: var(--color-secondary); /* Destaca el nombre/logo */
             letter-spacing: 1px;
-            z-index: 101;
+            text-decoration: none;
         }
-        
+
         .nav-links { list-style: none; display: flex; gap: 2rem; }
         .nav-links li a { text-decoration: none; color: var(--color-text); font-weight: 500; text-transform: uppercase; font-size: 0.9rem; transition: color 0.3s; }
         .nav-links li a:hover { color: var(--color-accent); }
-        
+
         .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
         .hamburger span { width: 25px; height: 3px; background-color: white; transition: transform 0.3s; }
 
@@ -336,13 +336,16 @@
     <canvas id="canvas-bg"></canvas>
 
     <nav class="navbar">
-        <div class="logo">RICCIE ORIACH</div>
+        <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
         <ul class="nav-links">
             <li><a href="index.html" style="color: var(--color-accent);">INICIO</a></li>
             <li><a href="music.html">MÚSICA</a></li>
             <li><a href="merch.html">MERCH</a></li>
+            <li><a href="events.html">TICKETS</a></li>
             <li><a href="blog.html">BLOG</a></li>
             <li><a href="contact.html">CONTACTO</a></li>
+            <li><a href="perfil.html">PERFIL</a></li>
+            <li><a href="auth/login.html">ACCESO</a></li>
         </ul>
         <div class="hamburger">
             <span></span><span></span><span></span>
@@ -355,7 +358,7 @@
                 <span class="outline-text">RICCIE</span><br>
                 <span class="filled-text">ORIACH</span>
             </h1>
-            <p class="hero-subtitle">FOLCLORE FUTURISTA / PSICODELIA TROPICAL</p>
+            <p class="hero-subtitle">FOLCLORE FUTURISTA</p>
             <a href="#listen" class="cta-button">ESCUCHAR AHORA</a>
         </div>
 
@@ -434,6 +437,8 @@
         canvas.height = window.innerHeight;
 
         let particlesArray;
+        let speedMultiplier = 1;
+        let scrollTimeout;
 
         window.addEventListener('resize', function() {
             canvas.width = window.innerWidth;
@@ -443,17 +448,21 @@
 
         class Particle {
             constructor() {
+                const hues = [90, 110, 135, 155, 180];
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 0.5; 
-                const depthSpeed = this.size * 0.15; 
+                this.size = Math.random() * 3 + 0.5;
+                const depthSpeed = this.size * 0.15;
                 this.speedX = (Math.random() * 2 - 1) * depthSpeed;
                 this.speedY = (Math.random() * 2 - 1) * depthSpeed;
-                this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
+                const hue = hues[Math.floor(Math.random() * hues.length)];
+                const lightness = 45 + Math.random() * 35; // diferentes brillos
+                const alpha = 0.18 + Math.random() * 0.32; // distintas transparencias
+                this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
             }
             update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+                this.x += this.speedX * speedMultiplier;
+                this.y += this.speedY * speedMultiplier;
                 if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
                 if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
             }
@@ -484,6 +493,16 @@
 
         initParticles();
         animateParticles();
+
+        const resetMultiplier = () => {
+            speedMultiplier = 1;
+        };
+
+        window.addEventListener('wheel', () => {
+            speedMultiplier = 3;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(resetMultiplier, 250);
+        });
 
         // --- 2. SCRIPT DE NAVEGACIÓN (Refactorizado con .classList.toggle) ---
         const hamburger = document.querySelector('.hamburger');
