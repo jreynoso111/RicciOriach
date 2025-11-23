@@ -1,4 +1,4 @@
-# Ricci Oriach Website
+# Riccie Oriach Website
 
 Static multi-page site for the Dominican artist Riccie Oriach, built with vanilla HTML, CSS, and a sprinkle of JS for background animation and navigation toggles.
 
