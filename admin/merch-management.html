@@ -78,6 +78,11 @@
                             <input type="text" id="product-name" required placeholder="Sudadera Ritmo Solar">
                         </div>
                         <div class="form-group">
+                            <label>Slug / URL interna</label>
+                            <input type="text" id="product-slug" placeholder="sudadera-ritmo-solar">
+                            <p class="field-hint">Se usa para la página de detalle. Si se deja vacío se generará automáticamente.</p>
+                        </div>
+                        <div class="form-group">
                             <label>Precio (USD)</label>
                             <input type="number" id="product-price" required step="0.01" min="0" placeholder="55">
                         </div>
@@ -178,6 +183,7 @@
                 {
                     id: 201,
                     name: 'Sudadera "Ritmo Solar"',
+                    slug: 'sudadera-ritmo-solar',
                     price: 55,
                     stock: 8,
                     status: 'Visible',
@@ -188,6 +194,7 @@
                 {
                     id: 202,
                     name: 'Camiseta "Maquiné"',
+                    slug: 'camiseta-maquine',
                     price: 35,
                     stock: 30,
                     status: 'Visible',
@@ -198,6 +205,7 @@
                 {
                     id: 203,
                     name: 'Vinilo "Mi Derriengue"',
+                    slug: 'vinilo-mi-derriengue',
                     price: 40,
                     stock: 0,
                     status: 'Agotado',
@@ -208,6 +216,7 @@
                 {
                     id: 204,
                     name: 'Gorra Logo',
+                    slug: 'gorra-logo',
                     price: 25,
                     stock: 5,
                     status: 'Borrador',
@@ -217,7 +226,8 @@
                 }
             ];
 
-            const products = JSON.parse(localStorage.getItem(storageKey) || 'null') || defaultProducts;
+            let products = (JSON.parse(localStorage.getItem(storageKey) || 'null') || defaultProducts)
+                .map((item, idx) => ({ ...item, slug: item.slug || slugify(item.name || `articulo-${idx + 1}`) }));
 
             const merchTableBody = document.getElementById('merch-table-body');
             const merchFilter = document.getElementById('merch-filter');
@@ -231,6 +241,7 @@
             const resetBtn = productForm.querySelector('button[type="reset"]');
             const productImageInput = document.getElementById('product-image');
             const productImagePreview = document.getElementById('product-image-preview');
+            const productSlugInput = document.getElementById('product-slug');
             const previewImage = document.getElementById('preview-image');
             const previewName = document.getElementById('preview-name');
             const previewDesc = document.getElementById('preview-desc');
@@ -239,6 +250,16 @@
             const previewLink = document.getElementById('preview-link');
             const liveInventory = document.getElementById('live-inventory');
             const defaultImage = 'assets/hero.png';
+
+            const slugify = (text) => (text || '')
+                .toString()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '')
+                .replace(/-{2,}/g, '-')
+                || 'item';
 
             let editingIndex = null;
             let productImageData = '';
@@ -341,6 +362,7 @@
                 productImagePreview.dataset.src = '';
                 productImagePreview.classList.add('hidden');
                 productForm.reset();
+                if (productSlugInput) productSlugInput.value = '';
                 updatePreviewFromForm();
             }
 
@@ -348,6 +370,7 @@
                 editingIndex = index;
                 productForm.setAttribute('data-editing', String(index));
                 document.getElementById('product-name').value = item.name;
+                if (productSlugInput) productSlugInput.value = item.slug || slugify(item.name);
                 document.getElementById('product-price').value = item.price;
                 document.getElementById('product-stock').value = item.stock;
                 document.getElementById('product-status').value = item.status;
@@ -368,6 +391,12 @@
                 const newProduct = {
                     id: editingIndex !== null ? products[editingIndex].id : Math.floor(Math.random() * 500) + 300,
                     name: document.getElementById('product-name').value,
+                    slug: (() => {
+                        const typed = productSlugInput?.value.trim();
+                        const base = typed || slugify(document.getElementById('product-name').value);
+                        const exists = products.some((p, idx) => p.slug === base && idx !== editingIndex);
+                        return exists ? `${base}-${Math.floor(Math.random() * 900 + 100)}` : base;
+                    })(),
                     price: Number(document.getElementById('product-price').value),
                     stock: Number(document.getElementById('product-stock').value),
                     status: document.getElementById('product-status').value,

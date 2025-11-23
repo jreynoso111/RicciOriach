@@ -17,6 +17,7 @@
             <li><a href="../index.html">INICIO</a></li>
             <li><a href="../music.html">MÚSICA</a></li>
             <li><a href="../merch.html">MERCH</a></li>
+            <li><a href="../events.html">TICKETS</a></li>
             <li><a href="../blog.html">BLOG</a></li>
             <li><a href="../contact.html">CONTACTO</a></li>
             <li><a href="../perfil.html">PERFIL</a></li>
@@ -41,6 +42,13 @@
                     <label>Nombre completo<input id="reg-name" required></label>
                     <label>Correo electrónico<input type="email" id="reg-email" required></label>
                     <label>Contraseña<input type="password" id="reg-password" required></label>
+                    <label>Rol (solo desarrollo)
+                        <select id="reg-role">
+                            <option value="user">Usuario</option>
+                            <option value="manager">Manager</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </label>
                     <label>Teléfono (opcional)<input id="reg-phone"></label>
                     <div class="actions">
                         <button class="btn" type="submit">Crear cuenta</button>
@@ -78,7 +86,8 @@
                     name: document.getElementById('reg-name').value.trim(),
                     email: document.getElementById('reg-email').value.trim(),
                     password: document.getElementById('reg-password').value.trim(),
-                    provider: 'password'
+                    provider: 'password',
+                    role: document.getElementById('reg-role').value || 'user'
                 });
                 const phone = document.getElementById('reg-phone').value.trim();
                 if (phone) {

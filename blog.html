@@ -144,8 +144,11 @@
             <li><a href="index.html">INICIO</a></li>
             <li><a href="music.html">MÚSICA</a></li>
             <li><a href="merch.html">MERCH</a></li>
+            <li><a href="events.html">TICKETS</a></li>
             <li><a href="blog.html" style="color: var(--color-accent);">BLOG</a></li>
             <li><a href="contact.html">CONTACTO</a></li>
+            <li><a href="perfil.html">PERFIL</a></li>
+            <li><a href="auth/login.html">ACCESO</a></li>
         </ul>
         <div class="hamburger">
             <span></span>
@@ -179,6 +182,7 @@
         </div>
     </footer>
 
+    <script src="auth/auth.js"></script>
     <script src="script.js"></script>
     <script>
         const hamburger = document.querySelector('.hamburger');
@@ -209,11 +213,14 @@
         const renderBlogCards = () => {
             const blogGrid = document.getElementById('blog-grid');
             if (!blogGrid) return;
+            const session = window.RicciAuth?.getSession?.();
+            const isManager = ['admin', 'manager'].includes(session?.role);
             const posts = hydratePosts();
             blogGrid.innerHTML = '';
             posts.forEach(post => {
                 const article = document.createElement('article');
                 article.className = 'blog-card';
+                article.dataset.slug = post.slug;
                 article.innerHTML = `
                     <div class="blog-image">
                         <img src="${post.image || 'assets/hero.png'}" alt="${post.title}">
@@ -223,12 +230,55 @@
                         <h3>${post.title}</h3>
                         <p class="blog-excerpt">${post.excerpt || ''}</p>
                         <a href="blog-post.html?slug=${encodeURIComponent(post.slug || slugify(post.title))}" class="read-more">Leer más →</a>
+                        ${isManager ? `
+                        <div class="admin-inline">
+                            <details>
+                                <summary>Editar desde listado</summary>
+                                <form class="blog-inline-form" data-slug="${post.slug}">
+                                    <label>Título<input name="title" value="${post.title}"></label>
+                                    <label>Estado
+                                        <select name="status" value="${post.status || 'Publicado'}">
+                                            <option value="Publicado" ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option>
+                                            <option value="Borrador" ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option>
+                                            <option value="Programado" ${post.status === 'Programado' ? 'selected' : ''}>Programado</option>
+                                        </select>
+                                    </label>
+                                    <label>Fecha<input type="date" name="date" value="${post.date || ''}"></label>
+                                    <label>Extracto<textarea name="excerpt" rows="2">${post.excerpt || ''}</textarea></label>
+                                    <label>Enlace externo<input name="link" value="${post.link || ''}"></label>
+                                    <label>Imagen de portada<input name="image" value="${post.image || ''}" placeholder="URL o base64"></label>
+                                    <button type="submit" class="read-more">Guardar cambios</button>
+                                </form>
+                            </details>
+                        </div>` : ''}
                     </div>
                 `;
                 blogGrid.appendChild(article);
             });
             localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(posts));
+
+            if (isManager) attachAdminEditors(posts);
         };
+
+        function attachAdminEditors(posts) {
+            document.querySelectorAll('.blog-inline-form').forEach(form => {
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const slug = form.dataset.slug;
+                    const payload = {
+                        title: form.title.value,
+                        status: form.status.value,
+                        date: form.date.value,
+                        excerpt: form.excerpt.value,
+                        link: form.link.value,
+                        image: form.image.value
+                    };
+                    const updated = posts.map(p => p.slug === slug ? { ...p, ...payload } : p);
+                    localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(updated));
+                    renderBlogCards();
+                });
+            });
+        }
 
         renderBlogCards();
     </script>

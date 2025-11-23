@@ -40,6 +40,7 @@
             <li><a href="index.html">INICIO</a></li>
             <li><a href="music.html">MÚSICA</a></li>
             <li><a href="merch.html">MERCH</a></li>
+            <li><a href="events.html">TICKETS</a></li>
             <li><a href="blog.html">BLOG</a></li>
             <li><a href="contact.html">CONTACTO</a></li>
             <li><a href="perfil.html">PERFIL</a></li>
@@ -74,11 +75,14 @@
     <script src="auth/auth.js"></script>
     <script>
         const ordersKey = 'ricciOrders';
+        const ticketOrdersKey = 'ricciTicketOrders';
         let activeSession = null;
 
         function renderOrders() {
             const list = document.getElementById('order-list');
-            const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]').filter(order => !order.userEmail || order.userEmail === activeSession?.email);
+            const merchOrders = JSON.parse(localStorage.getItem(ordersKey) || '[]').filter(order => !order.userEmail || order.userEmail === activeSession?.email);
+            const ticketOrders = JSON.parse(localStorage.getItem(ticketOrdersKey) || '[]').filter(order => !order.userEmail || order.userEmail === activeSession?.email).map(order => ({ ...order, type: 'Tickets' }));
+            const orders = [...merchOrders, ...ticketOrders];
             if (!orders.length) {
                 list.innerHTML = '<p class="muted">No hay órdenes aún. Inicia sesión o genera una desde el checkout.</p>';
                 return;
@@ -92,12 +96,12 @@
                 row.innerHTML = `
                     <div>
                         <strong>${order.id}</strong>
-                        <p class="muted">${new Date(order.createdAt).toLocaleString('es-DO')} · ${items} artículo(s)</p>
-                        <p>Total: $${Number(order.total || 0).toFixed(2)} · Método: ${order.paymentMethod || 'pendiente'}</p>
+                        <p class="muted">${new Date(order.createdAt).toLocaleString('es-DO')} · ${items} artículo(s) ${order.type ? '· ' + order.type : ''}</p>
+                        <p>Total: ${order.total || `$${Number(order.total || 0).toFixed(2)}`} · Método: ${order.paymentMethod || order.buyer?.payment || 'pendiente'}</p>
                     </div>
                     <div style="text-align:right;display:flex;flex-direction:column;gap:0.35rem;align-items:flex-end;">
                         <span class="pill ${statusClass}">${order.status || 'Pendiente'}</span>
-                        <small class="muted">Envío: ${order.shippingMethod || '—'}</small>
+                        <small class="muted">Envío: ${order.shippingMethod || order.buyer?.city || '—'}</small>
                     </div>
                 `;
                 list.appendChild(row);

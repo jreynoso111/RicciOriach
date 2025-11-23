@@ -166,15 +166,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const newDashboardProductBtn = document.getElementById('new-dashboard-product');
     const merchSyncChip = document.getElementById('dashboard-merch-sync');
     const MERCH_STORAGE_KEY = 'merchCatalog';
+    const merchSlugInput = document.getElementById('dashboard-product-slug');
+
+    const slugify = (text) => (text || '')
+        .toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '')
+        .replace(/-{2,}/g, '-')
+        || 'item';
 
     const defaultMerchProducts = [
-        { id: 201, name: 'Sudadera "Ritmo Solar"', price: 55, stock: 8, status: 'Visible', description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.', link: 'https://example.com/ritmo-solar', image: 'merch_nuevo_drop.jpg' },
-        { id: 202, name: 'Camiseta "Maquiné"', price: 35, stock: 30, status: 'Visible', description: 'Camiseta suave de algodón orgánico con tipografía Maquiné.', link: 'https://example.com/maquine', image: 'merch_camiseta_maquine.jpg' },
-        { id: 203, name: 'Vinilo "Mi Derriengue"', price: 40, stock: 0, status: 'Agotado', description: 'Prensado en 180g con arte alternativo y letras impresas.', link: 'https://example.com/derriengue', image: 'merch_vinilo_la_guayaba.jpg' },
-        { id: 204, name: 'Gorra Logo', price: 25, stock: 5, status: 'Borrador', description: 'Gorra ajustable con logo psicodélico bordado.', link: 'https://example.com/gorra', image: 'merch_gorra_logo.jpg' }
+        { id: 201, name: 'Sudadera "Ritmo Solar"', slug: 'sudadera-ritmo-solar', price: 55, stock: 8, status: 'Visible', description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.', link: 'https://example.com/ritmo-solar', image: 'merch_nuevo_drop.jpg' },
+        { id: 202, name: 'Camiseta "Maquiné"', slug: 'camiseta-maquine', price: 35, stock: 30, status: 'Visible', description: 'Camiseta suave de algodón orgánico con tipografía Maquiné.', link: 'https://example.com/maquine', image: 'merch_camiseta_maquine.jpg' },
+        { id: 203, name: 'Vinilo "Mi Derriengue"', slug: 'vinilo-mi-derriengue', price: 40, stock: 0, status: 'Agotado', description: 'Prensado en 180g con arte alternativo y letras impresas.', link: 'https://example.com/derriengue', image: 'merch_vinilo_la_guayaba.jpg' },
+        { id: 204, name: 'Gorra Logo', slug: 'gorra-logo', price: 25, stock: 5, status: 'Borrador', description: 'Gorra ajustable con logo psicodélico bordado.', link: 'https://example.com/gorra', image: 'merch_gorra_logo.jpg' }
     ];
 
-    let merchProducts = JSON.parse(localStorage.getItem(MERCH_STORAGE_KEY) || 'null') || defaultMerchProducts;
+    const ensureMerchSlugs = (items) => items.map((item, idx) => {
+        const baseSlug = item.slug || slugify(item.name || `articulo-${idx + 1}`);
+        return { ...item, slug: baseSlug };
+    });
+
+    let merchProducts = ensureMerchSlugs(JSON.parse(localStorage.getItem(MERCH_STORAGE_KEY) || 'null') || defaultMerchProducts);
     let merchEditingIndex = null;
     let merchImageData = '';
 
@@ -221,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         merchImageData = '';
         merchForm?.reset();
         merchForm?.removeAttribute('data-editing');
+        if (merchSlugInput) merchSlugInput.value = '';
         if (merchPreview.imagePreview) {
             merchPreview.imagePreview.src = '';
             merchPreview.imagePreview.dataset.src = '';
@@ -238,6 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         merchEditingIndex = index;
         merchForm?.setAttribute('data-editing', 'true');
         document.getElementById('dashboard-product-name').value = product.name;
+        if (merchSlugInput) merchSlugInput.value = product.slug || slugify(product.name);
         document.getElementById('dashboard-product-price').value = product.price;
         document.getElementById('dashboard-product-stock').value = product.stock;
         document.getElementById('dashboard-product-status').value = product.status;
@@ -275,6 +293,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const newProduct = {
             id: merchEditingIndex !== null ? merchProducts[merchEditingIndex].id : Math.floor(Math.random() * 500) + 300,
             name: document.getElementById('dashboard-product-name').value,
+            slug: (() => {
+                const typed = merchSlugInput?.value.trim();
+                const base = typed || slugify(document.getElementById('dashboard-product-name').value);
+                const exists = merchProducts.some((p, idx) => p.slug === base && idx !== merchEditingIndex);
+                return exists ? `${base}-${Math.floor(Math.random() * 900 + 100)}` : base;
+            })(),
             price: Number(document.getElementById('dashboard-product-price').value),
             stock: Number(document.getElementById('dashboard-product-stock').value),
             status: document.getElementById('dashboard-product-status').value,
@@ -716,6 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const profileForm = document.getElementById('profile-form');
     const profileNameInput = document.getElementById('profile-name');
     const profileEmailInput = document.getElementById('profile-email');
+    const profileRoleInput = document.getElementById('profile-role');
     const profileAddressInput = document.getElementById('profile-address');
     const profilePaymentInput = document.getElementById('profile-payment');
     const profileNotesInput = document.getElementById('profile-notes');
@@ -735,7 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.innerHTML = `
                 <td>${user.name || 'Sin nombre'}</td>
                 <td>${user.email}</td>
-                <td>${user.provider || 'password'}</td>
+                <td>${user.role || 'user'}</td>
                 <td>${new Date(user.createdAt || user.id?.split('-')[1] || Date.now()).toLocaleDateString('es-DO')}</td>
                 <td class="table-actions"><button class="action-btn ghost" data-edit-profile="${user.email}">Editar</button></td>
             `;
@@ -761,6 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
         profileAddressInput.value = profile.address || '';
         profilePaymentInput.value = profile.paymentPref || 'Tarjeta';
         profileNotesInput.value = profile.notes || '';
+        profileRoleInput.value = user?.role || 'user';
     }
 
     profilesTableBody?.addEventListener('click', (event) => {
@@ -783,6 +809,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paymentPref: profilePaymentInput.value,
             notes: profileNotesInput.value
         });
+        window.RicciAuth?.updateUserRole?.(email, profileRoleInput.value);
         alert('Perfil guardado para checkout y órdenes.');
         loadProfileData();
     });
@@ -796,7 +823,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: document.getElementById('create-name').value,
                 email: document.getElementById('create-email').value,
                 password: document.getElementById('create-password').value,
-                provider: 'password'
+                provider: 'password',
+                role: document.getElementById('create-role').value || 'user'
             });
             alert('Usuario creado y loggeado.');
             loadProfileData();

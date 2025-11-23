@@ -606,6 +606,54 @@
             cursor: pointer;
         }
 
+        .admin-inline {
+            margin-top: 0.6rem;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 0.65rem;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .admin-inline summary {
+            cursor: pointer;
+            color: var(--color-secondary);
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+        }
+
+        .admin-inline form {
+            display: grid;
+            gap: 0.4rem;
+        }
+
+        .admin-inline label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .admin-inline input,
+        .admin-inline textarea,
+        .admin-inline select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            color: var(--color-text);
+            padding: 0.45rem 0.6rem;
+            border-radius: 10px;
+        }
+
+        .admin-inline textarea {
+            min-height: 70px;
+        }
+
+        .cta-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
         .empty-cart {
             color: rgba(255, 255, 255, 0.7);
             text-align: center;
@@ -624,10 +672,12 @@
             <li><a href="index.html">INICIO</a></li>
             <li><a href="music.html">MÚSICA</a></li>
             <li><a href="merch.html" style="color: var(--color-accent);">MERCH</a></li>
+            <li><a href="events.html">TICKETS</a></li>
             <li><a href="blog.html">BLOG</a></li>
             <li><a href="contact.html">CONTACTO</a></li>
             <li><a href="perfil.html">PERFIL</a></li>
             <li><a href="checkout.html">CHECKOUT</a></li>
+            <li><a href="auth/login.html">ACCESO</a></li>
         </ul>
         <div class="nav-actions">
             <button class="cart-toggle" id="cart-toggle" aria-controls="cart-panel">🛒 <span class="cart-count" id="cart-count">0</span></button>
@@ -635,6 +685,9 @@
                 <button class="admin-gear" aria-haspopup="true" aria-expanded="false" aria-controls="admin-menu" title="Abrir opciones de admin">⚙</button>
                 <div class="admin-menu" id="admin-menu">
                     <a href="admin/dashboard.html">Dashboard</a>
+                    <a href="admin/blog-management.html">Blog</a>
+                    <a href="admin/merch-management.html">Merch</a>
+                    <a href="admin/pedidos.html">Pedidos</a>
                 </div>
             </div>
             <div class="hamburger"><span></span><span></span><span></span></div>
@@ -688,6 +741,7 @@
         </div>
     </footer>
 
+    <script src="auth/auth.js"></script>
     <!-- SCRIPT MENÚ MÓVIL -->
     <script>
         const hamburger = document.querySelector('.hamburger');
@@ -708,48 +762,71 @@
 
         const catalogKey = 'merchCatalog';
         const cartKey = 'ricciCart';
+        const session = window.RicciAuth?.getSession?.();
+        const isManager = ['admin', 'manager'].includes(session?.role);
         const defaultCatalog = [
             {
                 id: 201,
                 name: 'Sudadera "Ritmo Solar"',
-                price: 55,
-                stock: 8,
-                status: 'Visible',
-                description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.',
-                link: 'https://example.com/ritmo-solar',
+                slug: 'sudadera-ritmo-solar',
+                    price: 55,
+                    stock: 8,
+                    status: 'Visible',
+                    description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.',
+                    link: 'https://example.com/ritmo-solar',
                 image: 'merch_nuevo_drop.jpg'
             },
-            {
-                id: 202,
-                name: 'Camiseta "Maquiné"',
-                price: 35,
-                stock: 30,
-                status: 'Visible',
-                description: 'Camiseta suave de algodón orgánico con tipografía Maquiné.',
-                link: 'https://example.com/maquine',
+                {
+                    id: 202,
+                    name: 'Camiseta "Maquiné"',
+                    slug: 'camiseta-maquine',
+                    price: 35,
+                    stock: 30,
+                    status: 'Visible',
+                    description: 'Camiseta suave de algodón orgánico con tipografía Maquiné.',
+                    link: 'https://example.com/maquine',
                 image: 'merch_camiseta_maquine.jpg'
             },
-            {
-                id: 203,
-                name: 'Vinilo "Mi Derriengue"',
-                price: 40,
-                stock: 0,
-                status: 'Agotado',
-                description: 'Prensado en 180g con arte alternativo y letras impresas.',
-                link: 'https://example.com/derriengue',
+                {
+                    id: 203,
+                    name: 'Vinilo "Mi Derriengue"',
+                    slug: 'vinilo-mi-derriengue',
+                    price: 40,
+                    stock: 0,
+                    status: 'Agotado',
+                    description: 'Prensado en 180g con arte alternativo y letras impresas.',
+                    link: 'https://example.com/derriengue',
                 image: 'merch_vinilo_la_guayaba.jpg'
             },
-            {
-                id: 204,
-                name: 'Gorra Logo',
-                price: 25,
-                stock: 5,
-                status: 'Visible',
-                description: 'Gorra ajustable con logo psicodélico bordado.',
+                {
+                    id: 204,
+                    name: 'Gorra Logo',
+                    slug: 'gorra-logo',
+                    price: 25,
+                    stock: 5,
+                    status: 'Visible',
+                    description: 'Gorra ajustable con logo psicodélico bordado.',
                 link: 'https://example.com/gorra',
                 image: 'merch_gorra_logo.jpg'
             }
         ];
+
+        const slugify = (text) => (text || '')
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, '')
+            .replace(/-{2,}/g, '-')
+            || 'item';
+
+        const readFileAsDataURL = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
 
         let cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
 
@@ -777,11 +854,38 @@
         function getCatalog() {
             const stored = localStorage.getItem(catalogKey);
             const parsed = stored ? JSON.parse(stored) : defaultCatalog;
-            return parsed.filter(item => item.status !== 'Borrador');
+            const normalized = parsed.map((item, idx) => ({ ...item, slug: item.slug || slugify(item.name || `articulo-${idx + 1}`) }));
+            return isManager ? normalized : normalized.filter(item => item.status !== 'Borrador');
+        }
+
+        function buildAdminEditor(product) {
+            if (!isManager) return '';
+            return `
+            <div class="admin-inline">
+                <details open>
+                    <summary>Editar este producto</summary>
+                    <form class="merch-inline-form" data-id="${product.id}">
+                        <label>Nombre<input name="name" value="${product.name || ''}"></label>
+                        <label>Slug<input name="slug" value="${product.slug || ''}"></label>
+                        <label>Precio<input type="number" step="0.01" name="price" value="${product.price || 0}"></label>
+                        <label>Stock<input type="number" name="stock" value="${product.stock || 0}"></label>
+                        <label>Estado<select name="status">
+                            <option value="Visible" ${product.status === 'Visible' ? 'selected' : ''}>Visible</option>
+                            <option value="Borrador" ${product.status === 'Borrador' ? 'selected' : ''}>Borrador</option>
+                            <option value="Agotado" ${product.status === 'Agotado' ? 'selected' : ''}>Agotado</option>
+                        </select></label>
+                        <label>Link de compra<input name="link" value="${product.link || ''}"></label>
+                        <label>Imagen (URL o carga)<input name="image" value="${product.image || ''}"><input type="file" class="inline-file"></label>
+                        <label>Descripción<textarea name="description">${product.description || ''}</textarea></label>
+                        <button type="submit" class="cta-button" style="justify-self:start;">Guardar cambios</button>
+                    </form>
+                </details>
+            </div>`;
         }
 
         function buildFeatured(product) {
             const available = product.stock > 0 && product.status === 'Visible';
+            const detailUrl = `merch-item.html?slug=${encodeURIComponent(product.slug || slugify(product.name))}`;
             return `
                 <div class="product-image-container">
                     <img src="${product.image}" alt="${product.name}" class="product-image">
@@ -790,13 +894,18 @@
                     <h3>${product.name}</h3>
                     <p>${product.description || 'Nuevo drop de la tienda oficial.'}</p>
                     <p class="product-price">$${Number(product.price).toFixed(2)} USD</p>
-                    <button class="cta-button buy-button" data-add-cart="${product.id}" ${available ? '' : 'disabled'}>${available ? 'Añadir al carrito' : 'Agotado'}</button>
+                    <div class="cta-row">
+                        <button class="cta-button buy-button" data-add-cart="${product.id}" ${available ? '' : 'disabled'}>${available ? 'Añadir al carrito' : 'Agotado'}</button>
+                        <a class="cta-secondary" href="${detailUrl}">Ver detalles</a>
+                    </div>
+                    ${buildAdminEditor(product)}
                 </div>
             `;
         }
 
         function buildCard(product) {
             const available = product.stock > 0 && product.status === 'Visible';
+            const detailUrl = `merch-item.html?slug=${encodeURIComponent(product.slug || slugify(product.name))}`;
             return `
                 <div class="product-card">
                     <div class="product-image-container">
@@ -806,7 +915,11 @@
                         <h3 class="product-name">${product.name}</h3>
                         <p class="product-price">$${Number(product.price).toFixed(2)} USD</p>
                         <p>${product.description || ''}</p>
-                        <button class="cta-button buy-button" data-add-cart="${product.id}" ${available ? '' : 'disabled'}>${available ? 'Comprar ahora' : 'Agotado'}</button>
+                        <div class="cta-row">
+                            <button class="cta-button buy-button" data-add-cart="${product.id}" ${available ? '' : 'disabled'}>${available ? 'Comprar ahora' : 'Agotado'}</button>
+                            <a class="cta-secondary" href="${detailUrl}">Ver detalles</a>
+                        </div>
+                        ${buildAdminEditor(product)}
                     </div>
                 </div>
             `;
@@ -816,6 +929,41 @@
             document.querySelectorAll('[data-add-cart]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     addToCart(btn.dataset.addCart);
+                });
+            });
+        }
+
+        function attachMerchEditors(catalog) {
+            if (!isManager) return;
+            document.querySelectorAll('.merch-inline-form').forEach(form => {
+                const fileInput = form.querySelector('.inline-file');
+                const imageInput = form.querySelector('input[name="image"]');
+                fileInput?.addEventListener('change', async () => {
+                    const file = fileInput.files?.[0];
+                    if (file) {
+                        imageInput.value = await readFileAsDataURL(file);
+                    }
+                });
+
+                form.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const id = form.dataset.id;
+                    const updated = catalog.map(item => {
+                        if (String(item.id) !== String(id)) return item;
+                        return {
+                            ...item,
+                            name: form.name.value,
+                            slug: form.slug.value || slugify(form.name.value),
+                            price: Number(form.price.value) || 0,
+                            stock: Number(form.stock.value) || 0,
+                            status: form.status.value,
+                            link: form.link.value,
+                            image: imageInput?.value || item.image,
+                            description: form.description.value
+                        };
+                    });
+                    localStorage.setItem(catalogKey, JSON.stringify(updated));
+                    renderCatalog();
                 });
             });
         }
@@ -833,6 +981,7 @@
             featuredProduct.innerHTML = buildFeatured(first);
             productsGrid.innerHTML = rest.map(buildCard).join('');
             attachBuyButtons();
+            attachMerchEditors(catalog);
         }
 
         function saveCart() {
@@ -861,6 +1010,7 @@
                 const product = catalog.find(p => p.id === item.id) || defaultCatalog.find(p => p.id === item.id);
                 const price = product ? Number(product.price) : 0;
                 total += price * item.qty;
+                const detailUrl = product ? `merch-item.html?slug=${encodeURIComponent(product.slug || slugify(product.name))}` : '#';
 
                 const row = document.createElement('div');
                 row.className = 'cart-item';
@@ -869,6 +1019,7 @@
                     <div class="cart-info">
                         <strong>${product?.name || 'Producto'}</strong>
                         <span>$${price.toFixed(2)} USD</span>
+                        <a class="inline-link" href="${detailUrl}">Ver detalles</a>
                         <div class="qty-controls" data-index="${index}">
                             <button class="qty-btn" data-action="dec">-</button>
                             <span>${item.qty}</span>

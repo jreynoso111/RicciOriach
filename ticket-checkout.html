@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout Tickets | Riccie Oriach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --color-bg:#300505; --color-text:#F4F4F4; --color-accent:#FF5E6C; --color-secondary:#FFD700; --card:rgba(255,255,255,0.06); }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at 50% 50%,#3a0a0a 0%,#180303 100%);color:var(--color-text);min-height:100vh;overflow-x:hidden;position:relative;}
+    body::before{content:"";position:fixed;inset:0;background-image:url('assets/texture.png');background-size:cover;opacity:0.22;z-index:-2;pointer-events:none;}
+    body::after{content:"";position:fixed;inset:0;background:linear-gradient(45deg,rgba(255,94,108,0.12),transparent);z-index:-1;pointer-events:none;}
+    #canvas-bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
+    .navbar{display:flex;align-items:center;padding:1.2rem 2rem;position:absolute;top:0;left:0;width:100%;z-index:10;}
+    .logo a{font-family:'Abril Fatface',cursive;font-size:1.4rem;color:var(--color-secondary);text-decoration:none;letter-spacing:1px;}
+    .nav-links{list-style:none;display:flex;gap:1.4rem;margin-left:auto;}
+    .nav-links a{color:var(--color-text);text-decoration:none;font-weight:600;}
+    .nav-links a.active{color:var(--color-accent);}
+    .hero{padding:7rem 2rem 3rem;max-width:1100px;margin:0 auto;}
+    .hero h1{font-size:2.6rem;margin-bottom:0.4rem;}
+    .hero p{color:rgba(244,244,244,0.8);}
+    .layout{max-width:1100px;margin:0 auto;padding:0 2rem 4rem;display:grid;grid-template-columns:1.1fr 0.9fr;gap:1rem;}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:1.15rem;box-shadow:0 12px 30px rgba(0,0,0,0.26);}
+    .card h3{margin-bottom:0.5rem;}
+    .form-grid{display:grid;gap:0.7rem;}
+    label{display:flex;flex-direction:column;gap:0.2rem;font-size:0.95rem;}
+    input,select,textarea{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.14);color:var(--color-text);padding:0.55rem 0.7rem;border-radius:10px;}
+    .cart-row{display:flex;justify-content:space-between;align-items:center;padding:0.7rem;border:1px solid rgba(255,255,255,0.08);border-radius:10px;margin-bottom:0.55rem;background:rgba(0,0,0,0.2);}
+    .btn{display:inline-flex;align-items:center;gap:0.35rem;padding:0.65rem 0.95rem;border-radius:10px;border:1px solid var(--color-accent);color:var(--color-text);background:rgba(255,94,108,0.15);text-decoration:none;font-weight:700;cursor:pointer;}
+    .btn.secondary{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.2);}
+  </style>
+</head>
+<body>
+  <canvas id="canvas-bg"></canvas>
+  <nav class="navbar">
+    <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
+    <ul class="nav-links">
+      <li><a href="index.html">INICIO</a></li>
+      <li><a href="music.html">MÚSICA</a></li>
+      <li><a href="merch.html">MERCH</a></li>
+      <li><a href="events.html" class="active">TICKETS</a></li>
+      <li><a href="blog.html">BLOG</a></li>
+      <li><a href="contact.html">CONTACTO</a></li>
+      <li><a href="perfil.html">PERFIL</a></li>
+      <li><a href="auth/login.html">ACCESO</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <p>Ticketing</p>
+    <h1>Checkout de eventos</h1>
+    <p>Revisa tus boletos, confirma los datos y deja la orden en estado “Pendiente de pago”.</p>
+  </section>
+
+  <section class="layout">
+    <div class="card">
+      <h3>Carrito de tickets</h3>
+      <div id="ticket-list"></div>
+      <p id="ticket-total" style="font-weight:700;margin-top:0.5rem;">Total: $0.00 USD</p>
+      <div class="actions" style="margin-top:0.6rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <a class="btn secondary" href="events.html">Seguir eligiendo</a>
+        <button class="btn secondary" id="clear-cart">Vaciar</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Datos del comprador</h3>
+      <form id="checkout-form" class="form-grid">
+        <label>Nombre completo<input id="buyer-name" required></label>
+        <label>Correo<input type="email" id="buyer-email" required></label>
+        <label>Ciudad<input id="buyer-city"></label>
+        <label>Preferencia de pago<select id="buyer-method"><option>Tarjeta</option><option>Transferencia</option><option>Efectivo</option></select></label>
+        <button class="btn" type="submit">Confirmar orden</button>
+      </form>
+    </div>
+  </section>
+
+  <script src="auth/auth.js"></script>
+  <script>
+    const EVENTS_KEY = 'ricciEvents';
+    const CART_KEY = 'ricciTicketCart';
+    const ORDERS_KEY = 'ricciTicketOrders';
+    const session = window.RicciAuth?.getSession?.();
+    const loadEvents = () => JSON.parse(localStorage.getItem(EVENTS_KEY) || '[]');
+    let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+
+    function renderCart(){
+      const list = document.getElementById('ticket-list');
+      const events = loadEvents();
+      if(!cart.length){
+        list.innerHTML = '<p class="muted">No hay tickets seleccionados.</p>';
+        document.getElementById('ticket-total').textContent = 'Total: $0.00 USD';
+        return;
+      }
+      let total = 0;
+      list.innerHTML = '';
+      cart.forEach(item => {
+        const ev = events.find(e=>e.slug===item.slug);
+        const price = Number(ev?.price || 0);
+        total += price * (item.qty||1);
+        const row = document.createElement('div');
+        row.className = 'cart-row';
+        row.innerHTML = `<div><strong>${ev?.title || 'Evento'}</strong><br><small>${ev?.city || ''} · ${ev?.date || ''}</small></div><div>x${item.qty||1} · $${price.toFixed(2)}</div>`;
+        list.appendChild(row);
+      });
+      document.getElementById('ticket-total').textContent = `Total: $${total.toFixed(2)} USD`;
+    }
+
+    function saveCart(){ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+
+    document.getElementById('clear-cart').addEventListener('click', ()=>{ cart=[]; saveCart(); renderCart(); });
+
+    const profile = session?.email ? RicciAuth.getProfileForUser(session.email) : {};
+    document.getElementById('buyer-name').value = profile.name || session?.name || '';
+    document.getElementById('buyer-email').value = session?.email || '';
+    document.getElementById('buyer-city').value = profile.address || '';
+    document.getElementById('buyer-method').value = profile.paymentPref || 'Tarjeta';
+
+    document.getElementById('checkout-form').addEventListener('submit',(e)=>{
+      e.preventDefault();
+      if(!cart.length){ alert('Agrega tickets antes de confirmar.'); return; }
+      const data = {
+        id: `T-${Date.now()}`,
+        createdAt: new Date().toISOString(),
+        items: cart,
+        total: document.getElementById('ticket-total').textContent,
+        buyer: {
+          name: document.getElementById('buyer-name').value,
+          email: document.getElementById('buyer-email').value,
+          city: document.getElementById('buyer-city').value,
+          payment: document.getElementById('buyer-method').value
+        },
+        status: 'Pendiente',
+        userEmail: session?.email || null
+      };
+      const orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+      orders.push(data);
+      localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+      RicciAuth.saveProfileForUser(data.userEmail || data.buyer.email, { name: data.buyer.name, address: data.buyer.city, paymentPref: data.buyer.payment });
+      cart = []; saveCart(); renderCart();
+      alert('Orden registrada en estado pendiente.');
+    });
+
+    renderCart();
+  </script>
+  <script>
+    const canvas = document.getElementById('canvas-bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight; let particlesArray = []; let speedMultiplier = 1; let scrollTimeout; const hues=[90,110,135,155,180,210];
+    class Particle{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*3+0.5;const depth=this.size*0.18;this.speedX=(Math.random()*2-1)*depth;this.speedY=(Math.random()*2-1)*depth;const hue=hues[Math.floor(Math.random()*hues.length)];const light=45+Math.random()*35;const alpha=0.18+Math.random()*0.32;this.color=`hsla(${hue},70%,${light}%,${alpha})`;}
+      update(){this.x+=this.speedX*speedMultiplier;this.y+=this.speedY*speedMultiplier;if(this.x>canvas.width)this.x=0;else if(this.x<0)this.x=canvas.width;if(this.y>canvas.height)this.y=0;else if(this.y<0)this.y=canvas.height;}
+      draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=this.color;ctx.fill();}}
+    function init(){particlesArray=[];const count=(canvas.width*canvas.height)/9000;for(let i=0;i<count;i++)particlesArray.push(new Particle());}
+    function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,canvas.width,canvas.height);particlesArray.forEach(p=>{p.update();p.draw();});}
+    window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;init();});
+    window.addEventListener('wheel',()=>{speedMultiplier=3;clearTimeout(scrollTimeout);scrollTimeout=setTimeout(()=>speedMultiplier=1,250);});
+    init();animate();
+  </script>
+</body>
+</html>
