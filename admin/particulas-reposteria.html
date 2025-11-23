@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricci Oriach | Partículas para repostería</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <canvas id="admin-canvas-bg"></canvas>
+    <div class="site-return-bar">
+        <a class="site-return-link" href="../index.html">⟵ Volver al sitio principal</a>
+    </div>
+    <div class="admin-shell">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-accent">Ricci</span> Admin
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="blog-management.html">Blog</a>
+                <a href="merch-management.html">Merch</a>
+                <a href="particulas-reposteria.html" class="active">Partículas</a>
+            </nav>
+            <button id="logout-btn" class="logout-btn">Cerrar sesión</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <p class="eyebrow">Laboratorio dulce</p>
+                    <h1>Partículas para repostería</h1>
+                </div>
+                <div class="top-actions">
+                    <button class="action-btn ghost">Exportar lote</button>
+                    <button class="action-btn primary">Crear receta</button>
+                </div>
+            </header>
+
+            <section class="summary-grid">
+                <div class="metric-card">
+                    <p class="metric-label">Recetas activas</p>
+                    <div class="metric-value">12</div>
+                    <span class="metric-trend positive">listas para producción</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Lotes en curso</p>
+                    <div class="metric-value">5</div>
+                    <span class="metric-trend neutral">mezclado</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Alertas</p>
+                    <div class="metric-value">2</div>
+                    <span class="metric-trend">temperatura y stock</span>
+                </div>
+                <div class="metric-card highlight">
+                    <p class="metric-label">Calidad</p>
+                    <div class="metric-value">98.2%</div>
+                    <span class="metric-trend soft">batch score</span>
+                </div>
+            </section>
+
+            <section class="panels-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Nueva partícula</h3>
+                        <span class="pill">Fórmula</span>
+                    </div>
+                    <form class="form-grid">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" placeholder="Crystals cacao 72%" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Uso</label>
+                            <select>
+                                <option>Topping</option>
+                                <option>Relleno</option>
+                                <option>Decoración</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Granulometría</label>
+                            <input type="text" placeholder="0.8mm - 1.2mm">
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <input type="text" placeholder="Verde esmeralda">
+                        </div>
+                        <div class="form-group">
+                            <label>Batch objetivo</label>
+                            <input type="number" placeholder="50 kg">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Notas</label>
+                            <textarea rows="2" placeholder="Curado en frío para mantener brillo."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="action-btn primary">Guardar receta</button>
+                            <button type="reset" class="action-btn ghost">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Reportes primordiales</h3>
+                        <span class="pill soft">QA</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Lote</th>
+                                <th>Temperatura</th>
+                                <th>Humedad</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#PT-221</td>
+                                <td>18°C</td>
+                                <td>42%</td>
+                                <td><span class="badge live">Óptimo</span></td>
+                                <td><button class="action-btn ghost">Ver log</button></td>
+                            </tr>
+                            <tr>
+                                <td>#PT-222</td>
+                                <td>22°C</td>
+                                <td>58%</td>
+                                <td><span class="badge hidden">Vigilar</span></td>
+                                <td><button class="action-btn" style="background:#dc3545; border-color:#dc3545;">Ajustar</button></td>
+                            </tr>
+                            <tr>
+                                <td>#PT-223</td>
+                                <td>19°C</td>
+                                <td>46%</td>
+                                <td><span class="badge soft">En curso</span></td>
+                                <td><button class="action-btn ghost">Enviar QA</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="form-group" style="margin-top:1rem;">
+                        <label>Alertas en vivo</label>
+                        <ul class="top-products-list">
+                            <li>Sensor horno 2 calibrado</li>
+                            <li>Stock azúcar glass a 30%</li>
+                            <li>Entrega de empaques verdes mañana</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

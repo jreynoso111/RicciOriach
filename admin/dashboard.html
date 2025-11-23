@@ -630,6 +630,81 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Alertas y KPIs</p>
+                        <h2>Reportes</h2>
+                    </div>
+                    <div class="section-actions">
+                        <button id="refresh-reports" class="action-btn ghost">Refrescar</button>
+                        <button id="download-report" class="action-btn primary">Descargar PDF</button>
+                    </div>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="metric-card">
+                        <p class="metric-label">Ingresos este mes</p>
+                        <div class="metric-value" id="report-revenue">$0</div>
+                        <span class="metric-trend positive" id="report-revenue-trend">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Pedidos</p>
+                        <div class="metric-value" id="report-orders">0</div>
+                        <span class="metric-trend" id="report-orders-trend">--</span>
+                    </div>
+                    <div class="metric-card">
+                        <p class="metric-label">Conversiones</p>
+                        <div class="metric-value" id="report-conv">0%</div>
+                        <span class="metric-trend neutral" id="report-conv-trend">--</span>
+                    </div>
+                    <div class="metric-card highlight">
+                        <p class="metric-label">Estado</p>
+                        <div class="metric-value" id="report-health">Sincronizado</div>
+                        <span class="metric-trend soft" id="report-updated">Actualizado en vivo</span>
+                    </div>
+                </div>
+
+                <div class="panels-grid">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Alertas críticas</h3>
+                            <span class="pill soft">Tiempo real</span>
+                        </div>
+                        <ul class="top-products-list" id="report-alerts"></ul>
+                        <div class="form-group" style="margin-top:1rem;">
+                            <label>Filtro rápido</label>
+                            <select id="report-filter">
+                                <option value="all">Todo</option>
+                                <option value="ventas">Ventas</option>
+                                <option value="inventario">Inventario</option>
+                                <option value="pagos">Pagos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Resumen diario</h3>
+                            <span class="pill">Últimas 24h</span>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Ventas</th>
+                                    <th>Pedidos</th>
+                                    <th>Conversión</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
