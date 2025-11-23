@@ -1,4 +1,4 @@
-# Completed Tasks - Ricci Oriach Website Project
+# Completed Tasks - Riccie Oriach Website Project
 
 ## Initialization
 - [x] Scaffolded Project Structure (HTML/CSS/JS)
