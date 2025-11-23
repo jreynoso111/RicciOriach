@@ -75,6 +75,78 @@
             gap: 2rem;
         }
 
+        .admin-gear-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-left: 1rem;
+        }
+
+        .admin-gear {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--color-accent);
+            background: rgba(0, 0, 0, 0.25);
+            color: var(--color-accent);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .admin-gear:hover,
+        .admin-gear:focus-visible {
+            transform: rotate(10deg) scale(1.05);
+            box-shadow: 0 0 18px rgba(255, 94, 108, 0.4);
+            background: rgba(255, 94, 108, 0.12);
+            outline: none;
+        }
+
+        .admin-menu {
+            position: absolute;
+            top: 125%;
+            right: 0;
+            background: rgba(48, 5, 5, 0.92);
+            border: 1px solid var(--color-outline);
+            border-radius: 10px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+            min-width: 220px;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 200;
+        }
+
+        .admin-menu a {
+            color: var(--color-text);
+            text-decoration: none;
+            padding: 0.85rem 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .admin-menu a::after {
+            content: '↗';
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .admin-menu a:hover {
+            background: rgba(255, 94, 108, 0.12);
+            color: var(--color-secondary);
+        }
+
+        .admin-menu.open {
+            display: flex;
+        }
+
         .nav-links li a {
             text-decoration: none;
             color: var(--color-text);
@@ -275,13 +347,18 @@
         /* FOOTER */
         footer {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: auto;
         }
 
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         .social-links {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .social-links a {
@@ -345,12 +422,21 @@
     <nav class="navbar">
         <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
         <ul class="nav-links">
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="music.html">Música</a></li>
-            <li><ca href="merch.html" style="color: var(--color-accent);">Merch</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="contact.html">Contacto</a></li>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="music.html">MÚSICA</a></li>
+            <li><a href="merch.html" style="color: var(--color-accent);">MERCH</a></li>
+            <li><a href="blog.html">BLOG</a></li>
+            <li><a href="contact.html">CONTACTO</a></li>
         </ul>
+        <div class="admin-gear-wrapper">
+            <button class="admin-gear" aria-haspopup="true" aria-expanded="false" aria-controls="admin-menu" title="Abrir opciones de admin">⚙</button>
+            <div class="admin-menu" id="admin-menu">
+                <a href="admin/dashboard.html">Dashboard</a>
+                <a href="admin/index.html">Iniciar sesión</a>
+                <a href="admin/COMPLETED_TASKS.md">Reportes</a>
+                <a href="admin/">Carpeta admin</a>
+            </div>
+        </div>
         <div class="hamburger"><span></span><span></span><span></span></div>
     </nav>
 
@@ -417,21 +503,42 @@
     </main>
 
     <footer>
-        <div class="social-links">
-            <a href="#">Instagram</a>
-            <a href="#">Spotify</a>
-            <a href="#">YouTube</a>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#">Instagram</a>
+                <a href="#">Spotify</a>
+                <a href="#">YouTube</a>
+            </div>
+            <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
         </div>
-        <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
     </footer>
 
     <!-- SCRIPT MENÚ MÓVIL -->
     <script>
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
+        const adminGear = document.querySelector('.admin-gear');
+        const adminMenu = document.getElementById('admin-menu');
 
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
+        });
+
+        adminGear.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const isOpen = adminMenu.classList.toggle('open');
+            adminGear.setAttribute('aria-expanded', isOpen);
+        });
+
+        document.addEventListener('click', () => {
+            if (adminMenu.classList.contains('open')) {
+                adminMenu.classList.remove('open');
+                adminGear.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        adminMenu.addEventListener('click', (event) => {
+            event.stopPropagation();
         });
     </script>
     <script>
