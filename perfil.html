@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de usuario | Ricci Oriach</title>
+    <title>Perfil de usuario | Riccie Oriach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
@@ -19,24 +19,25 @@
         .hero h1{font-size:2.5rem;letter-spacing:1px;margin-bottom:0.5rem;}
         .hero p{color:rgba(244,244,244,0.75);} 
         .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:0 auto 2rem;max-width:1100px;padding:0 2rem;}
-        .card{background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.1rem;box-shadow:0 12px 30px rgba(0,0,0,0.28);} 
+        .card{background:var(--card);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.1rem;box-shadow:0 12px 30px rgba(0,0,0,0.28);}
         .card h3{margin-bottom:0.5rem;}
         label{display:flex;flex-direction:column;gap:0.25rem;font-weight:600;font-size:0.95rem;}
         input,textarea,select{width:100%;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.12);color:var(--color-text);padding:0.65rem 0.75rem;border-radius:10px;font-size:1rem;}
         textarea{min-height:90px;resize:vertical;}
         .actions{display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.75rem;}
         .btn{display:inline-flex;align-items:center;justify-content:center;gap:0.35rem;padding:0.75rem 1rem;border-radius:12px;border:1px solid var(--color-outline);background:linear-gradient(120deg,rgba(255,94,108,0.18),rgba(255,94,108,0.08));color:var(--color-text);font-weight:700;text-decoration:none;cursor:pointer;}
-        .btn.secondary{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.2);} 
+        .btn.secondary{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.2);}
         .list{display:grid;gap:0.75rem;margin-top:0.5rem;}
         .pill{display:inline-flex;gap:0.35rem;align-items:center;padding:0.4rem 0.65rem;border-radius:999px;background:rgba(255,94,108,0.16);color:var(--color-accent);font-weight:700;}
         .order-card{background:rgba(255,255,255,0.04);padding:0.75rem;border-radius:10px;border:1px solid rgba(255,255,255,0.08);}
-        .muted{color:rgba(244,244,244,0.7);} 
+        .muted{color:rgba(244,244,244,0.7);}
+        .disabled{opacity:0.6;cursor:not-allowed;}
     </style>
 </head>
 <body>
     <canvas id="canvas-bg"></canvas>
     <nav class="navbar">
-        <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
+        <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
         <ul class="nav-links">
             <li><a href="index.html">INICIO</a></li>
             <li><a href="music.html">MÚSICA</a></li>
@@ -45,6 +46,7 @@
             <li><a href="contact.html">CONTACTO</a></li>
             <li><a class="active" href="perfil.html">PERFIL</a></li>
             <li><a href="checkout.html">CHECKOUT</a></li>
+            <li><a href="auth/login.html">ACCESO</a></li>
         </ul>
     </nav>
 
@@ -56,8 +58,26 @@
 
     <section class="grid">
         <div class="card">
+            <h3>Acceso rápido</h3>
+            <p class="muted">Conecta tu sesión para vincular datos de perfil, checkout y órdenes.</p>
+            <div class="actions">
+                <button class="btn" id="google-connect" type="button">Entrar con Google</button>
+                <a class="btn secondary" href="auth/register.html">Crear cuenta</a>
+                <a class="btn secondary" href="auth/login.html">Ya tengo cuenta</a>
+            </div>
+            <form id="quick-register" class="list">
+                <label>Correo electrónico<input type="email" id="quick-email" required></label>
+                <label>Contraseña<input type="password" id="quick-pass" required></label>
+                <label>Nombre<input id="quick-name" placeholder="Opcional"></label>
+                <div class="actions">
+                    <button class="btn" type="submit">Crear y continuar</button>
+                </div>
+            </form>
+            <p class="muted" id="session-hint">Sin sesión activa.</p>
+        </div>
+        <div class="card">
             <h3>Datos personales</h3>
-            <form id="profile-form" class="list">
+            <form id="profile-form" class="list protected">
                 <label>Nombre completo<input id="fullName" required></label>
                 <label>Correo electrónico<input type="email" id="email" required></label>
                 <label>Teléfono<input type="tel" id="phone" placeholder="WhatsApp para seguimiento" required></label>
@@ -68,9 +88,12 @@
                 </div>
             </form>
         </div>
+    </section>
+
+    <section class="grid">
         <div class="card">
             <h3>Dirección y entrega</h3>
-            <form id="address-form" class="list">
+            <form id="address-form" class="list protected">
                 <label>Dirección<input id="address" required></label>
                 <label>Ciudad<input id="city" required></label>
                 <label>País<input id="country" value="República Dominicana" required></label>
@@ -87,13 +110,10 @@
                 </div>
             </form>
         </div>
-    </section>
-
-    <section class="grid">
         <div class="card">
             <h3>Preferencias de pago (placeholder)</h3>
             <p class="muted">Selecciona tu método preferido. El botón de checkout usará esta preferencia cuando conectemos la pasarela.</p>
-            <form id="payment-form" class="list">
+            <form id="payment-form" class="list protected">
                 <label>Método principal
                     <select id="payment-method">
                         <option value="card">Tarjeta (Stripe/CardNet/Azul)</option>
@@ -109,20 +129,32 @@
                 </div>
             </form>
         </div>
+    </section>
+
+    <section class="grid">
         <div class="card">
             <h3>Pedidos recientes</h3>
             <div class="list" id="order-list"></div>
         </div>
     </section>
 
+    <script src="auth/auth.js"></script>
     <script>
-        const profileKey = 'ricciProfile';
         const ordersKey = 'ricciOrders';
         const profileFields = ['fullName','email','phone','document'];
         const addressFields = ['address','city','country','notes'];
+        let activeSession = null;
 
-        function loadProfile() {
-            const stored = JSON.parse(localStorage.getItem(profileKey) || '{}');
+        function toggleProtected(enabled) {
+            document.querySelectorAll('.protected input, .protected textarea, .protected select, .protected button[type="submit"]').forEach(el => {
+                el.disabled = !enabled;
+                el.classList.toggle('disabled', !enabled);
+            });
+        }
+
+        function hydrateProfile() {
+            if (!activeSession?.email) return;
+            const stored = RicciAuth.getProfileForUser(activeSession.email);
             profileFields.concat(addressFields).forEach(id => {
                 const el = document.getElementById(id);
                 if (el && stored[id]) el.value = stored[id];
@@ -133,25 +165,62 @@
             if (stored.billingAddress) document.getElementById('billingAddress').value = stored.billingAddress;
         }
 
-        function save(data) {
-            const current = JSON.parse(localStorage.getItem(profileKey) || '{}');
-            localStorage.setItem(profileKey, JSON.stringify({ ...current, ...data }));
+        function persistProfile(payload) {
+            if (!activeSession?.email) {
+                alert('Inicia sesión o crea cuenta para guardar tu perfil.');
+                return false;
+            }
+            RicciAuth.saveProfileForUser(activeSession.email, payload);
+            return true;
         }
+
+        function updateSession() {
+            activeSession = RicciAuth.getSession();
+            const hint = document.getElementById('session-hint');
+            if (!activeSession?.email) {
+                hint.textContent = 'Sin sesión activa. Usa Google o crea una cuenta para habilitar los formularios.';
+                toggleProtected(false);
+                return;
+            }
+            hint.textContent = `Sesión: ${activeSession.email} (${activeSession.provider || 'correo'})`;
+            toggleProtected(true);
+            hydrateProfile();
+            renderOrders();
+        }
+
+        document.getElementById('google-connect').addEventListener('click', () => {
+            RicciAuth.googleLogin();
+            updateSession();
+            alert('Sesión creada con Google (modo desarrollo).');
+        });
+
+        document.getElementById('quick-register').addEventListener('submit', (e) => {
+            e.preventDefault();
+            try {
+                RicciAuth.registerUser({
+                    email: document.getElementById('quick-email').value.trim(),
+                    password: document.getElementById('quick-pass').value.trim(),
+                    name: document.getElementById('quick-name').value.trim()
+                });
+                updateSession();
+                alert('Cuenta creada y sesión activa. Completa tus datos abajo.');
+            } catch (err) {
+                alert(err.message || 'No se pudo crear la cuenta.');
+            }
+        });
 
         document.getElementById('profile-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const payload = {};
             profileFields.forEach(id => payload[id] = document.getElementById(id).value.trim());
-            save(payload);
-            alert('Perfil guardado y listo para usar en el checkout.');
+            if (persistProfile(payload)) alert('Perfil guardado y listo para usar en el checkout.');
         });
 
         document.getElementById('address-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const payload = { shipping: document.getElementById('shipping-method').value };
             addressFields.forEach(id => payload[id] = document.getElementById(id).value.trim());
-            save(payload);
-            alert('Dirección guardada. La usaremos en tu próxima orden.');
+            if (persistProfile(payload)) alert('Dirección guardada. La usaremos en tu próxima orden.');
         });
 
         document.getElementById('payment-form').addEventListener('submit', (e) => {
@@ -161,15 +230,14 @@
                 billingEmail: document.getElementById('billingEmail').value.trim(),
                 billingAddress: document.getElementById('billingAddress').value.trim()
             };
-            save(payload);
-            alert('Preferencias guardadas. Al integrar la pasarela leeremos esta selección.');
+            if (persistProfile(payload)) alert('Preferencias guardadas. Al integrar la pasarela leeremos esta selección.');
         });
 
         function renderOrders() {
             const list = document.getElementById('order-list');
-            const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]');
+            const orders = JSON.parse(localStorage.getItem(ordersKey) || '[]').filter(order => !order.userEmail || order.userEmail === activeSession?.email);
             if (!orders.length) {
-                list.innerHTML = '<p class="muted">Aún no tienes órdenes. Completa el checkout para crear tu primera orden en estado pendiente.</p>';
+                list.innerHTML = '<p class="muted">Aún no tienes órdenes asociadas a esta cuenta. Completa el checkout para generar una nueva.</p>';
                 return;
             }
             list.innerHTML = '';
@@ -189,8 +257,7 @@
             });
         }
 
-        loadProfile();
-        renderOrders();
+        updateSession();
     </script>
     <script>
         const canvas = document.getElementById('canvas-bg');

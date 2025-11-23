@@ -150,75 +150,195 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Products Table ---
-    const products = [
-        { id: 101, name: 'Camiseta "Maquiné"', price: 25.00, stock: 150, live: true, link: 'https://riccioriach.com/tienda/maquine', image: defaultImage },
-        { id: 102, name: 'Vinilo "Mi Derriengue"', price: 35.00, stock: 45, live: true, link: 'https://riccioriach.com/tienda/vinilo', image: defaultImage },
-        { id: 103, name: 'Gorra "La Guayaba"', price: 20.00, stock: 18, live: false, link: '', image: defaultImage },
-        { id: 104, name: 'Tote Bag "Tropical"', price: 15.00, stock: 200, live: true, link: '', image: defaultImage }
+    // --- Dashboard Merch Table + Editor ---
+    const merchTableBody = document.getElementById('products-table-body');
+    const merchForm = document.getElementById('dashboard-merch-form');
+    const merchPreview = {
+        image: document.getElementById('dashboard-preview-image'),
+        name: document.getElementById('dashboard-preview-name'),
+        desc: document.getElementById('dashboard-preview-desc'),
+        price: document.getElementById('dashboard-preview-price'),
+        stock: document.getElementById('dashboard-preview-stock'),
+        link: document.getElementById('dashboard-preview-link'),
+        imageInput: document.getElementById('dashboard-product-image'),
+        imagePreview: document.getElementById('dashboard-product-image-preview'),
+    };
+    const newDashboardProductBtn = document.getElementById('new-dashboard-product');
+    const merchSyncChip = document.getElementById('dashboard-merch-sync');
+    const MERCH_STORAGE_KEY = 'merchCatalog';
+
+    const defaultMerchProducts = [
+        { id: 201, name: 'Sudadera "Ritmo Solar"', price: 55, stock: 8, status: 'Visible', description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.', link: 'https://example.com/ritmo-solar', image: 'merch_nuevo_drop.jpg' },
+        { id: 202, name: 'Camiseta "Maquiné"', price: 35, stock: 30, status: 'Visible', description: 'Camiseta suave de algodón orgánico con tipografía Maquiné.', link: 'https://example.com/maquine', image: 'merch_camiseta_maquine.jpg' },
+        { id: 203, name: 'Vinilo "Mi Derriengue"', price: 40, stock: 0, status: 'Agotado', description: 'Prensado en 180g con arte alternativo y letras impresas.', link: 'https://example.com/derriengue', image: 'merch_vinilo_la_guayaba.jpg' },
+        { id: 204, name: 'Gorra Logo', price: 25, stock: 5, status: 'Borrador', description: 'Gorra ajustable con logo psicodélico bordado.', link: 'https://example.com/gorra', image: 'merch_gorra_logo.jpg' }
     ];
 
-    const tableBody = document.getElementById('products-table-body');
-    function renderProducts() {
-        if (!tableBody) return;
-        tableBody.innerHTML = '';
-        products.forEach((product, index) => {
+    let merchProducts = JSON.parse(localStorage.getItem(MERCH_STORAGE_KEY) || 'null') || defaultMerchProducts;
+    let merchEditingIndex = null;
+    let merchImageData = '';
+
+    function saveMerchCatalog() {
+        localStorage.setItem(MERCH_STORAGE_KEY, JSON.stringify(merchProducts));
+        if (merchSyncChip) merchSyncChip.textContent = `Actualizado • ${new Date().toLocaleString('es-DO')}`;
+    }
+
+    function renderMerchTable() {
+        if (!merchTableBody) return;
+        merchTableBody.innerHTML = '';
+        merchProducts.forEach((product, index) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>#${product.id}</td>
                 <td>${product.name}</td>
-                <td>$${product.price.toFixed(2)}</td>
+                <td>$${Number(product.price).toFixed(2)}</td>
                 <td>${product.stock}</td>
-                <td><span class="badge ${product.live ? 'live' : 'hidden'}">${product.live ? 'Visible' : 'Oculto'}</span></td>
+                <td><span class="badge ${product.status === 'Visible' ? 'live' : product.status === 'Agotado' ? 'neutral' : 'hidden'}">${product.status}</span></td>
                 <td class="table-actions">
-                    <button class="action-btn" data-toggle-index="${index}">${product.live ? 'Ocultar' : 'Publicar'}</button>
-                    <button class="action-btn ghost" data-edit-index="${index}">Editar</button>
-                    <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" data-delete-index="${index}">Eliminar</button>
+                    <button class="action-btn ghost" data-edit-product="${index}">Editar</button>
+                    <button class="action-btn" data-toggle-product="${index}">${product.status === 'Visible' ? 'Ocultar' : 'Publicar'}</button>
+                    <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" data-delete-product="${index}">Eliminar</button>
                 </td>
             `;
-            tableBody.appendChild(row);
+            merchTableBody.appendChild(row);
         });
     }
 
-    renderProducts();
+    function updateMerchPreview() {
+        if (!merchForm) return;
+        merchPreview.name.textContent = document.getElementById('dashboard-product-name')?.value || 'Nombre del producto';
+        merchPreview.desc.textContent = document.getElementById('dashboard-product-description')?.value || 'La descripción aparecerá aquí para validar el copy.';
+        const price = Number(document.getElementById('dashboard-product-price')?.value || 0).toFixed(2);
+        merchPreview.price.textContent = `$${price}`;
+        merchPreview.stock.textContent = `Stock: ${document.getElementById('dashboard-product-stock')?.value || 0}`;
+        const link = document.getElementById('dashboard-product-link')?.value;
+        merchPreview.link.textContent = link ? 'Ver link' : 'Sin enlace';
+        merchPreview.link.href = link || '#';
+    }
 
-    tableBody?.addEventListener('click', (event) => {
+    function resetMerchForm() {
+        merchEditingIndex = null;
+        merchImageData = '';
+        merchForm?.reset();
+        merchForm?.removeAttribute('data-editing');
+        if (merchPreview.imagePreview) {
+            merchPreview.imagePreview.src = '';
+            merchPreview.imagePreview.dataset.src = '';
+            merchPreview.imagePreview.classList.add('hidden');
+        }
+        if (merchPreview.imageInput) merchPreview.imageInput.value = '';
+        merchPreview.image.src = defaultImage;
+        merchPreview.stock.textContent = 'Stock: 0';
+        merchPreview.price.textContent = '$0.00';
+        merchPreview.name.textContent = 'Nombre del producto';
+        merchPreview.desc.textContent = 'La descripción aparecerá aquí para validar el copy.';
+    }
+
+    function loadMerchToForm(product, index) {
+        merchEditingIndex = index;
+        merchForm?.setAttribute('data-editing', 'true');
+        document.getElementById('dashboard-product-name').value = product.name;
+        document.getElementById('dashboard-product-price').value = product.price;
+        document.getElementById('dashboard-product-stock').value = product.stock;
+        document.getElementById('dashboard-product-status').value = product.status;
+        document.getElementById('dashboard-product-description').value = product.description || '';
+        document.getElementById('dashboard-product-link').value = product.link || '';
+        if (merchPreview.imagePreview) {
+            merchPreview.imagePreview.src = product.image || defaultImage;
+            merchPreview.imagePreview.dataset.src = product.image || defaultImage;
+            merchPreview.imagePreview.classList.remove('hidden');
+        }
+        merchPreview.image.src = product.image || defaultImage;
+        updateMerchPreview();
+        merchForm.querySelector('button[type="submit"]').textContent = 'Actualizar';
+    }
+
+    merchPreview.imageInput?.addEventListener('change', () => {
+        const file = merchPreview.imageInput.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                merchImageData = reader.result;
+                merchPreview.imagePreview.src = reader.result;
+                merchPreview.imagePreview.dataset.src = reader.result;
+                merchPreview.imagePreview.classList.remove('hidden');
+                merchPreview.image.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    merchForm?.addEventListener('input', updateMerchPreview);
+
+    merchForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newProduct = {
+            id: merchEditingIndex !== null ? merchProducts[merchEditingIndex].id : Math.floor(Math.random() * 500) + 300,
+            name: document.getElementById('dashboard-product-name').value,
+            price: Number(document.getElementById('dashboard-product-price').value),
+            stock: Number(document.getElementById('dashboard-product-stock').value),
+            status: document.getElementById('dashboard-product-status').value,
+            description: document.getElementById('dashboard-product-description').value,
+            link: document.getElementById('dashboard-product-link').value,
+            image: merchImageData || merchPreview.imagePreview?.dataset.src || defaultImage
+        };
+
+        if (newProduct.stock === 0) newProduct.status = 'Agotado';
+
+        if (merchEditingIndex !== null) {
+            merchProducts[merchEditingIndex] = { ...merchProducts[merchEditingIndex], ...newProduct };
+        } else {
+            merchProducts.unshift(newProduct);
+        }
+
+        saveMerchCatalog();
+        renderMerchTable();
+        resetMerchForm();
+        updateMerchPreview();
+        alert('Producto guardado y vinculado al carrito.');
+    });
+
+    merchForm?.addEventListener('reset', () => {
+        setTimeout(() => {
+            resetMerchForm();
+            updateMerchPreview();
+        });
+    });
+
+    merchTableBody?.addEventListener('click', (event) => {
         const target = event.target;
         if (!(target instanceof HTMLElement)) return;
 
-        if (target.dataset.toggleIndex) {
-            const idx = Number(target.dataset.toggleIndex);
-            products[idx].live = !products[idx].live;
-            renderProducts();
-            alert(`Producto #${products[idx].id} ahora está ${products[idx].live ? 'visible' : 'oculto'}.`);
+        if (target.dataset.editProduct) {
+            const idx = Number(target.dataset.editProduct);
+            loadMerchToForm(merchProducts[idx], idx);
         }
-        if (target.dataset.editIndex) {
-            const idx = Number(target.dataset.editIndex);
-            const current = products[idx];
-            const newName = prompt('Nombre del producto', current.name);
-            const newPrice = prompt('Precio (USD)', current.price);
-            const newStock = prompt('Stock disponible', current.stock);
-            const newVisibility = prompt('Estado (Visible/Borrador)', current.live ? 'Visible' : 'Borrador');
-            const newLink = prompt('Link del producto', current.link || '');
-            const newImage = prompt('URL de la imagen (o deja vacío para mantener)', current.image || '');
 
-            if (newName) current.name = newName;
-            if (newPrice !== null && !isNaN(parseFloat(newPrice))) current.price = parseFloat(newPrice);
-            if (newStock !== null && !isNaN(parseInt(newStock))) current.stock = parseInt(newStock);
-            if (newVisibility) current.live = newVisibility.toLowerCase() === 'visible';
-            if (newLink !== null) current.link = newLink;
-            if (newImage !== null && newImage !== '') current.image = newImage;
-
-            renderProducts();
+        if (target.dataset.toggleProduct) {
+            const idx = Number(target.dataset.toggleProduct);
+            merchProducts[idx].status = merchProducts[idx].status === 'Visible' ? 'Borrador' : 'Visible';
+            saveMerchCatalog();
+            renderMerchTable();
         }
-        if (target.dataset.deleteIndex) {
-            const idx = Number(target.dataset.deleteIndex);
-            if (confirm(`¿Eliminar el producto ${products[idx].name}?`)) {
-                products.splice(idx, 1);
-                renderProducts();
+
+        if (target.dataset.deleteProduct) {
+            const idx = Number(target.dataset.deleteProduct);
+            if (confirm('¿Eliminar producto?')) {
+                merchProducts.splice(idx, 1);
+                saveMerchCatalog();
+                renderMerchTable();
             }
         }
     });
+
+    newDashboardProductBtn?.addEventListener('click', () => {
+        resetMerchForm();
+        updateMerchPreview();
+        document.getElementById('dashboard-product-name').focus();
+    });
+
+    renderMerchTable();
+    updateMerchPreview();
 
     const syncMerchBtn = document.getElementById('sync-merch-btn');
     if (syncMerchBtn) {
@@ -229,44 +349,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Music Management ---
     const musicTableBody = document.getElementById('music-table-body');
-    const addMusicForm = document.getElementById('add-music-form');
-    const musicModal = document.getElementById('add-music-modal');
-    const openMusicModal = document.getElementById('open-music-modal');
-    const closeModalTriggers = document.querySelectorAll('[data-close-modal]');
+    const musicForm = document.getElementById('music-form');
     const musicCoverInput = document.getElementById('music-cover');
     const musicCoverPreview = document.getElementById('music-cover-preview');
-    let musicData = (JSON.parse(localStorage.getItem('site_music_data')) || []).map(item => ({
-        ...item,
-        cover: item.cover || defaultImage
-    }));
+    const musicNewBtn = document.getElementById('music-new');
+    const musicNotes = document.getElementById('music-notes');
+    const defaultMusic = [
+        { title: 'Mi Derriengue', type: 'Álbum', year: '2024', link: 'https://spotify.com', cover: defaultImage, notes: 'Edición deluxe con colaboraciones.' },
+        { title: 'La Guayaba', type: 'Single', year: '2023', link: 'https://youtube.com', cover: defaultImage, notes: 'Live session tropical.' }
+    ];
+    let musicData = (JSON.parse(localStorage.getItem('site_music_data')) || defaultMusic).map(item => ({ ...item, cover: item.cover || defaultImage }));
     let musicEditingIndex = null;
     let musicCoverData = '';
 
-    function loadMusic() {
-        if (musicTableBody) {
-            musicTableBody.innerHTML = '';
-            musicData.forEach((item, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.title}</td>
-                    <td>${item.type}</td>
-                    <td>${item.year}</td>
-                    <td>${item.link ? `<a href="${item.link}" target="_blank">Abrir</a>` : '—'}</td>
-                    <td class="table-actions">
-                        <button class="action-btn ghost" data-edit-music="${index}">Editar</button>
-                        <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" data-delete-music="${index}">Eliminar</button>
-                    </td>
-                `;
-                musicTableBody.appendChild(row);
-            });
-        }
+    function renderMusic() {
+        if (!musicTableBody) return;
+        musicTableBody.innerHTML = '';
+        musicData.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.title}</td>
+                <td>${item.type}</td>
+                <td>${item.year}</td>
+                <td>${item.link ? `<a href="${item.link}" target="_blank">Abrir</a>` : '—'}</td>
+                <td class="table-actions">
+                    <button class="action-btn ghost" data-edit-music="${index}">Editar</button>
+                    <button class="action-btn" style="background:#dc3545; border-color:#dc3545;" data-delete-music="${index}">Eliminar</button>
+                </td>
+            `;
+            musicTableBody.appendChild(row);
+        });
     }
 
-    function resetMusicModal() {
-        addMusicForm?.reset();
+    function resetMusicForm() {
         musicEditingIndex = null;
         musicCoverData = '';
-        addMusicForm?.removeAttribute('data-editing');
+        musicForm?.reset();
+        musicForm?.removeAttribute('data-editing');
         if (musicCoverPreview) {
             musicCoverPreview.src = '';
             musicCoverPreview.dataset.src = '';
@@ -275,37 +394,48 @@ document.addEventListener('DOMContentLoaded', () => {
         if (musicCoverInput) musicCoverInput.value = '';
     }
 
-    openMusicModal?.addEventListener('click', () => {
-        resetMusicModal();
-        musicModal?.classList.remove('hidden');
+    function loadMusicToForm(item, index) {
+        musicEditingIndex = index;
+        musicForm?.setAttribute('data-editing', 'true');
+        document.getElementById('music-title').value = item.title;
+        document.getElementById('music-type').value = item.type;
+        document.getElementById('music-year').value = item.year;
+        document.getElementById('music-link').value = item.link;
+        if (musicNotes) musicNotes.value = item.notes || '';
+        if (musicCoverPreview) {
+            musicCoverPreview.src = item.cover || defaultImage;
+            musicCoverPreview.dataset.src = item.cover || defaultImage;
+            musicCoverPreview.classList.remove('hidden');
+        }
+    }
+
+    musicForm?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('music-title').value;
+        const type = document.getElementById('music-type').value;
+        const year = document.getElementById('music-year').value;
+        const link = document.getElementById('music-link').value;
+        const newItem = {
+            title,
+            type,
+            year,
+            link,
+            notes: musicNotes?.value || '',
+            cover: musicCoverData || musicCoverPreview?.dataset.src || defaultImage
+        };
+
+        if (musicEditingIndex !== null) {
+            musicData[musicEditingIndex] = { ...musicData[musicEditingIndex], ...newItem };
+        } else {
+            musicData.unshift(newItem);
+        }
+        localStorage.setItem('site_music_data', JSON.stringify(musicData));
+        resetMusicForm();
+        renderMusic();
+        alert('Lanzamiento guardado');
     });
 
-    closeModalTriggers.forEach(btn => btn.addEventListener('click', () => {
-        musicModal?.classList.add('hidden');
-    }));
-
-    if (addMusicForm) {
-        addMusicForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('music-title').value;
-            const type = document.getElementById('music-type').value;
-            const year = document.getElementById('music-year').value;
-            const link = document.getElementById('music-link').value;
-
-            const newItem = { title, type, year, link, cover: musicCoverData || musicCoverPreview?.dataset.src || defaultImage };
-            if (musicEditingIndex !== null) {
-                musicData[musicEditingIndex] = { ...musicData[musicEditingIndex], ...newItem };
-            } else {
-                musicData.push(newItem);
-            }
-            localStorage.setItem('site_music_data', JSON.stringify(musicData));
-
-            musicModal?.classList.add('hidden');
-            resetMusicModal();
-            loadMusic();
-            alert('Música guardada correctamente');
-        });
-    }
+    musicForm?.addEventListener('reset', () => setTimeout(resetMusicForm));
 
     musicTableBody?.addEventListener('click', (event) => {
         const target = event.target;
@@ -316,49 +446,85 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confirm('¿Estás seguro de eliminar este item?')) {
                 musicData.splice(index, 1);
                 localStorage.setItem('site_music_data', JSON.stringify(musicData));
-                loadMusic();
+                renderMusic();
             }
         }
 
         if (target.dataset.editMusic) {
             const index = Number(target.dataset.editMusic);
-            const existing = musicData[index];
-            musicEditingIndex = index;
-            addMusicForm?.setAttribute('data-editing', String(index));
-            document.getElementById('music-title').value = existing.title;
-            document.getElementById('music-type').value = existing.type;
-            document.getElementById('music-year').value = existing.year;
-            document.getElementById('music-link').value = existing.link || '';
-            if (musicCoverPreview) {
-                musicCoverPreview.src = existing.cover || '';
-                musicCoverPreview.dataset.src = existing.cover || '';
-                musicCoverPreview.classList.toggle('hidden', !existing.cover);
-                musicCoverData = existing.cover || '';
-            }
-            musicModal?.classList.remove('hidden');
+            loadMusicToForm(musicData[index], index);
         }
     });
 
-    musicCoverInput?.addEventListener('change', async () => {
+    musicCoverInput?.addEventListener('change', () => {
         const file = musicCoverInput.files?.[0];
         if (file) {
-            musicCoverData = await readFileAsDataURL(file);
-            if (musicCoverPreview) {
-                musicCoverPreview.src = musicCoverData;
-                musicCoverPreview.dataset.src = musicCoverData;
+            const reader = new FileReader();
+            reader.onload = () => {
+                musicCoverData = reader.result;
+                musicCoverPreview.src = reader.result;
+                musicCoverPreview.dataset.src = reader.result;
                 musicCoverPreview.classList.remove('hidden');
-            }
+            };
+            reader.readAsDataURL(file);
         }
     });
 
-    loadMusic();
+    musicNewBtn?.addEventListener('click', () => {
+        resetMusicForm();
+        document.getElementById('music-title').focus();
+    });
+
+    renderMusic();
 
     // --- Blog Management (Dashboard) ---
-    const dashboardBlogPosts = [
-        { title: 'Sesión en vivo desde Santo Domingo', author: 'Ricci Oriach', status: 'Publicado', date: '2024-05-12', excerpt: 'Nuevas versiones con ritmos tropicales.', content: 'Revive la presentación completa con arreglos acústicos y percusión caribeña.', link: 'https://riccioriach.com/blog/sesion-sd', image: defaultImage },
-        { title: 'Gira Caribe 2024', author: 'Equipo Ricci', status: 'Programado', date: '2024-06-03', excerpt: 'Fechas confirmadas para Puerto Rico y RD.', content: 'El tour incluirá sets íntimos, colaboraciones locales y merch exclusivo para cada parada.', link: 'https://riccioriach.com/blog/gira-caribe', image: 'assets/texture.png' },
-        { title: 'Merch drop "Ritmo Solar"', author: 'Staff', status: 'Borrador', date: '2024-04-27', excerpt: 'Edición limitada inspirada en folclore futurista.', content: 'Línea de camisetas y accesorios con colores neón, prints inspirados en carnaval y detalles bordados.', link: '', image: defaultImage }
+    const BLOG_STORAGE_KEY = 'public_blog_posts';
+    const defaultBlogPosts = [
+        {
+            slug: 'sesion-en-vivo-desde-santo-domingo',
+            title: 'Sesión en vivo desde Santo Domingo',
+            author: 'Riccie Oriach',
+            status: 'Publicado',
+            date: '2024-05-12',
+            excerpt: 'Nuevas versiones con ritmos tropicales.',
+            content: 'Revive la presentación completa con arreglos acústicos y percusión caribeña.',
+            link: 'https://riccioriach.com/blog/sesion-sd',
+            image: defaultImage
+        },
+        {
+            slug: 'gira-caribe-2024',
+            title: 'Gira Caribe 2024',
+            author: 'Equipo Riccie',
+            status: 'Programado',
+            date: '2024-06-03',
+            excerpt: 'Fechas confirmadas para Puerto Rico y RD.',
+            content: 'El tour incluirá sets íntimos, colaboraciones locales y merch exclusivo para cada parada.',
+            link: 'https://riccioriach.com/blog/gira-caribe',
+            image: 'assets/texture.png'
+        },
+        {
+            slug: 'merch-drop-ritmo-solar',
+            title: 'Merch drop "Ritmo Solar"',
+            author: 'Staff',
+            status: 'Borrador',
+            date: '2024-04-27',
+            excerpt: 'Edición limitada inspirada en folclore futurista.',
+            content: 'Línea de camisetas y accesorios con colores neón, prints inspirados en carnaval y detalles bordados.',
+            link: '',
+            image: defaultImage
+        }
     ];
+
+    const slugify = (text = '') => text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9ñáéíóúü\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+
+    let dashboardBlogPosts = (JSON.parse(localStorage.getItem(BLOG_STORAGE_KEY)) || defaultBlogPosts)
+        .map(post => ({ ...post, slug: post.slug || slugify(post.title) }));
 
     const blogTableBody = document.getElementById('blog-table-body');
     const blogFilter = document.getElementById('blog-filter');
@@ -375,6 +541,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboardPostImagePreview = document.getElementById('dashboard-post-image-preview');
     let blogEditingIndex = null;
     let dashboardPostImageData = '';
+
+    function syncPublicBlogPosts() {
+        localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(dashboardBlogPosts.map(post => ({
+            ...post,
+            slug: post.slug || slugify(post.title)
+        }))));
+    }
+
+    syncPublicBlogPosts();
 
     function updateBlogStats() {
         if (!blogPublishedCount || !blogDraftCount || !blogScheduledCount || !blogLastUpdate) return;
@@ -428,15 +603,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     blogForm?.addEventListener('submit', (event) => {
         event.preventDefault();
+        const titleValue = document.getElementById('dashboard-post-title').value;
+        const computedSlug = slugify(titleValue);
         const newPost = {
-            title: document.getElementById('dashboard-post-title').value,
+            title: titleValue,
             author: document.getElementById('dashboard-post-author').value,
             status: document.getElementById('dashboard-post-status').value,
             date: document.getElementById('dashboard-post-date').value || 'Sin fecha',
             excerpt: document.getElementById('dashboard-post-excerpt').value,
             content: document.getElementById('dashboard-post-content').value,
             link: dashboardPostLinkInput?.value || '',
-            image: dashboardPostImageData || dashboardPostImagePreview?.dataset.src || defaultImage
+            image: dashboardPostImageData || dashboardPostImagePreview?.dataset.src || defaultImage,
+            slug: computedSlug || (blogEditingIndex !== null ? dashboardBlogPosts[blogEditingIndex]?.slug : '') || `post-${Date.now()}`
         };
 
         if (blogEditingIndex !== null) {
@@ -449,6 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetBlogFormState();
         renderBlogPosts();
         updateBlogStats();
+        syncPublicBlogPosts();
         alert(`Post "${newPost.title}" guardado bajo regla: ${document.getElementById('dashboard-auto-publish')?.value || 'manual'}`);
     });
 
@@ -461,6 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dashboardBlogPosts[idx].status = dashboardBlogPosts[idx].status === 'Publicado' ? 'Borrador' : 'Publicado';
             renderBlogPosts();
             updateBlogStats();
+            syncPublicBlogPosts();
         }
 
         if (target.dataset.delete) {
@@ -469,6 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dashboardBlogPosts.splice(idx, 1);
                 renderBlogPosts();
                 updateBlogStats();
+                syncPublicBlogPosts();
             }
         }
 
@@ -529,6 +710,104 @@ document.addEventListener('DOMContentLoaded', () => {
     resetBlogFormState();
     updateBlogStats();
     renderBlogPosts();
+
+    // --- User Profiles Dashboard ---
+    const profilesTableBody = document.getElementById('profiles-table-body');
+    const profileForm = document.getElementById('profile-form');
+    const profileNameInput = document.getElementById('profile-name');
+    const profileEmailInput = document.getElementById('profile-email');
+    const profileAddressInput = document.getElementById('profile-address');
+    const profilePaymentInput = document.getElementById('profile-payment');
+    const profileNotesInput = document.getElementById('profile-notes');
+    const createUserForm = document.getElementById('create-user-form');
+    const profileCount = document.getElementById('profile-count');
+    const googleCount = document.getElementById('google-count');
+    const profileComplete = document.getElementById('profile-complete');
+    const activeSessionLabel = document.getElementById('active-session');
+
+    function loadProfileData() {
+        const users = window.RicciAuth?.loadUsers?.() || [];
+        const profiles = window.RicciAuth?.loadProfiles?.() || {};
+        profilesTableBody.innerHTML = '';
+
+        users.forEach(user => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${user.name || 'Sin nombre'}</td>
+                <td>${user.email}</td>
+                <td>${user.provider || 'password'}</td>
+                <td>${new Date(user.createdAt || user.id?.split('-')[1] || Date.now()).toLocaleDateString('es-DO')}</td>
+                <td class="table-actions"><button class="action-btn ghost" data-edit-profile="${user.email}">Editar</button></td>
+            `;
+            profilesTableBody.appendChild(tr);
+        });
+
+        profileCount && (profileCount.textContent = users.length);
+        googleCount && (googleCount.textContent = users.filter(u => u.provider === 'google').length);
+
+        const completed = Object.values(profiles).filter(p => p.address && p.paymentPref && p.name);
+        const completionPercent = users.length ? Math.round((completed.length / users.length) * 100) : 0;
+        profileComplete && (profileComplete.textContent = `${completionPercent}%`);
+
+        const session = window.RicciAuth?.getSession?.();
+        activeSessionLabel && (activeSessionLabel.textContent = session?.email || 'Sin sesión');
+    }
+
+    function loadProfileToForm(email) {
+        const profile = window.RicciAuth?.getProfileForUser?.(email) || {};
+        const user = (window.RicciAuth?.loadUsers?.() || []).find(u => u.email === email);
+        profileNameInput.value = profile.name || user?.name || '';
+        profileEmailInput.value = email;
+        profileAddressInput.value = profile.address || '';
+        profilePaymentInput.value = profile.paymentPref || 'Tarjeta';
+        profileNotesInput.value = profile.notes || '';
+    }
+
+    profilesTableBody?.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement) || !target.dataset.editProfile) return;
+        loadProfileToForm(target.dataset.editProfile);
+        profileNameInput.focus();
+    });
+
+    profileForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = profileEmailInput.value;
+        if (!email) {
+            alert('Selecciona un perfil de la tabla.');
+            return;
+        }
+        window.RicciAuth?.saveProfileForUser?.(email, {
+            name: profileNameInput.value,
+            address: profileAddressInput.value,
+            paymentPref: profilePaymentInput.value,
+            notes: profileNotesInput.value
+        });
+        alert('Perfil guardado para checkout y órdenes.');
+        loadProfileData();
+    });
+
+    profileForm?.addEventListener('reset', () => setTimeout(() => profileEmailInput.value = ''));
+
+    createUserForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        try {
+            window.RicciAuth?.registerUser({
+                name: document.getElementById('create-name').value,
+                email: document.getElementById('create-email').value,
+                password: document.getElementById('create-password').value,
+                provider: 'password'
+            });
+            alert('Usuario creado y loggeado.');
+            loadProfileData();
+        } catch (err) {
+            alert(err.message || 'No se pudo crear la cuenta');
+        }
+    });
+
+    document.getElementById('refresh-profiles')?.addEventListener('click', loadProfileData);
+
+    loadProfileData();
 
     // --- Reports Module ---
     const reportRows = [

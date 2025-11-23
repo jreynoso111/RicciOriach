@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricci Oriach | Gestión de Blog</title>
+    <title>Riccie Oriach | Gestión de Blog</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
 </head>
@@ -17,7 +17,7 @@
     <div class="admin-shell">
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <span class="brand-accent">Ricci</span> Admin
+                <span class="brand-accent">Riccie</span> Admin
             </div>
             <nav class="sidebar-nav">
                 <a href="dashboard.html">Dashboard</a>
@@ -76,7 +76,7 @@
                         </div>
                         <div class="form-group">
                             <label>Autor</label>
-                            <input type="text" id="post-author" required placeholder="Ricci Oriach">
+                            <input type="text" id="post-author" required placeholder="Riccie Oriach">
                         </div>
                         <div class="form-group">
                             <label>Estado</label>
@@ -180,11 +180,21 @@
                 return;
             }
 
-            const posts = [
-                { title: 'Sesión en vivo desde Santo Domingo', author: 'Ricci Oriach', status: 'Publicado', date: '2024-05-12', excerpt: 'Nuevas versiones con ritmos tropicales.', content: 'Revive la presentación completa con arreglos acústicos y percusión caribeña.', link: 'https://riccioriach.com/blog/sesion-sd', image: 'assets/hero.png' },
-                { title: 'Gira Caribe 2024', author: 'Equipo Ricci', status: 'Programado', date: '2024-06-03', excerpt: 'Fechas confirmadas para Puerto Rico y RD.', content: 'El tour incluirá sets íntimos, colaboraciones locales y merch exclusivo para cada parada.', link: 'https://riccioriach.com/blog/gira-caribe', image: 'assets/texture.png' },
-                { title: 'Merch drop "Ritmo Solar"', author: 'Staff', status: 'Borrador', date: '2024-04-27', excerpt: 'Edición limitada inspirada en folclore futurista.', content: 'Línea de camisetas y accesorios con colores neón, prints inspirados en carnaval y detalles bordados.', link: '', image: 'assets/hero.png' }
+            const BLOG_STORAGE_KEY = 'public_blog_posts';
+            const defaultPosts = [
+                { slug: 'sesion-en-vivo-desde-santo-domingo', title: 'Sesión en vivo desde Santo Domingo', author: 'Riccie Oriach', status: 'Publicado', date: '2024-05-12', excerpt: 'Nuevas versiones con ritmos tropicales.', content: 'Revive la presentación completa con arreglos acústicos y percusión caribeña.', link: 'https://riccioriach.com/blog/sesion-sd', image: 'assets/hero.png' },
+                { slug: 'gira-caribe-2024', title: 'Gira Caribe 2024', author: 'Equipo Riccie', status: 'Programado', date: '2024-06-03', excerpt: 'Fechas confirmadas para Puerto Rico y RD.', content: 'El tour incluirá sets íntimos, colaboraciones locales y merch exclusivo para cada parada.', link: 'https://riccioriach.com/blog/gira-caribe', image: 'assets/texture.png' },
+                { slug: 'merch-drop-ritmo-solar', title: 'Merch drop "Ritmo Solar"', author: 'Staff', status: 'Borrador', date: '2024-04-27', excerpt: 'Edición limitada inspirada en folclore futurista.', content: 'Línea de camisetas y accesorios con colores neón, prints inspirados en carnaval y detalles bordados.', link: '', image: 'assets/hero.png' }
             ];
+            const slugify = (text = '') => text
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9ñáéíóúü\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+            const posts = (JSON.parse(localStorage.getItem(BLOG_STORAGE_KEY)) || defaultPosts)
+                .map(post => ({ ...post, slug: post.slug || slugify(post.title) }));
 
             const postsTableBody = document.getElementById('posts-table-body');
             const publishedCount = document.getElementById('published-count');
@@ -201,6 +211,7 @@
             const postImagePreview = document.getElementById('post-image-preview');
             let editingIndex = null;
             let postImageData = '';
+            const syncPublicBlogPosts = () => localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(posts));
 
             function updateStats() {
                 publishedCount.textContent = posts.filter(p => p.status === 'Publicado').length;
@@ -244,15 +255,17 @@
 
             quickPostForm.addEventListener('submit', (event) => {
                 event.preventDefault();
+                const titleValue = document.getElementById('post-title').value;
                 const newPost = {
-                    title: document.getElementById('post-title').value,
+                    title: titleValue,
                     author: document.getElementById('post-author').value,
                     status: document.getElementById('post-status').value,
                     date: document.getElementById('post-date').value || 'Sin fecha',
                     excerpt: document.getElementById('post-excerpt').value,
                     content: document.getElementById('post-content').value,
                     link: document.getElementById('post-link').value,
-                    image: postImageData || postImagePreview.dataset.src || 'assets/hero.png'
+                    image: postImageData || postImagePreview.dataset.src || 'assets/hero.png',
+                    slug: slugify(titleValue) || (editingIndex !== null ? posts[editingIndex]?.slug : '') || `post-${Date.now()}`
                 };
 
                 if (editingIndex !== null) {
@@ -269,6 +282,7 @@
                 resetFormState();
                 renderPosts();
                 updateStats();
+                syncPublicBlogPosts();
                 alert(`Post "${newPost.title}" guardado bajo regla: ${autoPublishRule.value}`);
             });
 
@@ -281,6 +295,7 @@
                     posts[idx].status = posts[idx].status === 'Publicado' ? 'Borrador' : 'Publicado';
                     renderPosts();
                     updateStats();
+                    syncPublicBlogPosts();
                 }
 
                 if (target.dataset.delete) {
@@ -289,6 +304,7 @@
                         posts.splice(idx, 1);
                         renderPosts();
                         updateStats();
+                        syncPublicBlogPosts();
                     }
                 }
 
@@ -353,6 +369,7 @@
             resetFormState();
             updateStats();
             renderPosts();
+            syncPublicBlogPosts();
         });
     </script>
 </body>

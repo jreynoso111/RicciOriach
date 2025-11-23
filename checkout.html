@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout | Ricci Oriach</title>
+    <title>Checkout | Riccie Oriach</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
@@ -104,6 +104,8 @@
             margin: 1rem auto 3rem;
             padding: 0 2rem 2rem;
         }
+        .session-banner {margin-top:0.75rem;padding:0.75rem 1rem;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:rgba(244,244,244,0.9);}        
+        .session-banner a{color:var(--color-secondary);font-weight:700;text-decoration:none;}
         .card {
             background: var(--card);
             border: 1px solid rgba(255,255,255,0.08);
@@ -174,7 +176,7 @@
 <body>
     <canvas id="canvas-bg"></canvas>
     <nav class="navbar">
-        <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
+        <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
         <ul class="nav-links">
             <li><a href="index.html">INICIO</a></li>
             <li><a href="music.html">MÚSICA</a></li>
@@ -183,6 +185,7 @@
             <li><a href="contact.html">CONTACTO</a></li>
             <li><a href="perfil.html">PERFIL</a></li>
             <li><a class="active" href="checkout.html">CHECKOUT</a></li>
+            <li><a href="auth/login.html">ACCESO</a></li>
         </ul>
     </nav>
 
@@ -190,6 +193,7 @@
         <p>PASO 2 · CHECKOUT</p>
         <h1>Confirma tus datos y envío</h1>
         <p>Revisa el carrito, rellena tu dirección y deja listo el flujo para procesar pagos más adelante.</p>
+        <div class="session-banner" id="session-banner">Accede con tu cuenta para precargar tus datos. <a href="auth/login.html">Iniciar sesión</a> · <a href="auth/register.html">Registrarme</a></div>
         <div class="steps">
             <div class="step"><h4>🛒 Carrito</h4><p>Los productos se cargan desde tu carrito guardado.</p></div>
             <div class="step"><h4>🪪 Perfil</h4><p>Usamos tus datos guardados para prellenar el formulario.</p></div>
@@ -267,11 +271,10 @@
             </div>
         </div>
     </section>
-
+    <script src="auth/auth.js"></script>
     <script>
         const catalogKey = 'merchCatalog';
         const cartKey = 'ricciCart';
-        const profileKey = 'ricciProfile';
         const ordersKey = 'ricciOrders';
         const defaultCatalog = [
             { id: 201, name: 'Sudadera "Ritmo Solar"', price: 55, stock: 8, status: 'Visible', description: 'Sudadera bordada con gráficos folclore futurista y capucha forrada.', link: 'https://example.com/ritmo-solar', image: 'merch_nuevo_drop.jpg' },
@@ -280,6 +283,7 @@
             { id: 204, name: 'Gorra Logo', price: 25, stock: 5, status: 'Visible', description: 'Gorra ajustable con logo psicodélico bordado.', link: 'https://example.com/gorra', image: 'merch_gorra_logo.jpg' }
         ];
 
+        const sessionBanner = document.getElementById('session-banner');
         const cartList = document.getElementById('cart-list');
         const subtotalEl = document.getElementById('subtotal');
         const shippingEl = document.getElementById('shipping');
@@ -292,6 +296,7 @@
         const fields = ['fullName','email','phone','address','city','country','notes'];
 
         let cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+        let activeSession = RicciAuth.getSession();
 
         function getCatalog() {
             const stored = localStorage.getItem(catalogKey);
@@ -299,8 +304,16 @@
             return parsed.filter(item => item.status !== 'Borrador');
         }
 
+        function updateSessionBanner() {
+            if (activeSession?.email) {
+                sessionBanner.innerHTML = `Sesión activa: ${activeSession.email} (${activeSession.provider || 'correo'}). <a href="auth/login.html">Cambiar cuenta</a>`;
+            } else {
+                sessionBanner.innerHTML = 'Accede para precargar datos y asociar órdenes. <a href="auth/login.html">Iniciar sesión</a> · <a href="auth/register.html">Registrarme</a>';
+            }
+        }
+
         function loadProfile() {
-            const profile = JSON.parse(localStorage.getItem(profileKey) || '{}');
+            const profile = activeSession?.email ? RicciAuth.getProfileForUser(activeSession.email) : {};
             fields.forEach(id => {
                 const input = document.getElementById(id);
                 if (input && profile[id]) input.value = profile[id];
@@ -311,12 +324,25 @@
             if (paymentMethod && profile.payment) paymentMethod.value = profile.payment;
         }
 
-        function saveProfile() {
+        function saveProfile(showMessage = true) {
+            if (!activeSession?.email) {
+                confirmation.style.display = 'block';
+                confirmation.textContent = 'Necesitas iniciar sesión o registrarte para guardar los datos de perfil.';
+                return false;
+            }
             const data = { shipping: document.getElementById('shipping-method').value, payment: document.getElementById('payment-method').value };
             fields.forEach(id => data[id] = document.getElementById(id).value.trim());
-            localStorage.setItem(profileKey, JSON.stringify(data));
-            confirmation.style.display = 'block';
-            confirmation.textContent = 'Perfil guardado. Tus datos quedarán listos para el pago cuando se active la pasarela.';
+            RicciAuth.saveProfileForUser(activeSession.email, data);
+            if (showMessage) {
+                confirmation.style.display = 'block';
+                confirmation.textContent = 'Perfil guardado. Tus datos quedarán listos para el pago cuando se active la pasarela.';
+            }
+            return true;
+        }
+
+        function refreshSession() {
+            activeSession = RicciAuth.getSession();
+            updateSessionBanner();
         }
 
         function renderCart() {
@@ -371,6 +397,7 @@
 
         saveProfileBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            refreshSession();
             saveProfile();
         });
 
@@ -381,7 +408,8 @@
                 confirmation.textContent = 'No hay productos en el carrito. Añade artículos antes de confirmar la orden.';
                 return;
             }
-            saveProfile();
+            refreshSession();
+            if (!saveProfile(false)) return;
             const catalog = getCatalog();
             const subtotal = cart.reduce((sum, item) => {
                 const p = catalog.find(prod => String(prod.id) === String(item.id)) || defaultCatalog.find(prod => String(prod.id) === String(item.id));
@@ -395,6 +423,7 @@
                 id: `ORD-${Date.now()}`,
                 createdAt: new Date().toISOString(),
                 status: 'Pendiente de pago',
+                userEmail: activeSession?.email || null,
                 shippingMethod: document.getElementById('shipping-method').value,
                 paymentMethod: document.getElementById('payment-method').value,
                 items: cart,
@@ -411,6 +440,7 @@
             confirmation.innerHTML = `Orden ${order.id} creada en estado <strong>Pendiente de pago</strong>. Conecta tu gateway para capturar el pago.<br><br><a class="btn" href="ordenes.html" style="margin-top:0.5rem; display:inline-flex;">Ver detalle</a>`;
         });
 
+        refreshSession();
         loadProfile();
         renderCart();
     </script>
