@@ -25,6 +25,17 @@
     return users.find(u => u.email.toLowerCase() === String(email).toLowerCase());
   };
 
+  const SECURE_SALT = 'riccie-auth-salt';
+
+  const hashValue = (raw) => {
+    const value = `${raw || ''}::${SECURE_SALT}`;
+    let hash = 0;
+    for (let i = 0; i < value.length; i++) {
+      hash = Math.imul(31, hash) + value.charCodeAt(i) | 0;
+    }
+    return btoa(`${hash}-${value.length}`);
+  };
+
   const registerUser = ({ name, email, password, provider = 'password', role = 'user' }) => {
     if (!email) throw new Error('Ingresa un correo válido.');
     const users = loadUsers();
@@ -33,7 +44,7 @@
       id: `U-${Date.now()}`,
       name: name || 'Usuario Ricci',
       email,
-      password: provider === 'password' ? password : null,
+      passwordHash: provider === 'password' ? hashValue(password || '') : null,
       provider,
       role: role || 'user',
       createdAt: new Date().toISOString()
@@ -47,8 +58,22 @@
   const loginUser = (email, password) => {
     const user = findUser(email);
     if (!user) throw new Error('No encontramos esa cuenta. Regístrate primero.');
-    if (user.provider === 'password' && user.password !== password) {
-      throw new Error('Contraseña incorrecta.');
+    if (user.provider === 'password') {
+      const incoming = hashValue(password || '');
+      const stored = user.passwordHash || hashValue(user.password || '');
+      if (stored !== incoming) {
+        throw new Error('Contraseña incorrecta.');
+      }
+      if (!user.passwordHash) { // migrate legacy plain password
+        user.passwordHash = incoming;
+        user.password = undefined;
+        const users = loadUsers();
+        const idx = users.findIndex(u => u.id === user.id);
+        if (idx !== -1) {
+          users[idx] = { ...user };
+          saveUsers(users);
+        }
+      }
     }
     return persistSession({ ...user, role: user.role || 'user' });
   };
@@ -88,7 +113,8 @@
   const saveProfileForUser = (email, data) => {
     if (!email) return null;
     const profiles = loadProfiles();
-    profiles[email] = { ...(profiles[email] || {}), ...data };
+    const now = new Date().toISOString();
+    profiles[email] = { createdAt: profiles[email]?.createdAt || now, ...data, updatedAt: now };
     saveProfiles(profiles);
     return profiles[email];
   };
@@ -110,6 +136,7 @@
     loadUsers,
     loadProfiles,
     persistSession,
-    updateUserRole
+    updateUserRole,
+    hashValue
   };
 })();

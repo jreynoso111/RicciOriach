@@ -85,7 +85,11 @@
                 refreshStatus();
                 alert('Sesión iniciada. Puedes continuar al checkout o perfil.');
             } catch (err) {
-                alert(err.message || 'No se pudo iniciar sesión.');
+                const message = err.message || 'No se pudo iniciar sesión.';
+                alert(message);
+                if (/no encontramos esa cuenta/i.test(message)) {
+                    window.location.href = 'register.html#registro';
+                }
             }
         });
 
