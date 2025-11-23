@@ -140,6 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
+    const readFileAsDataURL = (file) => new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+    });
+
     // --- Logout ---
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
