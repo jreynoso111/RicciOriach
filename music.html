@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricci Oriach | Música</title>
+    <title>Riccie Oriach | Música</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -392,7 +392,7 @@
     <canvas id="canvas-bg"></canvas>
 
     <nav class="navbar">
-        <div class="logo"><a href="index.html">RICCI ORIACH</a></div>
+        <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
         <ul class="nav-links">
             <li><a href="index.html">INICIO</a></li>
             <li><a href="music.html" style="color: var(--color-accent);">MÚSICA</a></li>
@@ -406,10 +406,7 @@
     <main class="music-content-wrapper">
 
         <section class="featured-album">
-            <h1 class="hero-title music-title">
-                <span class="outline-text">PSICODELIA</span><br>
-                <span class="filled-text">TROPICAL</span>
-            </h1>
+            <h1 class="hero-title music-title">MÚSICA</h1>
 
             <div class="album-highlight">
                 <div class="cover-image-container">
@@ -463,7 +460,7 @@
                 <a href="#">Spotify</a>
                 <a href="#">YouTube</a>
             </div>
-            <p>&copy; 2025 Ricci Oriach. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Riccie Oriach. Todos los derechos reservados.</p>
         </div>
     </footer>
 
@@ -483,6 +480,8 @@
         canvas.height = window.innerHeight;
 
         let particlesArray;
+        let speedMultiplier = 1;
+        let scrollTimeout;
 
         window.addEventListener('resize', function () {
             canvas.width = window.innerWidth;
@@ -492,17 +491,21 @@
 
         class Particle {
             constructor() {
+                const hues = [90, 110, 135, 155, 180];
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 3 + 0.5;
                 const depthSpeed = this.size * 0.15;
                 this.speedX = (Math.random() * 2 - 1) * depthSpeed;
                 this.speedY = (Math.random() * 2 - 1) * depthSpeed;
-                this.color = `rgba(240, 240, 210, ${Math.random() * 0.5 + 0.1})`;
+                const hue = hues[Math.floor(Math.random() * hues.length)];
+                const lightness = 45 + Math.random() * 35;
+                const alpha = 0.18 + Math.random() * 0.32;
+                this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
             }
             update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+                this.x += this.speedX * speedMultiplier;
+                this.y += this.speedY * speedMultiplier;
                 if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
                 if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
             }
@@ -533,6 +536,14 @@
 
         initParticles();
         animateParticles();
+
+        const resetMultiplier = () => speedMultiplier = 1;
+
+        window.addEventListener('wheel', () => {
+            speedMultiplier = 3;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(resetMultiplier, 250);
+        });
     </script>
 </body>
 
