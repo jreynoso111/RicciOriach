@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle de merch | Riccie Oriach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#300505; --text:#f4f4f4; --accent:#ff5e6c; --card:rgba(255,255,255,0.06); }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Outfit',sans-serif;background:radial-gradient(circle at 50% 50%,#3a0a0a 0%,#180303 100%);color:var(--text);min-height:100vh;overflow-x:hidden;position:relative;}
+    body::before{content:"";position:fixed;inset:0;background-image:url('assets/texture.png');background-size:cover;opacity:0.2;z-index:-2;}
+    body::after{content:"";position:fixed;inset:0;background:linear-gradient(45deg,rgba(255,94,108,0.08),transparent);z-index:-1;}
+    #canvas-bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
+    nav{display:flex;align-items:center;gap:1rem;padding:1.5rem 2rem;position:absolute;top:0;left:0;width:100%;z-index:10;}
+    .logo a{font-family:'Abril Fatface',cursive;color:#ffd700;text-decoration:none;font-size:1.5rem;letter-spacing:1px;}
+    .nav-links{list-style:none;display:flex;gap:1.4rem;margin-left:auto;}
+    .nav-links a{color:var(--text);text-decoration:none;font-weight:600;transition:color 0.3s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--accent);}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;margin-left:1rem;}
+    .hamburger span{width:24px;height:3px;background:var(--text);}    
+    main{max-width:900px;margin:7rem auto 3rem;padding:0 1.5rem;display:grid;gap:1.2rem;}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:1.5rem;box-shadow:0 16px 32px rgba(0,0,0,0.28);}
+    .cta{display:inline-flex;align-items:center;gap:0.4rem;padding:0.75rem 1rem;border-radius:12px;background:var(--accent);color:#120202;font-weight:800;text-decoration:none;}
+    .secondary{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid rgba(255,255,255,0.2);} 
+  </style>
+</head>
+<body>
+  <canvas id="canvas-bg"></canvas>
+  <nav>
+    <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
+    <ul class="nav-links">
+      <li><a href="index.html">INICIO</a></li>
+      <li><a href="music.html">MÚSICA</a></li>
+      <li><a class="active" href="merch.html">MERCH</a></li>
+      <li><a href="events.html">TICKETS</a></li>
+      <li><a href="blog.html">BLOG</a></li>
+      <li><a href="contact.html">CONTACTO</a></li>
+    </ul>
+    <div class="hamburger" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <main>
+    <div class="card">
+      <h1>Detalle del producto</h1>
+      <p style="color:rgba(244,244,244,0.78);margin-top:0.4rem;">Los productos se compran directamente en la tienda gestionada. Usa el enlace para abrir el ítem en el carrito externo.</p>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1rem;">
+        <a class="cta" href="https://placeholder-enlace-tienda.com/producto-detalle" target="_blank" rel="noopener">Ver en la tienda</a>
+        <a class="cta secondary" href="merch.html">Volver al catálogo</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const canvas = document.getElementById('canvas-bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight; let particlesArray = []; let speedMultiplier = 1; let scrollTimeout; const hues=[90,110,135,155,180,210];
+    class Particle{constructor(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*3+0.5;const depth=this.size*0.18;this.speedX=(Math.random()*2-1)*depth;this.speedY=(Math.random()*2-1)*depth;const hue=hues[Math.floor(Math.random()*hues.length)];const light=45+Math.random()*35;const alpha=0.18+Math.random()*0.32;this.color=`hsla(${hue},70%,${light}%,${alpha})`;}
+      update(){this.x+=this.speedX*speedMultiplier;this.y+=this.speedY*speedMultiplier;if(this.x>canvas.width)this.x=0;else if(this.x<0)this.x=canvas.width;if(this.y>canvas.height)this.y=0;else if(this.y<0)this.y=canvas.height;}
+      draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fillStyle=this.color;ctx.fill();}}
+    function init(){particlesArray=[];const count=(canvas.width*canvas.height)/9000;for(let i=0;i<count;i++)particlesArray.push(new Particle());}
+    function animate(){requestAnimationFrame(animate);ctx.clearRect(0,0,canvas.width,canvas.height);particlesArray.forEach(p=>{p.update();p.draw();});}
+    window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;init();});
+    window.addEventListener('wheel',()=>{speedMultiplier=3;clearTimeout(scrollTimeout);scrollTimeout=setTimeout(()=>speedMultiplier=1,250);});
+    init();animate();
+    const hamburger=document.querySelector('.hamburger');
+    const navLinks=document.querySelector('.nav-links');
+    hamburger.addEventListener('click',()=>navLinks.classList.toggle('active'));
+    navLinks.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>navLinks.classList.remove('active')));
+  </script>
+  <style>
+    @media(max-width:768px){
+      .nav-links{position:absolute;top:70px;right:20px;background:rgba(16,2,2,0.95);padding:1.25rem;border-radius:12px;flex-direction:column;border:1px solid rgba(255,94,108,0.5);display:none;}
+      .nav-links.active{display:flex;}
+      .hamburger{display:flex;}
+    }
+  </style>
+</body>
+</html>

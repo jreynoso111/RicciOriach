@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ricci Oriach | Dashboard</title>
+    <title>Riccie Oriach | Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="admin.css">
 </head>
@@ -11,11 +11,12 @@
     <div class="admin-shell">
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <span class="brand-accent">Ricci</span> Admin
+                <span class="brand-accent">Riccie</span> Admin
             </div>
             <nav class="sidebar-nav">
                 <a href="#" data-section="overview" class="active">Resumen</a>
                 <a href="#" data-section="merch">Merch</a>
+                <a href="#" data-section="blog">Blog</a>
                 <a href="#" data-section="music">Música</a>
                 <a href="report.md" target="_blank">Report</a>
             </nav>
@@ -148,6 +149,75 @@
                         </tr>
                     </thead>
                     <tbody id="products-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Blog Section -->
+            <section id="blog" class="content-section">
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">Publicaciones</p>
+                        <h2>Blog</h2>
+                    </div>
+                    <div class="section-actions">
+                        <button id="publish-blog-btn" class="action-btn ghost">Publicar cambios</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Crear o editar post</h3>
+                        <span class="pill">Slug autogenerado</span>
+                    </div>
+                    <form id="blog-form" class="grid-form">
+                        <div class="form-group">
+                            <label for="blog-title">Título</label>
+                            <input type="text" id="blog-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-status">Estado</label>
+                            <select id="blog-status">
+                                <option value="Publicado">Publicado</option>
+                                <option value="Programado">Programado</option>
+                                <option value="Borrador">Borrador</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-date">Fecha</label>
+                            <input type="date" id="blog-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-link">Enlace externo</label>
+                            <input type="url" id="blog-link" placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-image">Imagen de portada</label>
+                            <input type="text" id="blog-image" placeholder="URL de imagen">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="blog-excerpt">Extracto</label>
+                            <textarea id="blog-excerpt" rows="3" placeholder="Breve resumen del post"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="action-btn primary" id="blog-submit-btn">Guardar post</button>
+                            <button type="button" class="action-btn ghost" id="blog-reset-btn">Limpiar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Slug</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blog-table-body">
                         <!-- Populated by JS -->
                     </tbody>
                 </table>

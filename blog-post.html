@@ -4,17 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riccie Oriach | Blog de Eventos</title>
-    <meta name="description" content="Revive los mejores momentos de los conciertos y eventos de Riccie Oriach.">
-
-    <!-- Google Fonts -->
+    <title>Riccie Oriach | Entrada de Blog</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap"
         rel="stylesheet">
-
     <link rel="stylesheet" href="style.css">
-
     <style>
         :root {
             --color-bg: #300505;
@@ -30,7 +25,6 @@
             font-family: 'Outfit', sans-serif;
         }
 
-        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
         #canvas-bg {
             position: fixed;
             top: 0;
@@ -58,55 +52,7 @@
         }
 
         .nav-links li a { color: var(--color-text); }
-
         .nav-links li a:hover, .nav-links li a.active { color: var(--color-accent); }
-
-        .hero-title .outline-text { -webkit-text-stroke: 2px var(--color-outline); }
-
-        /* --- BLOG HERO STYLES --- */
-
-        .blog-hero {
-            text-align: center;
-            padding-top: 100px;
-            padding-bottom: 50px;
-            margin-bottom: 3rem;
-            border-bottom: 3px solid var(--color-accent);
-        }
-
-        .blog-title {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 5rem;
-            line-height: 0.9;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-        }
-
-        /* Las clases outline-text y filled-text deben estar en el CSS global */
-
-        .blog-subtitle {
-            font-size: 1.2rem;
-            letter-spacing: 3px;
-            color: var(--color-secondary);
-            font-weight: 300;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .blog-title {
-                font-size: 3.5rem;
-            }
-
-            .blog-subtitle {
-                font-size: 1rem;
-            }
-        }
-
-        .blog-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        footer { border-top: 1px solid rgba(255, 255, 255, 0.1); }
 
         @media (max-width: 768px) {
             .nav-links {
@@ -133,6 +79,88 @@
 
             .hamburger { display: flex; }
         }
+
+        .post-hero {
+            padding-top: 120px;
+            padding-bottom: 40px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .post-hero h1 {
+            font-family: 'Abril Fatface', cursive;
+            font-size: clamp(2.6rem, 4vw, 4.5rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .post-meta {
+            color: var(--color-secondary);
+            letter-spacing: 2px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+        }
+
+        .post-cover {
+            margin: 2rem auto;
+            max-width: 900px;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        .post-cover img {
+            width: 100%;
+            display: block;
+        }
+
+        .post-body {
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            padding: 0 1.5rem;
+            line-height: 1.8;
+            font-size: 1.05rem;
+            color: rgba(244, 244, 244, 0.92);
+        }
+
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            color: var(--color-secondary);
+            font-size: 1.4rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 2rem 0 3rem;
+        }
+
+        .action-btn {
+            background: var(--color-accent);
+            color: #0d0d0d;
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 94, 108, 0.35); }
+
+        .muted-btn { background: transparent; border: 1px solid rgba(255, 255, 255, 0.25); color: var(--color-text); }
+
+        .not-found {
+            text-align: center;
+            padding: 120px 20px;
+            color: var(--color-text);
+        }
+
+        footer { border-top: 1px solid rgba(255, 255, 255, 0.1); }
     </style>
 </head>
 
@@ -155,19 +183,22 @@
         </div>
     </nav>
 
-    <header class="blog-hero">
-        <h1 class="hero-title blog-title">
-            <span class="outline-text">FOLCLORE</span><br>
-            <span class="filled-text">BITÁCORA</span>
-        </h1>
-        <p class="blog-subtitle">Noticias, Reflexiones y Cuentos del Caribe Alternativo.</p>
+    <header class="post-hero">
+        <p class="post-meta" id="post-meta">BLOG | Historias y bitácoras</p>
+        <h1 id="post-title">Cargando post...</h1>
     </header>
 
-    <section class="product-section blog-section">
-        <div class="blog-grid" id="blog-grid">
-            <!-- Blog posts will be loaded here -->
-        </div>
-    </section>
+    <div class="post-cover" id="post-cover" aria-hidden="true"></div>
+
+    <article class="post-body" id="post-body"></article>
+
+    <div class="post-actions" id="post-actions" aria-live="polite"></div>
+
+    <div class="not-found" id="post-not-found" style="display:none;">
+        <h2>Ups, no encontramos este post.</h2>
+        <p>Quizás fue movido o aún no está publicado. Vuelve al blog para explorar las últimas historias.</p>
+        <a class="action-btn" href="blog.html">Volver al blog</a>
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -207,77 +238,59 @@
         const hydratePosts = () => (JSON.parse(localStorage.getItem(BLOG_STORAGE_KEY)) || defaultPosts)
             .map(post => ({ ...post, slug: post.slug || slugify(post.title) }));
 
-        const renderBlogCards = () => {
-            const blogGrid = document.getElementById('blog-grid');
-            if (!blogGrid) return;
-            const session = window.RicciAuth?.getSession?.();
-            const isManager = ['admin', 'manager'].includes(session?.role);
+        const renderPost = () => {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
             const posts = hydratePosts();
-            blogGrid.innerHTML = '';
-            posts.forEach(post => {
-                const article = document.createElement('article');
-                article.className = 'blog-card';
-                article.dataset.slug = post.slug;
-                article.innerHTML = `
-                    <div class="blog-image">
-                        <img src="${post.image || 'assets/hero.png'}" alt="${post.title}">
-                        <div class="blog-date">${post.date || ''}</div>
-                    </div>
-                    <div class="blog-content">
-                        <h3>${post.title}</h3>
-                        <p class="blog-excerpt">${post.excerpt || ''}</p>
-                        <a href="blog-post.html?slug=${encodeURIComponent(post.slug || slugify(post.title))}" class="read-more">Leer más →</a>
-                        ${isManager ? `
-                        <div class="admin-inline">
-                            <details>
-                                <summary>Editar desde listado</summary>
-                                <form class="blog-inline-form" data-slug="${post.slug}">
-                                    <label>Título<input name="title" value="${post.title}"></label>
-                                    <label>Estado
-                                        <select name="status" value="${post.status || 'Publicado'}">
-                                            <option value="Publicado" ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option>
-                                            <option value="Borrador" ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option>
-                                            <option value="Programado" ${post.status === 'Programado' ? 'selected' : ''}>Programado</option>
-                                        </select>
-                                    </label>
-                                    <label>Fecha<input type="date" name="date" value="${post.date || ''}"></label>
-                                    <label>Extracto<textarea name="excerpt" rows="2">${post.excerpt || ''}</textarea></label>
-                                    <label>Enlace externo<input name="link" value="${post.link || ''}"></label>
-                                    <label>Imagen de portada<input name="image" value="${post.image || ''}" placeholder="URL o base64"></label>
-                                    <button type="submit" class="read-more">Guardar cambios</button>
-                                </form>
-                            </details>
-                        </div>` : ''}
-                    </div>
-                `;
-                blogGrid.appendChild(article);
-            });
-            localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(posts));
+            const post = posts.find(p => p.slug === slug);
+            const notFound = document.getElementById('post-not-found');
+            const cover = document.getElementById('post-cover');
+            const body = document.getElementById('post-body');
+            const title = document.getElementById('post-title');
+            const meta = document.getElementById('post-meta');
+            const actions = document.getElementById('post-actions');
 
-            if (isManager) attachAdminEditors(posts);
+            if (!post) {
+                notFound.style.display = 'block';
+                cover.style.display = 'none';
+                body.style.display = 'none';
+                actions.style.display = 'none';
+                return;
+            }
+
+            document.title = `${post.title} | Riccie Oriach`;
+            title.textContent = post.title;
+            meta.textContent = `${post.author || 'Riccie Oriach'} • ${post.date || 'Sin fecha'}`;
+
+            if (post.image) {
+                cover.innerHTML = `<img src="${post.image}" alt="${post.title}">`;
+                cover.removeAttribute('aria-hidden');
+            }
+
+            const paragraphs = (post.content || post.excerpt || '').split(/\n\n+/).filter(Boolean);
+            body.innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('') || '<p>Próximamente el contenido completo de este post.</p>';
+
+            actions.innerHTML = '';
+            const backLink = document.createElement('a');
+            backLink.className = 'action-btn muted-btn';
+            backLink.href = 'blog.html';
+            backLink.textContent = 'Volver al blog';
+            actions.appendChild(backLink);
+
+            if (post.link) {
+                const external = document.createElement('a');
+                external.className = 'action-btn';
+                external.href = post.link;
+                external.target = '_blank';
+                external.rel = 'noopener noreferrer';
+                external.textContent = 'Abrir enlace del post';
+                actions.appendChild(external);
+            }
+
+            localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(posts));
         };
 
-        function attachAdminEditors(posts) {
-            document.querySelectorAll('.blog-inline-form').forEach(form => {
-                form.addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    const slug = form.dataset.slug;
-                    const payload = {
-                        title: form.title.value,
-                        status: form.status.value,
-                        date: form.date.value,
-                        excerpt: form.excerpt.value,
-                        link: form.link.value,
-                        image: form.image.value
-                    };
-                    const updated = posts.map(p => p.slug === slug ? { ...p, ...payload } : p);
-                    localStorage.setItem(BLOG_STORAGE_KEY, JSON.stringify(updated));
-                    renderBlogCards();
-                });
-            });
-        }
-
-        renderBlogCards();
+        renderPost();
     </script>
     <script>
         // --- SCRIPT DE PUNTOS FLOTANTES ---
