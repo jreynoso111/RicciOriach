@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riccie Oriach | Pedidos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <canvas id="admin-canvas-bg"></canvas>
+    <div class="site-return-bar">
+        <a class="site-return-link" href="../index.html">⟵ Volver al sitio principal</a>
+    </div>
+    <div class="admin-shell">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <span class="brand-accent">Riccie</span> Admin
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="blog-management.html">Blog</a>
+                <a href="merch-management.html">Merch</a>
+                <a href="pedidos.html" class="active">Pedidos</a>
+            </nav>
+            <button id="logout-btn" class="logout-btn">Cerrar sesión</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <p class="eyebrow">Ventas</p>
+                    <h1>Pedidos y checkout</h1>
+                </div>
+                <div class="top-actions">
+                    <button class="action-btn ghost">Exportar CSV</button>
+                    <button class="action-btn primary">Sincronizar con tienda</button>
+                </div>
+            </header>
+
+            <section class="summary-grid">
+                <div class="metric-card">
+                    <p class="metric-label">Pendientes de pago</p>
+                    <div class="metric-value">8</div>
+                    <span class="metric-trend neutral">esperando confirmación</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Pagados</p>
+                    <div class="metric-value">26</div>
+                    <span class="metric-trend positive">listos para envío</span>
+                </div>
+                <div class="metric-card">
+                    <p class="metric-label">Enviados</p>
+                    <div class="metric-value">14</div>
+                    <span class="metric-trend soft">tracking activo</span>
+                </div>
+                <div class="metric-card highlight">
+                    <p class="metric-label">Ticket promedio</p>
+                    <div class="metric-value">$48.90</div>
+                    <span class="metric-trend">últimos 30 días</span>
+                </div>
+            </section>
+
+            <section class="panel wide-panel">
+                <div class="panel-header">
+                    <div>
+                        <h3>Filtrar pedidos</h3>
+                        <p class="panel-subtitle">Revisa el embudo de checkout y prepara despachos.</p>
+                    </div>
+                    <div class="pill">Checkout</div>
+                </div>
+                <form class="form-grid">
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select>
+                            <option>Todos</option>
+                            <option>Pendiente de pago</option>
+                            <option>Pagado</option>
+                            <option>Enviado</option>
+                            <option>Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Rango de fecha</label>
+                        <input type="date" value="2024-05-01">
+                    </div>
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <input type="text" placeholder="Buscar por nombre o email">
+                    </div>
+                    <div class="form-group">
+                        <label>Canal</label>
+                        <select>
+                            <option>Tienda</option>
+                            <option>Checkout directo</option>
+                            <option>Perfil guardado</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button class="action-btn primary" type="button">Aplicar filtros</button>
+                        <button class="action-btn ghost" type="reset">Limpiar</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="panels-grid">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Últimos pedidos</h3>
+                        <span class="pill">Hoy</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#4312</td>
+                                <td>Laura Méndez</td>
+                                <td>$62.00</td>
+                                <td><span class="badge live">Pagado</span></td>
+                                <td><button class="action-btn ghost">Ver detalle</button></td>
+                            </tr>
+                            <tr>
+                                <td>#4311</td>
+                                <td>Juan Pérez</td>
+                                <td>$28.50</td>
+                                <td><span class="badge soft">Pendiente de pago</span></td>
+                                <td><button class="action-btn">Enviar recordatorio</button></td>
+                            </tr>
+                            <tr>
+                                <td>#4310</td>
+                                <td>Sofía Díaz</td>
+                                <td>$45.00</td>
+                                <td><span class="badge hidden">Enviado</span></td>
+                                <td><button class="action-btn ghost">Actualizar tracking</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Resumen de checkout</h3>
+                        <span class="pill soft">Funnel</span>
+                    </div>
+                    <ul class="top-products-list">
+                        <li>Carritos iniciados <span>132</span></li>
+                        <li>Datos de envío completados <span>104</span></li>
+                        <li>Preferencia de pago guardada <span>76</span></li>
+                        <li>Pagos confirmados <span>42</span></li>
+                    </ul>
+                    <div class="form-group" style="margin-top:1rem;">
+                        <label>Alertas de compra</label>
+                        <ul class="top-products-list">
+                            <li>2 pagos rechazados en las últimas 24h</li>
+                            <li>Checkout móvil convierte 18% mejor</li>
+                            <li>3 carritos con dirección incompleta</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
