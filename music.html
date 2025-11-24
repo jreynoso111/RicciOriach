@@ -129,16 +129,6 @@
             background-color: white;
         }
 
-        .page-subtitle {
-            text-align: center;
-            margin-top: 110px;
-            margin-bottom: 30px;
-            font-family: 'Abril Fatface', cursive;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: var(--color-secondary);
-        }
-
         /* --- TIPOGRAFÍA HERO --- */
         .hero-title {
             font-family: 'Abril Fatface', cursive;
@@ -157,9 +147,25 @@
 
         /* --- MUSIC PAGE STYLES --- */
 
+        .music-hero {
+            text-align: center;
+            padding-top: 110px;
+            padding-bottom: 50px;
+            margin-bottom: 3rem;
+            border-bottom: 3px solid var(--color-accent);
+        }
+
+        .music-subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            color: var(--color-secondary);
+            font-weight: 300;
+            margin-bottom: 1.5rem;
+        }
+
         .music-content-wrapper {
             max-width: 1200px;
-            margin: 120px auto 4rem auto;
+            margin: 0 auto 4rem auto;
             padding: 0 5%;
             position: relative;
             z-index: 10;
@@ -167,10 +173,9 @@
 
         /* Título Hero de Música */
         .music-title {
-            font-size: 4rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            line-height: 0.85;
+            font-size: 5rem;
+            line-height: 0.9;
+            margin: 0;
         }
 
         /* Álbum Destacado */
@@ -392,7 +397,11 @@
             }
 
             .music-title {
-                font-size: 3rem;
+                font-size: 3.5rem;
+            }
+
+            .music-subtitle {
+                font-size: 1rem;
             }
         }
     </style>
@@ -413,13 +422,17 @@
         <div class="hamburger"><span></span><span></span><span></span></div>
     </nav>
 
-    <div class="page-subtitle">psicodelia tropical</div>
+    <header class="music-hero">
+        <p class="music-subtitle">psicodelia tropical</p>
+        <h1 class="hero-title music-title">
+            <span class="outline-text">FOLCLORE</span><br>
+            <span class="filled-text">MÚSICA</span>
+        </h1>
+    </header>
 
     <main class="music-content-wrapper">
 
         <section class="featured-album">
-            <h1 class="hero-title music-title">MÚSICA</h1>
-
             <div class="album-highlight">
                 <div class="cover-image-container">
                     <img src="album_reciente.jpg" alt="Portada del Álbum Reciente" class="featured-cover">
