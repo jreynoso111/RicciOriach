@@ -21,7 +21,6 @@
             <li><a href="../blog.html">BLOG</a></li>
             <li><a href="../contact.html">CONTACTO</a></li>
             <li><a href="../perfil.html">PERFIL</a></li>
-            <li><a class="active" href="register.html">REGISTRO</a></li>
         </ul>
     </nav>
 
@@ -29,37 +28,35 @@
         <div class="card" id="registro">
             <p class="badge">Nuevo usuario</p>
             <h1>Crea tu cuenta</h1>
-            <p class="subtitle">Conecta con Google o llena el formulario para guardar tu perfil, checkout y órdenes asociadas.</p>
-            <div class="actions" style="margin-top:1rem;">
+            <p class="subtitle">Regístrate con un correo y contraseña. Si ya tienes una cuenta, vuelve a Acceso para iniciar sesión.</p>
+            <div class="actions" style="margin-top:1rem; gap: 1rem;">
                 <button class="btn" id="google-register">Registrarme con Google</button>
                 <a class="btn secondary" href="login.html">Ya tengo cuenta</a>
             </div>
         </div>
         <div class="cards">
             <div class="card">
-                <h3>Registro manual</h3>
+                <h3>Registro tradicional</h3>
+                <p class="muted">Campos obligatorios para crear tu usuario y mantener la sesión activa.</p>
                 <form id="register-form" class="form-grid">
-                    <label>Nombre completo<input id="reg-name" required></label>
-                    <label>Correo electrónico<input type="email" id="reg-email" required></label>
-                    <label>Contraseña<input type="password" id="reg-password" required></label>
-                    <label>Rol (solo desarrollo)
-                        <select id="reg-role">
-                            <option value="user">Usuario</option>
-                            <option value="manager">Manager</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                    <label>Nombre completo<input id="reg-name" autocomplete="name" required></label>
+                    <label>Correo electrónico<input type="email" id="reg-email" autocomplete="email" required></label>
+                    <label>Contraseña<input type="password" id="reg-password" autocomplete="new-password" minlength="6" required></label>
+                    <label>Confirmar contraseña<input type="password" id="reg-password-confirm" autocomplete="new-password" minlength="6" required></label>
+                    <label class="checkbox">
+                        <input type="checkbox" id="reg-terms" required>
+                        <span>Acepto crear mi cuenta para usar checkout, órdenes y perfil.</span>
                     </label>
-                    <label>Teléfono (opcional)<input id="reg-phone"></label>
                     <div class="actions">
                         <button class="btn" type="submit">Crear cuenta</button>
-                        <a class="btn secondary" href="../perfil.html">Pasar al perfil</a>
+                        <a class="btn secondary" href="login.html">Ir a Acceso</a>
                     </div>
                 </form>
             </div>
             <div class="card">
                 <h3>Estado</h3>
                 <p class="status" id="status">Cuenta no creada.</p>
-                <p class="muted">Guardaremos la sesión para reutilizarla en checkout, perfil y órdenes.</p>
+                <p class="muted">La sesión activa se reutiliza en checkout, pedidos y perfil.</p>
             </div>
         </div>
     </section>
@@ -82,20 +79,20 @@
         document.getElementById('register-form').addEventListener('submit', (e) => {
             e.preventDefault();
             try {
+                const password = document.getElementById('reg-password').value.trim();
+                const confirm = document.getElementById('reg-password-confirm').value.trim();
+                const terms = document.getElementById('reg-terms').checked;
+                if (password !== confirm) throw new Error('Las contraseñas no coinciden.');
+                if (!terms) throw new Error('Debes aceptar los términos de registro.');
                 RicciAuth.registerUser({
                     name: document.getElementById('reg-name').value.trim(),
                     email: document.getElementById('reg-email').value.trim(),
-                    password: document.getElementById('reg-password').value.trim(),
+                    password,
                     provider: 'password',
-                    role: document.getElementById('reg-role').value || 'user'
+                    role: 'user'
                 });
-                const phone = document.getElementById('reg-phone').value.trim();
-                if (phone) {
-                    const session = RicciAuth.getSession();
-                    RicciAuth.saveProfileForUser(session?.email, { phone });
-                }
                 refreshStatus();
-                alert('Cuenta creada. Puedes seguir al perfil para completar datos.');
+                alert('Cuenta creada. Te mantendremos conectado para completar tus compras y perfil.');
             } catch (err) {
                 alert(err.message || 'No se pudo crear la cuenta.');
             }
