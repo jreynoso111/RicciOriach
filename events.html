@@ -44,28 +44,22 @@
     <ul class="nav-links">
       <li><a href="index.html">INICIO</a></li>
       <li><a href="music.html">MÚSICA</a></li>
-      <li><a href="merch.html">MERCH</a></li>
       <li><a class="active" href="events.html">TICKETS</a></li>
       <li><a href="blog.html">BLOG</a></li>
       <li><a href="contact.html">CONTACTO</a></li>
-      <li><a href="perfil.html">PERFIL</a></li>
-      <li><a href="auth/login.html">ACCESO</a></li>
     </ul>
   </nav>
 
   <section class="hero">
     <div class="tickets-badge">Ticketing</div>
     <h1>Compra tus boletos oficiales</h1>
-    <p>Selecciona fecha, ciudad y cantidad. Tu sesión se conserva para que puedas continuar desde perfil u órdenes.</p>
+    <p>Selecciona fecha, ciudad y cantidad. Tu selección queda guardada en este dispositivo para que sigas más tarde.</p>
     <div class="list-actions">
-      <a class="cta" href="ticket-checkout.html">Ir al checkout de tickets</a>
-      <a class="cta secondary" href="ordenes.html">Ver mis órdenes</a>
+      <a class="cta" href="#events-grid">Ver eventos disponibles</a>
     </div>
   </section>
 
   <section class="grid" id="events-grid"></section>
-
-  <script src="auth/auth.js"></script>
   <script>
     const EVENTS_KEY = 'ricciEvents';
     const TICKET_CART_KEY = 'ricciTicketCart';
@@ -90,7 +84,7 @@
       const existing = ticketCart.find(item => item.slug === slug);
       if (existing) existing.qty += 1; else ticketCart.push({ slug, qty:1 });
       localStorage.setItem(TICKET_CART_KEY, JSON.stringify(ticketCart));
-      alert('Ticket añadido. Puedes completar la compra en el checkout de tickets.');
+      alert('Ticket añadido. Conservamos tu selección en este navegador.');
     }
 
     function buildAdminEditor(ev) {
@@ -140,7 +134,6 @@
           <p>${ev.description || ''}</p>
           <div class="list-actions">
             <button class="cta" data-ticket="${ev.slug}">Comprar ticket</button>
-            <a class="cta secondary" href="ticket-checkout.html">Ir al checkout</a>
           </div>
           ${buildAdminEditor(ev)}
         `;
