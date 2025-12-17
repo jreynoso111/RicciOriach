@@ -90,7 +90,7 @@
             display: flex;
             align-items: center;
             justify-content: center; /* Centrado */
-            gap: 5rem; /* Espacio controlado entre elementos */
+            gap: 5rem;
             padding: 0 5%;
             padding-top: 80px;
             position: relative;
@@ -150,57 +150,74 @@
         .marquee-item { font-family: 'Abril Fatface', cursive; font-size: 1.5rem; text-transform: uppercase; padding: 0 2rem; line-height: 1; flex-shrink: 0; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* --- SECCIÓN MULTIMEDIA (Spotify + YouTube) --- */
+        /* --- SECCIÓN MULTIMEDIA --- */
         #listen {
             padding: 4rem 5%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            text-align: center;
         }
 
         .section-title {
-            font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 3rem;
+            font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 1rem;
             color: var(--color-text); text-align: center;
             text-shadow: 0 0 15px rgba(255, 94, 108, 0.3);
         }
 
-        /* GRID: Divide en 2 columnas */
-        .media-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* Contenedor flexible para poner Spotify y Youtube lado a lado */
+        .multimedia-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             gap: 2rem;
-            width: 100%;
-            max-width: 1100px;
-            align-items: start;
+            flex-wrap: wrap; /* Para movil */
+            margin-top: 2rem;
         }
 
-        /* Estilos para contenedores de medios */
-        .media-wrapper {
+        /* --- TU CÓDIGO DE SPOTIFY (INTACTO) --- */
+        .spotify-container {
+            display: flex;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .spotify-embed {
+            width: 25vw;
+            min-width: 280px;
+            max-width: 420px;
+            /* Asegura que no tenga borde */
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .spotify-fallback {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            width: 100%; /* Para que ocupe ancho completo abajo */
+        }
+
+        .spotify-fallback a {
+            color: var(--color-secondary);
+            font-weight: 700;
+        }
+        /* ------------------------------------- */
+
+        /* Estilo para YouTube imitando las dimensiones de tu código Spotify */
+        .youtube-box {
+            width: 25vw;
+            min-width: 280px;
+            max-width: 420px;
+            aspect-ratio: 16/9; /* Proporción video */
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-
-        .spotify-embed { 
-            width: 100%; 
-            height: 352px; 
-            border: none; 
-            display: block; 
-        }
-
-        .youtube-container {
-            position: relative;
+        .youtube-box iframe {
             width: 100%;
-            height: 0;
-            padding-bottom: 56.25%; /* 16:9 ratio */
-            background: #000;
+            height: 100%;
+            border: none;
         }
-        .youtube-container iframe {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
-        }
-
-        .spotify-fallback { text-align: center; margin-top: 1rem; font-size: 0.9rem; opacity: 0.8; grid-column: 1 / -1; }
-        .spotify-fallback a { color: var(--color-secondary); font-weight: 700; }
 
         /* --- TOUR SECTION --- */
         .tour-section {
@@ -250,8 +267,6 @@
              .hero-content { max-width: 100%; }
              .hero-image-container { max-width: 80%; }
              .hero-title { font-size: 3.5rem; }
-             /* En tablet/móvil, la media-grid pasa a 1 columna */
-             .media-grid { grid-template-columns: 1fr; max-width: 500px; gap: 3rem; }
         }
 
         @media (max-width: 768px) {
@@ -267,6 +282,10 @@
 
             .hero-subtitle { font-size: 1rem; }
             .marquee-item { font-size: 1.2rem; padding: 0 1rem; }
+
+            .multimedia-wrapper { flex-direction: column; gap: 2rem; }
+            .spotify-embed, .youtube-box { width: 100%; max-width: 100%; min-width: 0; }
+            .spotify-embed { width: 80vw; } /* Ajuste movil */
 
             .tour-section { margin: 3rem 1rem; padding: 2rem 1rem; }
             .tour-item { flex-direction: column; gap: 15px; text-align: center; padding: 1.5rem 0; }
@@ -328,16 +347,14 @@
     <section id="listen">
         <h2 class="section-title">MÚSICA & VIDEO</h2>
         
-        <div class="media-grid">
+        <div class="multimedia-wrapper">
             
-            <div class="media-wrapper spotify-wrapper">
-                <iframe class="spotify-embed" style="border-radius:12px" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <div class="spotify-container">
+                <iframe class="spotify-embed" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" height="352" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
 
-            <div class="media-wrapper">
-                <div class="youtube-container">
-                    <iframe src="https://www.youtube.com/embed/6Zn7H97v1HM" title="Riccie Oriach - La Guayaba (Official Video)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
+            <div class="youtube-box">
+                <iframe src="https://www.youtube.com/embed/6Zn7H97v1HM" title="Riccie Oriach - La Guayaba (Official Video)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
 
         </div>
@@ -390,7 +407,6 @@
     </footer>
 
     <script>
-        // --- 1. SCRIPT DE PUNTOS FLOTANTES ---
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -464,7 +480,7 @@
             scrollTimeout = setTimeout(resetMultiplier, 250);
         });
 
-        // --- 2. SCRIPT DE NAVEGACIÓN ---
+        // --- SCRIPT DE NAVEGACIÓN ---
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
