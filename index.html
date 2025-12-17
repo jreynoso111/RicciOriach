@@ -172,7 +172,7 @@
             margin-top: 2rem;
         }
 
-        /* --- TU CÓDIGO DE SPOTIFY (INTACTO) --- */
+        /* --- SPOTIFY --- */
         .spotify-container {
             display: flex;
             justify-content: center;
@@ -183,7 +183,6 @@
             width: 25vw;
             min-width: 280px;
             max-width: 420px;
-            /* Asegura que no tenga borde */
             border: none;
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -194,21 +193,20 @@
             margin-top: 1rem;
             font-size: 0.9rem;
             opacity: 0.8;
-            width: 100%; /* Para que ocupe ancho completo abajo */
+            width: 100%;
         }
 
         .spotify-fallback a {
             color: var(--color-secondary);
             font-weight: 700;
         }
-        /* ------------------------------------- */
 
-        /* Estilo para YouTube imitando las dimensiones de tu código Spotify */
+        /* YouTube */
         .youtube-box {
             width: 25vw;
             min-width: 280px;
             max-width: 420px;
-            aspect-ratio: 16/9; /* Proporción video */
+            aspect-ratio: 16/9;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -285,7 +283,7 @@
 
             .multimedia-wrapper { flex-direction: column; gap: 2rem; }
             .spotify-embed, .youtube-box { width: 100%; max-width: 100%; min-width: 0; }
-            .spotify-embed { width: 80vw; } /* Ajuste movil */
+            .spotify-embed { width: 80vw; }
 
             .tour-section { margin: 3rem 1rem; padding: 2rem 1rem; }
             .tour-item { flex-direction: column; gap: 15px; text-align: center; padding: 1.5rem 0; }
@@ -309,7 +307,7 @@
             <li><a href="blog.html">BLOG</a></li>
             <li><a href="contact.html">CONTACTO</a></li>
         </ul>
-        <div class="hamburger">
+        <div class="hamburger" aria-label="Abrir menú" role="button" tabindex="0">
             <span></span><span></span><span></span>
         </div>
     </nav>
@@ -346,21 +344,38 @@
 
     <section id="listen">
         <h2 class="section-title">MÚSICA & VIDEO</h2>
-        
+
         <div class="multimedia-wrapper">
-            
+
             <div class="spotify-container">
-                <iframe class="spotify-embed" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" height="352" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <!-- ✅ Riccie Oriach (ID correcto) -->
+                <iframe
+                    class="spotify-embed"
+                    src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0"
+                    height="352"
+                    title="Riccie Oriach en Spotify"
+                    loading="lazy"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                ></iframe>
             </div>
 
             <div class="youtube-box">
-                <iframe src="https://www.youtube.com/embed/6Zn7H97v1HM" title="Riccie Oriach - La Guayaba (Official Video)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <iframe
+                    src="https://www.youtube.com/embed/6Zn7H97v1HM"
+                    title="Riccie Oriach - La Guayaba (Official Video)"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                ></iframe>
             </div>
 
         </div>
 
         <p class="spotify-fallback">
-            ¿No carga el reproductor? <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank">Abrir perfil en Spotify</a>
+            ¿No carga el reproductor?
+            <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank" rel="noopener noreferrer">
+                Abrir perfil en Spotify
+            </a>
         </p>
     </section>
 
@@ -398,9 +413,9 @@
         <div class="footer-content">
             <div class="logo" style="margin-bottom: 1.5rem;"><a href="index.html">RICCIE ORIACH</a></div>
             <div class="social-links">
-                <a href="#">Instagram</a>
-                <a href="#">Spotify</a>
-                <a href="#">YouTube</a>
+                <a href="#" rel="noopener">Instagram</a>
+                <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank" rel="noopener noreferrer">Spotify</a>
+                <a href="#" rel="noopener">YouTube</a>
             </div>
             <p>© 2025 Riccie Oriach. Todos los derechos reservados.</p>
         </div>
@@ -432,8 +447,8 @@
                 this.speedX = (Math.random() * 2 - 1) * depthSpeed;
                 this.speedY = (Math.random() * 2 - 1) * depthSpeed;
                 const hue = hues[Math.floor(Math.random() * hues.length)];
-                const lightness = 45 + Math.random() * 35; 
-                const alpha = 0.18 + Math.random() * 0.32; 
+                const lightness = 45 + Math.random() * 35;
+                const alpha = 0.18 + Math.random() * 0.32;
                 this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
             }
             update() {
@@ -484,9 +499,17 @@
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
-        hamburger.addEventListener('click', () => {
+        const toggleMenu = () => {
             navLinks.classList.toggle('active');
             hamburger.style.transform = navLinks.classList.contains('active') ? 'rotate(90deg)' : 'rotate(0)';
+        };
+
+        hamburger.addEventListener('click', toggleMenu);
+        hamburger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleMenu();
+            }
         });
 
         document.querySelectorAll('.nav-links li a').forEach(link => {
