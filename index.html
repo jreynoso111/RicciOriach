@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" style="scroll-padding-top: 100px;">
 
 <head>
     <meta charset="UTF-8">
@@ -19,13 +19,19 @@
             --color-accent: #FF5E6C;   /* Rosa Guayaba */
             --color-secondary: #FFD700; /* Amarillo Sol */
             --color-outline: rgba(255, 94, 108, 0.7); /* Contraste para Outline */
+
+            /* Ajustes del fondo */
+            --texture-offset-y: 15%;
+            --texture-opacity: 0.48;
+            --overlay-strong: rgba(58, 10, 10, 0.55);
+            --overlay-soft: rgba(24, 3, 3, 0.42);
+            --overlay-sheen: rgba(255, 94, 108, 0.04);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--color-bg);
-            background: radial-gradient(circle at 50% 50%, #3a0a0a 0%, #180303 100%);
             color: var(--color-text);
             font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
@@ -33,301 +39,241 @@
             position: relative;
         }
 
+        /* Capas de Fondo */
         body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('assets/texture.png');
-            background-size: cover;
-            opacity: 0.2;
-            z-index: -2;
-            pointer-events: none;
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('Assets/images/texture.png'); background-size: cover;
+            background-position: center var(--texture-offset-y); background-repeat: no-repeat;
+            opacity: var(--texture-opacity); z-index: -3; pointer-events: none;
         }
 
         body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(255, 94, 108, 0.08), transparent);
-            z-index: -1;
-            pointer-events: none;
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, var(--overlay-strong) 0%, var(--overlay-soft) 100%),
+                        linear-gradient(45deg, var(--overlay-sheen), transparent);
+            z-index: -2; pointer-events: none;
         }
 
-        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
-        #canvas-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; 
-            pointer-events: none;
-        }
+        #canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
         /* --- NAVBAR --- */
         .navbar {
-            display: flex;
-            justify-content: space-between; /* Alinea logo a izq y links a der */
-            align-items: center;
-            padding: 1.5rem 2rem;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5rem 2rem; position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
+            background: linear-gradient(to bottom, rgba(48, 5, 5, 0.8), transparent);
         }
 
-        /* Estilo para el logo/nombre del artista */
         .logo a {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 1.5rem;
-            color: var(--color-secondary); /* Destaca el nombre/logo */
-            letter-spacing: 1px;
-            text-decoration: none;
+            font-family: 'Abril Fatface', cursive; font-size: 1.5rem; color: var(--color-secondary);
+            letter-spacing: 1px; text-decoration: none; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
         .nav-links { list-style: none; display: flex; gap: 2rem; }
-        .nav-links li a { text-decoration: none; color: var(--color-text); font-weight: 500; text-transform: uppercase; font-size: 0.9rem; transition: color 0.3s; }
-        .nav-links li a:hover { color: var(--color-accent); }
+        .nav-links li a {
+            text-decoration: none; color: var(--color-text); font-weight: 500;
+            text-transform: uppercase; font-size: 0.9rem; transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-links li a::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
+            background-color: var(--color-accent); transition: width 0.3s;
+        }
+        .nav-links li a:hover::after { width: 100%; }
+        .nav-links li a:hover { color: var(--color-accent); text-shadow: 0 0 5px var(--color-accent); }
 
         .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
         .hamburger span { width: 25px; height: 3px; background-color: white; transition: transform 0.3s; }
 
-        /* HERO SECTION */
+        /* --- HERO SECTION --- */
         .hero {
             min-height: 90vh;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center; /* Centrado */
+            gap: 5rem; /* Espacio controlado entre elementos */
             padding: 0 5%;
             padding-top: 80px;
             position: relative;
         }
 
-        .hero-content { max-width: 50%; z-index: 2; }
+        .hero-content { max-width: 600px; z-index: 2; }
 
         .hero-title {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 5rem;
-            line-height: 0.9;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
+            font-family: 'Abril Fatface', cursive; font-size: 5rem; line-height: 0.9;
+            margin-bottom: 1rem; text-transform: uppercase;
         }
 
-        /* Mejorado el color outline */
-        .outline-text { 
-            -webkit-text-stroke: 2px var(--color-outline); 
-            text-stroke: 2px var(--color-outline);
-            color: transparent; 
-        }
-        .filled-text { color: var(--color-accent); }
+        .outline-text { -webkit-text-stroke: 2px var(--color-outline); text-stroke: 2px var(--color-outline); color: transparent; }
+        .filled-text { color: var(--color-accent); text-shadow: 0 0 20px rgba(255, 94, 108, 0.3); }
 
-        /* Aumentamos un poco el subtítulo */
         .hero-subtitle {
             font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 2.5rem;
             color: var(--color-secondary); font-weight: 300;
         }
 
         .cta-button {
-            display: inline-block; padding: 1rem 2.5rem;
-            background-color: var(--color-accent); color: white;
-            text-decoration: none; border-radius: 50px; font-weight: 700;
-            font-size: 1.1rem; transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block; padding: 1rem 3rem; background-color: var(--color-accent);
+            color: white; text-decoration: none; border-radius: 50px; font-weight: 700;
+            font-size: 1.1rem; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 94, 108, 0.3);
         }
         .cta-button:hover {
-            transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 94, 108, 0.5);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(255, 94, 108, 0.6); background-color: #ff7a85;
         }
 
-        /* Imagen y Elementos Flotantes */
-        .hero-image-container {
-            position: relative; width: 45%; display: flex; justify-content: center;
-        }
-
+        /* Imagen Héroe */
+        .hero-image-container { position: relative; max-width: 500px; display: flex; justify-content: center; }
         .hero-image {
-            width: 100%; max-width: 500px; border-radius: 20px;
+            width: 100%; border-radius: 30px;
             filter: contrast(1.1) saturate(1.1);
-            /* Sombra con color secundario para mejor contraste */
-            box-shadow: 10px 10px 0px rgba(255, 215, 0, 0.2); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(255, 215, 0, 0.2);
+            transition: transform 0.5s ease;
         }
+        .hero-image-container:hover .hero-image { transform: scale(1.02) rotate(1deg); }
 
-        .floating-element {
-            position: absolute; border-radius: 50%; opacity: 0.8;
-            animation: float 6s ease-in-out infinite; z-index: -1;
-        }
-        /* Los colores están invertidos para dar más peso al Rosa Guayaba */
-        .fruit-1 { width: 80px; height: 80px; background: radial-gradient(circle, var(--color-accent), transparent); top: -20px; right: 20px; filter: blur(5px); }
-        .fruit-2 { width: 120px; height: 120px; background: radial-gradient(circle, var(--color-secondary), transparent); bottom: 20px; left: -40px; animation-delay: 2s; filter: blur(8px); }
-        
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        .floating-element { position: absolute; border-radius: 50%; opacity: 0.8; animation: float 6s ease-in-out infinite; z-index: -1; }
+        .fruit-1 { width: 80px; height: 80px; background: radial-gradient(circle, var(--color-accent), transparent); top: -30px; right: 30px; filter: blur(8px); }
+        .fruit-2 { width: 120px; height: 120px; background: radial-gradient(circle, var(--color-secondary), transparent); bottom: 30px; left: -50px; animation-delay: 2s; filter: blur(10px); }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
 
-        /* --- MARQUEE (CARRUSEL) --- */
+        /* --- MARQUEE --- */
         .marquee-container {
-            background: var(--color-secondary); 
-            color: var(--color-bg); 
-            padding: 15px 0; 
-            overflow: hidden; 
+            background: var(--color-secondary); color: var(--color-bg); padding: 15px 0;
+            overflow: hidden; position: relative; width: 105%; margin-left: -2.5%;
+            margin-bottom: 4rem; transform: rotate(-1deg);
+            border-top: 3px solid var(--color-bg); border-bottom: 3px solid var(--color-bg);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); display: flex;
+        }
+        .marquee-track { display: flex; width: max-content; white-space: nowrap; animation: marquee 20s linear infinite; }
+        .marquee-group { display: flex; }
+        .marquee-item { font-family: 'Abril Fatface', cursive; font-size: 1.5rem; text-transform: uppercase; padding: 0 2rem; line-height: 1; flex-shrink: 0; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- SECCIÓN MULTIMEDIA (Spotify + YouTube) --- */
+        #listen {
+            padding: 4rem 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .section-title {
+            font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 3rem;
+            color: var(--color-text); text-align: center;
+            text-shadow: 0 0 15px rgba(255, 94, 108, 0.3);
+        }
+
+        /* GRID: Divide en 2 columnas */
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1100px;
+            align-items: start;
+        }
+
+        /* Estilos para contenedores de medios */
+        .media-wrapper {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .spotify-embed { 
+            width: 100%; 
+            height: 352px; 
+            border: none; 
+            display: block; 
+        }
+
+        .youtube-container {
             position: relative;
-            width: 105%; 
-            margin-left: -2.5%; 
-            margin-bottom: 3rem;
-            transform: rotate(-1deg);
-            border-top: 2px solid #000; 
-            border-bottom: 2px solid #000;
-            display: flex;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 ratio */
+            background: #000;
         }
-        .marquee-track {
-            display: flex;
-            white-space: nowrap;
-            animation: scroll 20s linear infinite;
-        }
-        .marquee-item {
-            font-family: 'Abril Fatface', cursive; 
-            font-size: 1.5rem; 
-            text-transform: uppercase;
-            padding: 0 2rem;
-            line-height: 1; /* Para centrar verticalmente */
+        .youtube-container iframe {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
         }
 
-        /* SPOTIFY SECTION - Se mantiene */
-        .spotify-container {
-            display: flex;
-            justify-content: center;
-            padding: 2rem 0;
-        }
-
-        .spotify-embed {
-            width: 25vw;
-            min-width: 280px;
-            max-width: 420px;
-        }
-
-        .spotify-fallback {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .spotify-fallback a {
-            color: var(--color-secondary);
-            font-weight: 700;
-        }
+        .spotify-fallback { text-align: center; margin-top: 1rem; font-size: 0.9rem; opacity: 0.8; grid-column: 1 / -1; }
+        .spotify-fallback a { color: var(--color-secondary); font-weight: 700; }
 
         /* --- TOUR SECTION --- */
         .tour-section {
-            padding: 4rem 2rem; 
-            background: rgba(48, 5, 5, 0.6); 
-            backdrop-filter: blur(5px); /* Aumentamos el blur */
-            text-align: center;
-            margin: 0 2rem;
-            border-radius: 20px;
-            border: 1px solid var(--color-accent); /* Borde acentuado */
+            padding: 4rem 2rem; background: rgba(48, 5, 5, 0.5);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            text-align: center; margin: 4rem 5%; border-radius: 30px;
+            border: 1px solid rgba(255, 94, 108, 0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
-        .tour-section h2 { font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 3rem; color: var(--color-text); }
-        
+
+        .tour-dates { max-width: 900px; margin: 0 auto; }
         .tour-item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.15); transition: background 0.3s;
+            padding: 1.8rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
-        .tour-item:hover { background: rgba(255, 255, 255, 0.05); }
-        
-        /* Aplicamos Abril Fatface a la fecha para mayor impacto */
-        .date { 
-            color: var(--color-secondary); 
-            font-weight: 700; 
-            font-size: 1.5rem; 
-            width: 15%; 
-            text-align: left; 
-            font-family: 'Abril Fatface', cursive;
-        }
-        .city { font-weight: 700; font-size: 1.2rem; width: 30%; text-align: left; }
-        .venue { font-weight: 300; width: 30%; text-align: left; opacity: 0.8; }
-        
+        .tour-item:hover { background: rgba(255, 255, 255, 0.08); padding-left: 1.5rem; }
+        .tour-item:last-child { border-bottom: none; }
+
+        .date { color: var(--color-secondary); font-weight: 700; font-size: 1.6rem; width: 18%; text-align: left; font-family: 'Abril Fatface', cursive; }
+        .city { font-weight: 700; font-size: 1.3rem; width: 28%; text-align: left; }
+        .venue { font-weight: 300; width: 30%; text-align: left; opacity: 0.8; font-size: 1.1rem;}
+
         .ticket-btn {
-            padding: 0.5rem 1.5rem; border: 1px solid var(--color-accent); color: var(--color-accent);
-            text-decoration: none; border-radius: 20px; font-size: 0.9rem; font-weight: 700; transition: all 0.3s;
+            padding: 0.8rem 2rem; border: 2px solid var(--color-accent); color: var(--color-accent);
+            text-decoration: none; border-radius: 30px; font-size: 0.9rem; font-weight: 700;
+            transition: all 0.3s; letter-spacing: 1px;
         }
-        .ticket-btn:hover { background: var(--color-accent); color: white; }
+        .ticket-btn:hover { background: var(--color-accent); color: white; box-shadow: 0 0 20px rgba(255, 94, 108, 0.5); }
 
-        /* --- FOOTER - Se mantiene --- */
-
+        /* --- FOOTER --- */
         footer {
-            text-align: center;
-            padding: 3rem 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: auto;
+            text-align: center; padding: 4rem 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto; background: linear-gradient(to top, rgba(20, 3, 3, 0.8), transparent);
         }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .social-links {
-            margin-bottom: 1.5rem;
-        }
-
+        .social-links { margin-bottom: 2rem; }
         .social-links a {
-            color: var(--color-text);
-            margin: 0 15px;
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            transition: color 0.3s;
+            color: var(--color-text); margin: 0 20px; text-decoration: none; font-weight: 700;
+            text-transform: uppercase; font-size: 0.9rem; transition: all 0.3s; letter-spacing: 1px;
         }
-
-        .social-links a:hover {
-            color: var(--color-secondary);
-        }
+        .social-links a:hover { color: var(--color-secondary); text-shadow: 0 0 10px var(--color-secondary); }
+        footer p { opacity: 0.6; font-size: 0.9rem; }
 
         /* --- RESPONSIVE --- */
+        @media (max-width: 968px) {
+             .hero { flex-direction: column-reverse; text-align: center; padding-top: 120px; gap: 3rem; }
+             .hero-content { max-width: 100%; }
+             .hero-image-container { max-width: 80%; }
+             .hero-title { font-size: 3.5rem; }
+             /* En tablet/móvil, la media-grid pasa a 1 columna */
+             .media-grid { grid-template-columns: 1fr; max-width: 500px; gap: 3rem; }
+        }
+
         @media (max-width: 768px) {
-            .navbar { justify-content: space-between; }
-            .hero { flex-direction: column-reverse; text-align: center; padding-top: 100px; justify-content: center; }
-            .hero-content { max-width: 100%; margin-top: 2rem; }
-            .hero-image-container { width: 80%; }
-            .hero-title { font-size: 3.5rem; }
-            .hero-subtitle { font-size: 1rem; }
-
-            /* Menú Hamburguesa - Estilos Mobile */
-            .nav-links { 
-                display: none; 
-                flex-direction: column;
-                position: absolute; 
-                top: 70px; 
-                right: 20px; 
-                background-color: var(--color-bg); 
-                padding: 2rem; 
-                border: 1px solid var(--color-accent); 
-                border-radius: 10px; 
-                z-index: 1000;
-                /* Propiedades de Animación */
-                opacity: 0;
-                transform: translateY(-20px);
-                transition: opacity 0.3s ease, transform 0.3s ease;
+            .navbar { padding: 1rem; }
+            .nav-links {
+                display: none; flex-direction: column; position: absolute; top: 70px; right: 20px;
+                background-color: rgba(48, 5, 5, 0.95); padding: 2rem; border: 1px solid var(--color-accent);
+                border-radius: 15px; z-index: 1000; backdrop-filter: blur(10px);
+                opacity: 0; transform: translateY(-20px); transition: all 0.3s ease;
             }
-            .nav-links.active {
-                display: flex; /* Mostrar cuando está activo */
-                opacity: 1;
-                transform: translateY(0);
-            }
-
+            .nav-links.active { display: flex; opacity: 1; transform: translateY(0); }
             .hamburger { display: flex; }
-            .tour-item { flex-direction: column; gap: 10px; text-align: center; }
-            .date, .city, .venue { width: 100%; text-align: center; }
-            .tour-section { margin: 0; border-radius: 0; }
 
-            .spotify-embed {
-                width: 100%;
-                max-width: none;
-            }
+            .hero-subtitle { font-size: 1rem; }
+            .marquee-item { font-size: 1.2rem; padding: 0 1rem; }
+
+            .tour-section { margin: 3rem 1rem; padding: 2rem 1rem; }
+            .tour-item { flex-direction: column; gap: 15px; text-align: center; padding: 1.5rem 0; }
+            .tour-item:hover { padding-left: 0; background: transparent; }
+            .date, .city, .venue { width: 100%; text-align: center; }
+            .date { font-size: 2rem; margin-bottom: 0.5rem; }
+            .ticket-btn { width: 100%; max-width: 200px; margin-top: 1rem;}
         }
     </style>
 </head>
@@ -368,25 +314,41 @@
 
     <div class="marquee-container">
         <div class="marquee-track">
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
-            <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+            <div class="marquee-group">
+                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+            </div>
+            <div class="marquee-group" aria-hidden="true">
+                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+            </div>
         </div>
     </div>
 
-    <div id="listen" class="spotify-container">
-        <div>
-            <iframe class="spotify-embed" style="border-radius:12px" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <section id="listen">
+        <h2 class="section-title">MÚSICA & VIDEO</h2>
+        
+        <div class="media-grid">
+            
+            <div class="media-wrapper spotify-wrapper">
+                <iframe class="spotify-embed" style="border-radius:12px" src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            </div>
 
-            <p class="spotify-fallback">
-                ¿No carga el reproductor? <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank">Abrir perfil en Spotify</a>
-            </p>
+            <div class="media-wrapper">
+                <div class="youtube-container">
+                    <iframe src="https://www.youtube.com/embed/6Zn7H97v1HM" title="Riccie Oriach - La Guayaba (Official Video)" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+
         </div>
-    </div>
+
+        <p class="spotify-fallback">
+            ¿No carga el reproductor? <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank">Abrir perfil en Spotify</a>
+        </p>
+    </section>
 
     <section id="tour" class="tour-section">
-        <h2>TOUR 2025</h2>
+        <h2 class="section-title" style="margin-bottom: 2rem;">TOUR 2025</h2>
         <div class="tour-dates">
             <div class="tour-item">
                 <span class="date">15 MAR</span>
@@ -417,6 +379,7 @@
 
     <footer>
         <div class="footer-content">
+            <div class="logo" style="margin-bottom: 1.5rem;"><a href="index.html">RICCIE ORIACH</a></div>
             <div class="social-links">
                 <a href="#">Instagram</a>
                 <a href="#">Spotify</a>
@@ -427,7 +390,7 @@
     </footer>
 
     <script>
-        // --- 1. SCRIPT DE PUNTOS FLOTANTES (Se mantiene por ser óptimo) ---
+        // --- 1. SCRIPT DE PUNTOS FLOTANTES ---
         const canvas = document.getElementById('canvas-bg');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -453,8 +416,8 @@
                 this.speedX = (Math.random() * 2 - 1) * depthSpeed;
                 this.speedY = (Math.random() * 2 - 1) * depthSpeed;
                 const hue = hues[Math.floor(Math.random() * hues.length)];
-                const lightness = 45 + Math.random() * 35; // diferentes brillos
-                const alpha = 0.18 + Math.random() * 0.32; // distintas transparencias
+                const lightness = 45 + Math.random() * 35; 
+                const alpha = 0.18 + Math.random() * 0.32; 
                 this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
             }
             update() {
@@ -501,23 +464,35 @@
             scrollTimeout = setTimeout(resetMultiplier, 250);
         });
 
-        // --- 2. SCRIPT DE NAVEGACIÓN (Refactorizado con .classList.toggle) ---
+        // --- 2. SCRIPT DE NAVEGACIÓN ---
         const hamburger = document.querySelector('.hamburger');
         const navLinks = document.querySelector('.nav-links');
 
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
+            hamburger.style.transform = navLinks.classList.contains('active') ? 'rotate(90deg)' : 'rotate(0)';
         });
 
-        // Scroll suave
+        document.querySelectorAll('.nav-links li a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    hamburger.style.transform = 'rotate(0)';
+                }
+            });
+        });
+
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
     </script>
 </body>
-
 </html>
