@@ -951,13 +951,13 @@ button {
 }
 .footer-signature {
   font-family: var(--display);
-  font-size: clamp(44px, 7vw, 118px);
-  line-height: 1.13;
+  font-size: clamp(32px, 5vw, 84px);
+  line-height: 1;
   text-align: center;
   color: var(--yellow);
-  letter-spacing: -0.045em;
+  letter-spacing: -0.025em;
   white-space: nowrap;
-  margin: 35px 0 10px;
+  margin: 28px 0 8px;
 }
 
 /* Film prologue. A timed, skippable sequence; never waits for remote media. */
@@ -2150,8 +2150,8 @@ dialog:not([open]) {
     gap: 10px;
   }
   .footer-signature {
-    font-size: 11vw;
-    margin: 24px 0 14px;
+    font-size: 8.5vw;
+    margin: 20px 0 12px;
   }
   .page-hero h1 {
     font-size: 65px;
