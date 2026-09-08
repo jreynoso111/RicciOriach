@@ -1,575 +1,400 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riccie Oriach | Música</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <style>
-        /* --- VARIABLES DE COLOR (ROJO VINO, ROSA GUAYABA, AMARILLO SOL) --- */
-        :root {
-            --color-bg: #300505;
-            --color-text: #F4F4F4;
-            --color-accent: #FF5E6C;
-            --color-secondary: #FFD700;
-            --color-card: rgba(255, 255, 255, 0.05);
-            --color-outline: rgba(255, 94, 108, 0.7);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--color-bg);
-            background: radial-gradient(circle at 50% 50%, #3a0a0a 0%, #180303 100%);
-            color: var(--color-text);
-            font-family: 'Outfit', sans-serif;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('assets/texture.png');
-            background-size: cover;
-            opacity: 0.2;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(255, 94, 108, 0.08), transparent);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
-        #canvas-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* --- NAVBAR --- */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100;
-        }
-
-        .logo a {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 1.5rem;
-            text-decoration: none;
-            color: var(--color-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links li a {
-            text-decoration: none;
-            color: var(--color-text);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .nav-links li a:hover {
-            color: var(--color-accent);
-        }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background-color: white;
-        }
-
-        /* --- TIPOGRAFÍA HERO --- */
-        .hero-title {
-            font-family: 'Abril Fatface', cursive;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .outline-text {
-            -webkit-text-stroke: 2px var(--color-outline);
-            color: transparent;
-        }
-
-        .filled-text {
-            color: var(--color-accent);
-        }
-
-        /* --- MUSIC PAGE STYLES --- */
-
-        .music-hero {
-            text-align: center;
-            padding-top: 110px;
-            padding-bottom: 50px;
-            margin-bottom: 3rem;
-            border-bottom: 3px solid var(--color-accent);
-        }
-
-        .music-subtitle {
-            font-size: 1.2rem;
-            letter-spacing: 3px;
-            color: var(--color-secondary);
-            font-weight: 300;
-            margin-bottom: 1.5rem;
-        }
-
-        .music-content-wrapper {
-            max-width: 1200px;
-            margin: 0 auto 4rem auto;
-            padding: 0 5%;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Título Hero de Música */
-        .music-title {
-            font-size: 5rem;
-            line-height: 0.9;
-            margin: 0;
-        }
-
-        /* Álbum Destacado */
-        .featured-album {
-            margin-bottom: 2rem;
-        }
-
-        .album-highlight {
-            display: flex;
-            align-items: center;
-            gap: 5rem;
-            background: rgba(48, 5, 5, 0.6);
-            backdrop-filter: blur(5px);
-            padding: 3rem;
-            border-radius: 20px;
-            border: 1px solid var(--color-accent);
-            margin-bottom: 5rem;
-        }
-
-        .cover-image-container {
-            flex-shrink: 0;
-        }
-
-        .featured-cover {
-            width: 350px;
-            height: 350px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 5px solid var(--color-secondary);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .album-details {
-            color: var(--color-text);
-        }
-
-        .featured-year {
-            color: var(--color-secondary);
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 0.5rem;
-        }
-
-        .featured-name {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 3rem;
-            color: var(--color-text);
-            margin-bottom: 1rem;
-        }
-
-        .featured-description {
-            font-weight: 300;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 0.9rem 2.4rem;
-            border-radius: 999px;
-            font-weight: 700;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: var(--color-accent);
-            color: var(--color-bg);
-            border: 2px solid var(--color-accent);
-            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 94, 108, 0.35);
-            background: var(--color-secondary);
-            border-color: var(--color-secondary);
-        }
-
-        /* Discografía en Cuadrícula */
-        .discography-section {
-            text-align: center;
-            padding: 3rem 0;
-        }
-
-        .section-heading {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 2.5rem;
-            color: var(--color-accent);
-            margin-bottom: 3rem;
-        }
-
-        .albums-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
-        }
-
-        .album-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            transition: transform 0.3s, background 0.3s;
-        }
-
-        .album-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .card-cover {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-title {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 1.5rem;
-            color: var(--color-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .card-year {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-bottom: 1rem;
-        }
-
-        .card-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        .icon-link {
-            color: var(--color-text);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 700;
-            transition: color 0.3s;
-        }
-
-        .icon-link:hover {
-            color: var(--color-accent);
-        }
-
-        /* FOOTER */
-        footer {
-            text-align: center;
-            padding: 3rem 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: auto;
-        }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .social-links {
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links a {
-            color: var(--color-text);
-            margin: 0 15px;
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: var(--color-secondary);
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-            .album-highlight {
-                flex-direction: column;
-                text-align: center;
-                gap: 2rem;
-            }
-
-            .featured-cover {
-                width: 100%;
-                max-width: 300px;
-                height: auto;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                right: 20px;
-                background-color: var(--color-bg);
-                padding: 2rem;
-                border: 1px solid var(--color-accent);
-                border-radius: 10px;
-                opacity: 0;
-                transform: translateY(-20px);
-                transition: opacity 0.3s ease, transform 0.3s ease;
-                z-index: 1000;
-            }
-
-            .nav-links.active {
-                display: flex;
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            .music-title {
-                font-size: 3.5rem;
-            }
-
-            .music-subtitle {
-                font-size: 1rem;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <canvas id="canvas-bg"></canvas>
-
-    <nav class="navbar">
-        <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
-        <ul class="nav-links">
-            <li><a href="index.html">INICIO</a></li>
-            <li><a href="music.html" style="color: var(--color-accent);">MÚSICA</a></li>
-            <li><a href="events.html">TICKETS</a></li>
-            <li><a href="blog.html">BLOG</a></li>
-            <li><a href="contact.html">CONTACTO</a></li>
-        </ul>
-        <div class="hamburger"><span></span><span></span><span></span></div>
-    </nav>
-
-    <header class="music-hero">
-        <p class="music-subtitle">psicodelia tropical</p>
-        <h1 class="hero-title music-title">
-            <span class="outline-text">FOLCLORE</span><br>
-            <span class="filled-text">MÚSICA</span>
-        </h1>
-    </header>
-
-    <main class="music-content-wrapper">
-
-        <section class="featured-album">
-            <div class="album-highlight">
-                <div class="cover-image-container">
-                    <img src="album_reciente.jpg" alt="Portada del Álbum Reciente" class="featured-cover">
-                </div>
-                <div class="album-details">
-                    <p class="featured-year">2024</p>
-                    <h2 class="featured-name">MAQUINÉ</h2>
-                    <p class="featured-description">
-                        El folclore se fusiona con ritmos electrónicos futuristas en el disco que redefine el sonido
-                        caribeño alternativo.
-                    </p>
-                    <a href="#" class="cta-button listen-button">ESCUCHAR AHORA</a>
-                </div>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#290e18" />
+    <title>Música | Riccie Oriach</title>
+    <meta
+      name="description"
+      content="Escucha Maquiné, Mi Derriengue, Viaje al infinito y los sencillos de Riccie Oriach. Videoclips y enlaces a sus plataformas."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Música | Riccie Oriach" />
+    <meta
+      property="og:description"
+      content="Escucha Maquiné, Mi Derriengue, Viaje al infinito y los sencillos de Riccie Oriach. Videoclips y enlaces a sus plataformas."
+    />
+    <meta
+      property="og:image"
+      content="https://riccie-oriach.vercel.app/assets/images/riccie-portrait.jpg"
+    />
+    <meta
+      property="og:url"
+      content="https://riccie-oriach.vercel.app/music.html"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://riccie-oriach.vercel.app/music.html" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+    <script src="assets/site.js" defer></script>
+  </head>
+  <body class="page-music">
+    <div class="site-shell">
+      <a class="skip-link" href="#main-content">Saltar al contenido</a>
+      <header class="site-header">
+        <a class="brand" href="index.html" aria-label="Riccie Oriach, inicio"
+          ><span>riccie</span><span>oriach.</span></a
+        >
+        <nav aria-label="Navegación principal">
+          <ul class="nav-links" id="main-nav">
+            <li><a href="index.html#universo">El universo</a></li>
+            <li><a href="music.html" aria-current="page">Música</a></li>
+            <li><a href="events.html">En vivo</a></li>
+            <li><a href="blog.html">Bitácora</a></li>
+          </ul>
+        </nav>
+        <a class="header-contact" href="contact.html"
+          >Hablemos <span class="arrow" aria-hidden="true">↗</span></a
+        >
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="main-nav"
+        >
+          <span></span><span></span>
+        </button>
+      </header>
+      <main id="main-content" tabindex="-1">
+        <section class="page-hero wrap">
+          <p class="eyebrow"><span class="dot"></span>El universo sonoro</p>
+          <h1>Ponte <em>en órbita.</em></h1>
+          <div class="page-hero-bottom">
+            <p>
+              Canciones que empiezan en la isla y terminan donde te lleve el
+              cuerpo.
+            </p>
+            <a
+              class="text-link"
+              href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Escuchar en Spotify
+              <span class="arrow" aria-hidden="true">↗</span></a
+            >
+          </div>
         </section>
-
-        <section class="discography-section">
-            <h2 class="section-heading">Discografía</h2>
-            <div class="albums-grid">
-
-                <div class="album-card">
-                    <img src="album_la_guayaba.jpg" alt="La Guayaba" class="card-cover">
-                    <h3 class="card-title">LA GUAYABA</h3>
-                    <p class="card-year">2020</p>
-                    <div class="card-links">
-                        <a href="#" class="icon-link">Spotify</a>
-                        <a href="#" class="icon-link">YouTube</a>
-                    </div>
-                </div>
-
-                <div class="album-card">
-                    <img src="album_prima_tecata.jpg" alt="Prima Tecata" class="card-cover">
-                    <h3 class="card-title">PRIMA TECATA</h3>
-                    <p class="card-year">2018</p>
-                    <div class="card-links">
-                        <a href="#" class="icon-link">Spotify</a>
-                        <a href="#" class="icon-link">Bandcamp</a>
-                    </div>
-                </div>
-
+        <section class="wrap" aria-label="Lanzamiento destacado">
+          <div class="new-release">
+            <a
+              class="release-visual reveal"
+              href="https://www.youtube.com/watch?v=1S2t2gNuf8M"
+              data-video="1S2t2gNuf8M"
+              data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach"
+              aria-label="Ver Pa’ que bailemos"
+              ><img
+                src="assets/images/pa-que-bailemos-cover.webp"
+                alt="Portada del sencillo Pa’ que bailemos, de Lena Dardelet y Riccie Oriach"
+                width="480"
+                height="360"
+                loading="lazy"
+              /><span class="image-tag">En rotación / 2025</span
+              ><span class="play-disc"
+                ><span aria-hidden="true">▶</span></span
+              ></a
+            >
+            <div class="release-copy reveal">
+              <p class="eyebrow">
+                <span class="dot"></span> Lo nuevo suena así
+              </p>
+              <h2>Pa’ que<br /><em>bailemos.</em></h2>
+              <p class="artists">LENA DARDELET × RICCIE ORIACH</p>
+              <p>
+                Dos universos que se encuentran. Una invitación a soltar el
+                cuerpo y dejar que la música haga lo suyo.
+              </p>
+              <a
+                class="text-link"
+                href="https://www.youtube.com/watch?v=1S2t2gNuf8M"
+                data-video="1S2t2gNuf8M"
+                data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach"
+                >Ver el videoclip
+                <span class="arrow" aria-hidden="true">↗</span></a
+              >
+              <div class="release-year">
+                <span>Sencillo / 05 dic 2025</span
+                ><span>El Caribe se mueve.</span>
+              </div>
             </div>
+          </div>
         </section>
-
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="social-links">
-                <a href="#">Instagram</a>
-                <a href="#">Spotify</a>
-                <a href="#">YouTube</a>
+        <section class="section wrap music-section">
+          <div class="section-top">
+            <div>
+              <p class="eyebrow">La discografía</p>
+              <h2>Tres viajes.<br />Un mismo origen.</h2>
             </div>
-            <p>&copy; 2025 Riccie Oriach. Todos los derechos reservados.</p>
+          </div>
+          <div class="album-grid">
+            <a
+              class="album-card reveal"
+              href="https://riccieoriach.bandcamp.com/album/maquin"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Escuchar Maquiné en Bandcamp"
+              ><div class="album-art">
+                <img
+                  src="assets/images/maquine.jpg"
+                  alt="Portada de Maquiné"
+                  width="700"
+                  height="700"
+                  loading="lazy"
+                /><span class="album-go" aria-hidden="true">↗</span>
+              </div>
+              <div class="album-meta">
+                <span>01 / Riccie Oriach</span><span>Álbum · 2021</span>
+              </div>
+              <h3>Maquiné</h3></a
+            ><a
+              class="album-card reveal"
+              href="https://riccieoriach.bandcamp.com/album/mi-derriengue"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Escuchar Mi Derriengue en Bandcamp"
+              ><div class="album-art">
+                <img
+                  src="assets/images/mi-derriengue.jpg"
+                  alt="Portada de Mi Derriengue"
+                  width="700"
+                  height="700"
+                  loading="lazy"
+                /><span class="album-go" aria-hidden="true">↗</span>
+              </div>
+              <div class="album-meta">
+                <span>02 / Riccie Oriach</span><span>EP · 2020</span>
+              </div>
+              <h3>Mi Derriengue</h3></a
+            ><a
+              class="album-card reveal"
+              href="https://riccieoriach.bandcamp.com/album/viaje-al-infinito"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Escuchar Viaje al infinito en Bandcamp"
+              ><div class="album-art">
+                <img
+                  src="assets/images/viaje-al-infinito.jpg"
+                  alt="Portada de Viaje al infinito"
+                  width="700"
+                  height="700"
+                  loading="lazy"
+                /><span class="album-go" aria-hidden="true">↗</span>
+              </div>
+              <div class="album-meta">
+                <span>03 / Riccie Oriach</span><span>EP · 2017</span>
+              </div>
+              <h3>Viaje al infinito</h3></a
+            >
+          </div>
+          <div class="platforms">
+            <span>ENCUENTRA TU FORMA DE ESCUCHAR.</span>
+            <div class="platform-links">
+              <a
+                href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Spotify <span class="arrow" aria-hidden="true">↗</span></a
+              ><a
+                href="https://music.apple.com/us/artist/riccie-oriach/1149242812"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Apple Music <span class="arrow" aria-hidden="true">↗</span></a
+              ><a
+                href="https://riccieoriach.bandcamp.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Bandcamp <span class="arrow" aria-hidden="true">↗</span></a
+              >
+            </div>
+          </div>
+        </section>
+        <section class="section wrap">
+          <div class="section-top">
+            <div>
+              <p class="eyebrow">Para seguir escuchando</p>
+              <h2>Canciones <em>sueltas.</em></h2>
+            </div>
+          </div>
+          <div class="track-list">
+            <a
+              class="track-row"
+              href="https://music.apple.com/us/song/1852175979"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>01</span><strong>Guillermina</strong
+              ><small>Sencillo · 2025</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://open.spotify.com/album/2Qy9CVgdBqHYtDOWKuJ33w"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>02</span><strong>Arregoso vaya y sea</strong
+              ><small>Sencillo · 2023</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://riccieoriach.bandcamp.com/track/la-guayaba"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>03</span><strong>La Guayaba</strong
+              ><small>Viaje al infinito · 2017</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://riccieoriach.bandcamp.com/track/prima-tecata"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>04</span><strong>Prima Tecata</strong
+              ><small>Viaje al infinito · 2017</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            >
+          </div>
+        </section>
+        <section class="section wrap music-section">
+          <div class="section-top">
+            <div>
+              <p class="eyebrow">El archivo audiovisual</p>
+              <h2>Sube el volumen.</h2>
+            </div>
+            <a
+              class="text-link"
+              href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Ir a YouTube <span class="arrow" aria-hidden="true">↗</span></a
+            >
+          </div>
+          <div class="video-grid">
+            <article class="video-card reveal">
+              <a
+                class="video-art"
+                href="https://www.youtube.com/watch?v=6Zn7H97v1HM"
+                data-video="6Zn7H97v1HM"
+                data-video-title="La Guayaba"
+                aria-label="Ver video de La Guayaba"
+                ><img
+                  src="assets/images/la-guayaba.jpg"
+                  alt="Fotograma del video La Guayaba"
+                  width="480"
+                  height="360"
+                  loading="lazy"
+                /><span class="video-number">01</span
+                ><span class="play-disc"
+                  ><span aria-hidden="true">▶</span></span
+                ></a
+              >
+              <h3>La Guayaba</h3>
+              <p>Videoclip · Viaje al infinito</p>
+            </article>
+            <article class="video-card reveal">
+              <a
+                class="video-art"
+                href="https://www.youtube.com/watch?v=d0jUZkRwvp0"
+                data-video="d0jUZkRwvp0"
+                data-video-title="Mi Derriengue"
+                aria-label="Ver video de Mi Derriengue"
+                ><img
+                  src="assets/images/mi-derriengue-video.jpg"
+                  alt="Fotograma del video Mi Derriengue"
+                  width="480"
+                  height="360"
+                  loading="lazy"
+                /><span class="video-number">02</span
+                ><span class="play-disc"
+                  ><span aria-hidden="true">▶</span></span
+                ></a
+              >
+              <h3>Mi Derriengue</h3>
+              <p>Videoclip · Mi Derriengue</p>
+            </article>
+            <article class="video-card reveal">
+              <a
+                class="video-art"
+                href="https://www.youtube.com/watch?v=8Eies6dWJLg"
+                data-video="8Eies6dWJLg"
+                data-video-title="Viaje al infinito"
+                aria-label="Ver video de Viaje al infinito"
+                ><img
+                  src="assets/images/viaje-video.jpg"
+                  alt="Fotograma del video Viaje al infinito"
+                  width="480"
+                  height="360"
+                  loading="lazy"
+                /><span class="video-number">03</span
+                ><span class="play-disc"
+                  ><span aria-hidden="true">▶</span></span
+                ></a
+              >
+              <h3>Viaje al infinito</h3>
+              <p>Videoclip · Viaje al infinito</p>
+            </article>
+          </div>
+        </section>
+      </main>
+      <footer class="site-footer wrap">
+        <div class="footer-top">
+          <p class="footer-claim">
+            Una isla.<br /><span>Infinitas formas de sonar.</span>
+          </p>
+          <div class="footer-links">
+            <div>
+              <a href="music.html">Música</a><a href="events.html">En vivo</a
+              ><a href="contact.html">Booking & contacto</a>
+            </div>
+            <div>
+              <a
+                href="https://www.instagram.com/riccieoriach/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Instagram ↗</a
+              ><a
+                href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Spotify ↗</a
+              ><a
+                href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A"
+                target="_blank"
+                rel="noopener noreferrer"
+                >YouTube ↗</a
+              ><a href="index.html">Volver al inicio ↗</a>
+            </div>
+          </div>
         </div>
-    </footer>
-
-    <script>
-        // Script del menú móvil
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-    </script>
-    <script>
-        // --- SCRIPT DE PUNTOS FLOTANTES ---
-        const canvas = document.getElementById('canvas-bg');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particlesArray;
-        let speedMultiplier = 1;
-        let scrollTimeout;
-
-        window.addEventListener('resize', function () {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
-        });
-
-        class Particle {
-            constructor() {
-                const hues = [90, 110, 135, 155, 180];
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 0.5;
-                const depthSpeed = this.size * 0.15;
-                this.speedX = (Math.random() * 2 - 1) * depthSpeed;
-                this.speedY = (Math.random() * 2 - 1) * depthSpeed;
-                const hue = hues[Math.floor(Math.random() * hues.length)];
-                const lightness = 45 + Math.random() * 35;
-                const alpha = 0.18 + Math.random() * 0.32;
-                this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
-            }
-            update() {
-                this.x += this.speedX * speedMultiplier;
-                this.y += this.speedY * speedMultiplier;
-                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particlesArray = [];
-            let numberOfParticles = (canvas.height * canvas.width) / 9000;
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            requestAnimationFrame(animateParticles);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-        }
-
-        initParticles();
-        animateParticles();
-
-        const resetMultiplier = () => speedMultiplier = 1;
-
-        window.addEventListener('wheel', () => {
-            speedMultiplier = 3;
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(resetMultiplier, 250);
-        });
-    </script>
-</body>
-
+        <p class="footer-signature" aria-hidden="true">RICCIE ORIACH</p>
+        <div class="footer-bottom">
+          <p>
+            © <span data-year>2026</span> Riccie Oriach. Todos los derechos
+            reservados.
+          </p>
+          <p>Hecho de Caribe & libertad.</p>
+        </div>
+      </footer>
+    </div>
+    <dialog class="media-modal" id="media-modal" aria-labelledby="media-title">
+      <div class="modal-heading">
+        <h2 id="media-title">Riccie Oriach · Video</h2>
+        <button class="modal-close" type="button" aria-label="Cerrar video">
+          ×
+        </button>
+      </div>
+      <div class="video-player" id="video-player"></div>
+      <a
+        class="text-link"
+        id="video-external"
+        href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Ver directamente en YouTube
+        <span class="arrow" aria-hidden="true">↗</span></a
+      >
+    </dialog>
+  </body>
 </html>

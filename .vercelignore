@@ -1,0 +1,5 @@
+docs/
+scripts/
+*.md
+*.backup
+__pycache__/

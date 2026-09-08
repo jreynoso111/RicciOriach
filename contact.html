@@ -1,440 +1,191 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riccie Oriach | Contacto</title>
-    <meta name="description" content="Contacta con el equipo de Riccie Oriach. Booking y Management.">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap"
-        rel="stylesheet">
-
-    <style>
-        /* --- VARIABLES DE COLOR (Vibe Riccie Oriach) --- */
-        :root {
-            --color-bg: #300505;
-            --color-text: #F4F4F4;
-            --color-accent: #FF5E6C;
-            --color-secondary: #FFD700;
-            --color-outline: rgba(255, 94, 108, 0.7);
-        }
-
-        /* --- ESTILOS GENERALES --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: var(--color-bg);
-            background: radial-gradient(circle at 50% 50%, #3a0a0a 0%, #180303 100%);
-            color: var(--color-text);
-            font-family: 'Outfit', sans-serif;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('assets/texture.png');
-            background-size: cover;
-            opacity: 0.2;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(255, 94, 108, 0.08), transparent);
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* --- CANVAS DE FONDO (PUNTOS FLOTANTES) --- */
-        #canvas-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* --- NAVBAR (Del código nuevo) --- */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 2rem;
-            position: absolute;
-            /* Flotante sobre el contenido */
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100;
-        }
-
-        .logo a {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 1.5rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--color-secondary);
-            text-decoration: none;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links li a {
-            text-decoration: none;
-            color: var(--color-text);
-            font-weight: 500;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links li a:hover {
-            color: var(--color-accent);
-        }
-
-        /* Menú Hamburguesa (Visual) */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 5px;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background-color: var(--color-text);
-        }
-
-        /* --- SECCIÓN DE CONTACTO --- */
-        .contact-hero {
-            padding-top: 150px;
-            /* Espacio para que no choque con el navbar */
-            padding-bottom: 50px;
-            text-align: center;
-        }
-
-        h1 {
-            font-family: 'Abril Fatface', cursive;
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            line-height: 1;
-        }
-
-        .outline-text {
-            -webkit-text-stroke: 2px var(--color-outline);
-            color: transparent;
-        }
-
-        .filled-text {
-            color: var(--color-accent);
-        }
-
-        .tour-section {
-            padding: 0 1rem 4rem 1rem;
-            max-width: 800px;
-            margin: 0 auto 3rem auto;
-            background: rgba(48, 5, 5, 0.6);
-            border: 1px solid var(--color-accent);
-            border-radius: 20px;
-        }
-
-        /* Estilos del Formulario */
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            color: var(--color-secondary);
-            /* Amarillo para resaltar labels */
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 8px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .cta-button {
-            width: 100%;
-            padding: 1rem;
-            background-color: var(--color-accent);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .cta-button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(255, 94, 108, 0.4);
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            text-align: center;
-            padding: 3rem 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: auto;
-        }
-
-        .footer-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .social-links {
-            margin-bottom: 1.5rem;
-        }
-
-        .social-links a {
-            color: var(--color-text);
-            margin: 0 15px;
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: var(--color-secondary);
-        }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                right: 20px;
-                background-color: var(--color-bg);
-                padding: 2rem;
-                border: 1px solid var(--color-accent);
-                border-radius: 10px;
-                opacity: 0;
-                transform: translateY(-20px);
-                transition: opacity 0.3s ease, transform 0.3s ease;
-            }
-
-            .nav-links.active {
-                display: flex;
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            h1 {
-                font-size: 2.5rem;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <canvas id="canvas-bg"></canvas>
-    <!-- HEADER / NAVBAR (Integrado del código nuevo) -->
-    <nav class="navbar">
-        <div class="logo">
-            <a href="index.html">RICCIE ORIACH</a>
-        </div>
-        <ul class="nav-links">
-            <li><a href="index.html">INICIO</a></li>
-            <li><a href="music.html">MÚSICA</a></li>
-            <li><a href="events.html">TICKETS</a></li>
-            <li><a href="blog.html">BLOG</a></li>
-            <li><a href="contact.html" style="color: var(--color-accent);">CONTACTO</a></li>
-        </ul>
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
-
-    <!-- CONTENIDO DE LA PÁGINA -->
-    <div class="contact-hero">
-        <h1>
-            <span class="outline-text">CON</span><span class="filled-text">TACTO</span>
-        </h1>
-    </div>
-
-    <section class="tour-section">
-        <div class="tour-dates" style="text-align: center;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif; color: white;">
-                Booking & Management</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 3rem; opacity: 0.8; font-weight: 300;">
-                management@riccioriach.com</p>
-
-            <form action="#" method="POST">
-                <div>
-                    <label for="nombre">NOMBRE</label>
-                    <input type="text" id="nombre" required placeholder="Tu nombre o empresa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#290e18" />
+    <title>Contacto & booking | Riccie Oriach</title>
+    <meta
+      name="description"
+      content="Conecta con Riccie Oriach para conciertos, festivales, prensa y colaboraciones a través de sus canales oficiales."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Contacto &amp; booking | Riccie Oriach"
+    />
+    <meta
+      property="og:description"
+      content="Conecta con Riccie Oriach para conciertos, festivales, prensa y colaboraciones a través de sus canales oficiales."
+    />
+    <meta
+      property="og:image"
+      content="https://riccie-oriach.vercel.app/assets/images/riccie-portrait.jpg"
+    />
+    <meta
+      property="og:url"
+      content="https://riccie-oriach.vercel.app/contact.html"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link
+      rel="canonical"
+      href="https://riccie-oriach.vercel.app/contact.html"
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="assets/site.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+    <script src="assets/site.js" defer></script>
+  </head>
+  <body class="">
+    <div class="site-shell">
+      <a class="skip-link" href="#main-content">Saltar al contenido</a>
+      <header class="site-header">
+        <a class="brand" href="index.html" aria-label="Riccie Oriach, inicio"
+          ><span>riccie</span><span>oriach.</span></a
+        >
+        <nav aria-label="Navegación principal">
+          <ul class="nav-links" id="main-nav">
+            <li><a href="index.html#universo">El universo</a></li>
+            <li><a href="music.html">Música</a></li>
+            <li><a href="events.html">En vivo</a></li>
+            <li><a href="blog.html">Bitácora</a></li>
+          </ul>
+        </nav>
+        <a class="header-contact" href="contact.html"
+          >Hablemos <span class="arrow" aria-hidden="true">↗</span></a
+        >
+        <button
+          class="menu-toggle"
+          type="button"
+          aria-label="Abrir menú"
+          aria-expanded="false"
+          aria-controls="main-nav"
+        >
+          <span></span><span></span>
+        </button>
+      </header>
+      <main id="main-content" tabindex="-1">
+        <section class="page-hero wrap">
+          <p class="eyebrow">
+            <span class="dot"></span>Booking · Prensa · Colaboraciones
+          </p>
+          <h1>Hablemos.<br /><em>Que suene.</em></h1>
+          <div class="page-hero-bottom">
+            <p>Las mejores historias empiezan con una conversación.</p>
+          </div>
+        </section>
+        <section class="section wrap contact-grid">
+          <div class="contact-copy">
+            <h2>Trae la idea.<br />La música<br />nos encuentra.</h2>
+            <p>
+              Para conciertos, festivales, entrevistas o colaboraciones, conecta
+              con Riccie a través de su perfil oficial.
+            </p>
+            <div class="contact-options">
+              <a
+                class="contact-option"
+                href="https://www.instagram.com/riccieoriach/"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><div>
+                  <small>BOOKING & COLABORACIONES</small
+                  ><span>Escribir por Instagram</span>
                 </div>
-                <div>
-                    <label for="email">EMAIL</label>
-                    <input type="email" id="email" required placeholder="correo@ejemplo.com">
+                <span class="arrow" aria-hidden="true">↗</span></a
+              ><a
+                class="contact-option"
+                href="https://riccieoriach.bandcamp.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><div>
+                  <small>MÚSICA & LANZAMIENTOS</small
+                  ><span>Riccie Oriach en Bandcamp</span>
                 </div>
-                <div>
-                    <label for="mensaje">MENSAJE</label>
-                    <textarea id="mensaje" rows="5" required
-                        placeholder="Detalles del evento o propuesta..."></textarea>
+                <span class="arrow" aria-hidden="true">↗</span></a
+              ><a
+                class="contact-option"
+                href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><div>
+                  <small>VIDEOS & SESIONES</small><span>Canal de YouTube</span>
                 </div>
-                <button type="submit" class="cta-button">ENVIAR MENSAJE</button>
-            </form>
-        </div>
-    </section>
-
-    <footer>
-        <div class="footer-content">
-            <div class="social-links">
-                <a href="#">Instagram</a>
-                <a href="#">Spotify</a>
-                <a href="#">YouTube</a>
+                <span class="arrow" aria-hidden="true">↗</span></a
+              >
             </div>
-            <p>&copy; 2025 Riccie Oriach. Todos los derechos reservados.</p>
+          </div>
+          <div class="contact-photo">
+            <img
+              src="assets/images/riccie-portrait.jpg"
+              alt="Retrato de Riccie Oriach con su maraca"
+              width="640"
+              height="639"
+            />
+            <p class="eyebrow">De República Dominicana, con música.</p>
+          </div>
+        </section>
+      </main>
+      <footer class="site-footer wrap">
+        <div class="footer-top">
+          <p class="footer-claim">
+            Una isla.<br /><span>Infinitas formas de sonar.</span>
+          </p>
+          <div class="footer-links">
+            <div>
+              <a href="music.html">Música</a><a href="events.html">En vivo</a
+              ><a href="contact.html">Booking & contacto</a>
+            </div>
+            <div>
+              <a
+                href="https://www.instagram.com/riccieoriach/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Instagram ↗</a
+              ><a
+                href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Spotify ↗</a
+              ><a
+                href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A"
+                target="_blank"
+                rel="noopener noreferrer"
+                >YouTube ↗</a
+              ><a href="index.html">Volver al inicio ↗</a>
+            </div>
+          </div>
         </div>
-    </footer>
-
-    <!-- Script simple para el menú hamburguesa en móviles -->
-    <script>
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
-
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-    </script>
-    <script>
-        // --- SCRIPT DE PUNTOS FLOTANTES ---
-        const canvas = document.getElementById('canvas-bg');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let particlesArray;
-        let speedMultiplier = 1;
-        let scrollTimeout;
-
-        window.addEventListener('resize', function () {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
-        });
-
-        class Particle {
-            constructor() {
-                const hues = [90, 110, 135, 155, 180];
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 0.5;
-                const depthSpeed = this.size * 0.15;
-                this.speedX = (Math.random() * 2 - 1) * depthSpeed;
-                this.speedY = (Math.random() * 2 - 1) * depthSpeed;
-                const hue = hues[Math.floor(Math.random() * hues.length)];
-                const lightness = 45 + Math.random() * 35;
-                const alpha = 0.18 + Math.random() * 0.32;
-                this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
-            }
-            update() {
-                this.x += this.speedX * speedMultiplier;
-                this.y += this.speedY * speedMultiplier;
-                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particlesArray = [];
-            let numberOfParticles = (canvas.height * canvas.width) / 9000;
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            requestAnimationFrame(animateParticles);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-        }
-
-        initParticles();
-        animateParticles();
-
-        const resetMultiplier = () => speedMultiplier = 1;
-
-        window.addEventListener('wheel', () => {
-            speedMultiplier = 3;
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(resetMultiplier, 250);
-        });
-    </script>
-</body>
-
+        <p class="footer-signature" aria-hidden="true">RICCIE ORIACH</p>
+        <div class="footer-bottom">
+          <p>
+            © <span data-year>2026</span> Riccie Oriach. Todos los derechos
+            reservados.
+          </p>
+          <p>Hecho de Caribe & libertad.</p>
+        </div>
+      </footer>
+    </div>
+    <dialog class="media-modal" id="media-modal" aria-labelledby="media-title">
+      <div class="modal-heading">
+        <h2 id="media-title">Riccie Oriach · Video</h2>
+        <button class="modal-close" type="button" aria-label="Cerrar video">
+          ×
+        </button>
+      </div>
+      <div class="video-player" id="video-player"></div>
+      <a
+        class="text-link"
+        id="video-external"
+        href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Ver directamente en YouTube
+        <span class="arrow" aria-hidden="true">↗</span></a
+      >
+    </dialog>
+  </body>
 </html>
