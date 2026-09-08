@@ -1210,6 +1210,20 @@ dialog:not([open]) {
 .page-hero-bottom .text-link {
   flex-shrink: 0;
 }
+.page-music .page-hero {
+  padding-top: 120px;
+  padding-bottom: 32px;
+}
+.page-music .page-hero .eyebrow {
+  margin-bottom: 14px;
+}
+.page-music .page-hero h1 {
+  font-size: clamp(42px, 5.5vw, 84px);
+  line-height: 0.98;
+}
+.page-music .page-hero p:not(.eyebrow) {
+  margin-top: 16px;
+}
 .page-music .new-release {
   padding-block: 75px;
 }
@@ -1956,6 +1970,16 @@ dialog:not([open]) {
     flex-direction: column;
     gap: 10px;
   }
+  .page-music .page-hero {
+    padding-top: 100px;
+    padding-bottom: 26px;
+  }
+  .page-music .page-hero .eyebrow {
+    margin-bottom: 10px;
+  }
+  .page-music .page-hero p:not(.eyebrow) {
+    margin-top: 12px;
+  }
   .page-music .new-release {
     padding-block: 50px;
   }
@@ -2138,6 +2162,10 @@ dialog:not([open]) {
   }
   .page-hero h1 {
     font-size: 65px;
+  }
+  .page-music .page-hero {
+    padding-top: 90px;
+    padding-bottom: 22px;
   }
   .page-hero .eyebrow {
     font-size: 8px;
