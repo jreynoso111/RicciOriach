@@ -951,7 +951,7 @@ button {
 }
 .footer-signature {
   font-family: var(--display);
-  font-size: clamp(64px, 13.7vw, 230px);
+  font-size: clamp(44px, 7vw, 118px);
   line-height: 1.13;
   text-align: center;
   color: var(--yellow);
@@ -2150,8 +2150,8 @@ dialog:not([open]) {
     gap: 10px;
   }
   .footer-signature {
-    font-size: 13vw;
-    margin: 32px 0 18px;
+    font-size: 11vw;
+    margin: 24px 0 14px;
   }
   .page-hero h1 {
     font-size: 65px;
