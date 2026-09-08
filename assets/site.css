@@ -949,16 +949,6 @@ button {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.footer-signature {
-  font-family: var(--display);
-  font-size: clamp(32px, 5vw, 84px);
-  line-height: 1;
-  text-align: center;
-  color: var(--yellow);
-  letter-spacing: -0.025em;
-  white-space: nowrap;
-  margin: 28px 0 8px;
-}
 
 /* Film prologue. A timed, skippable sequence; never waits for remote media. */
 .intro-pending .site-shell {
@@ -1954,9 +1944,6 @@ dialog:not([open]) {
   .footer-bottom {
     font-size: 8px;
   }
-  .footer-signature {
-    margin-top: 25px;
-  }
   .page-hero {
     padding-top: 140px;
     padding-bottom: 45px;
@@ -2148,10 +2135,6 @@ dialog:not([open]) {
     align-items: start;
     flex-direction: column;
     gap: 10px;
-  }
-  .footer-signature {
-    font-size: 8.5vw;
-    margin: 20px 0 12px;
   }
   .page-hero h1 {
     font-size: 65px;
