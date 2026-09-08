@@ -1,358 +1,1871 @@
 <!DOCTYPE html>
-<html lang="es" style="scroll-padding-top: 100px;">
+<html lang="es" style="scroll-padding-top: 96px;">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('js');</script>
     <title>Riccie Oriach | Folclore Alternativo</title>
-    <meta name="description" content="Sitio oficial de Riccie Oriach. Folclore Alternativo Caribeño.">
+    <meta name="description" content="Sitio oficial de Riccie Oriach: rock, folclor dominicano, historias de la isla y música para entrar en movimiento.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&amp;family=Fraunces:opsz,wght@9..144,700;9..144,900&amp;family=Outfit:wght@300;500;700;900&amp;display=swap" rel="stylesheet">
 
     <style>
-        /* --- VARIABLES & ESTILOS GLOBALES --- */
         :root {
-            --color-bg: #300505;       /* Rojo Vino Profundo */
-            --color-text: #F4F4F4;     /* Blanco Hueso */
-            --color-accent: #FF5E6C;   /* Rosa Guayaba */
-            --color-secondary: #FFD700; /* Amarillo Sol */
-            --color-outline: rgba(255, 94, 108, 0.7); /* Contraste para Outline */
-
-            /* Ajustes del fondo */
-            --texture-offset-y: 15%;
-            --texture-opacity: 0.48;
-            --overlay-strong: rgba(58, 10, 10, 0.55);
-            --overlay-soft: rgba(24, 3, 3, 0.42);
-            --overlay-sheen: rgba(255, 94, 108, 0.04);
+            --cacao: #240b08;
+            --vino: #4f1710;
+            --hoja: #143c2d;
+            --guayaba: #ff5f65;
+            --mango: #f3c544;
+            --crema: #fff2d7;
+            --menta: #6ed7bf;
+            --ink: #120605;
+            --glass: rgba(255, 242, 215, 0.08);
+            --line: rgba(255, 242, 215, 0.18);
+            --display: 'Abril Fatface', cursive;
+            --wordmark: 'Fraunces', 'Abril Fatface', serif;
+            --body: 'Outfit', sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background: var(--cacao);
+        }
 
         body {
-            background-color: var(--color-bg);
-            color: var(--color-text);
-            font-family: 'Outfit', sans-serif;
-            overflow-x: hidden;
-            margin: 0;
             position: relative;
+            isolation: isolate;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--crema);
+            font-family: var(--body);
+            background:
+                radial-gradient(circle at 72% 22%, rgba(255, 95, 101, 0.24), transparent 28rem),
+                radial-gradient(circle at 18% 72%, rgba(243, 197, 68, 0.1), transparent 22rem),
+                radial-gradient(circle at 50% 50%, #3a0a0a 0%, #180303 100%);
         }
 
-        /* Capas de Fondo */
         body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('Assets/images/texture.png'); background-size: cover;
-            background-position: center var(--texture-offset-y); background-repeat: no-repeat;
-            opacity: var(--texture-opacity); z-index: -3; pointer-events: none;
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image: url('assets/texture.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.42;
         }
 
         body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, var(--overlay-strong) 0%, var(--overlay-soft) 100%),
-                        linear-gradient(45deg, var(--overlay-sheen), transparent);
-            z-index: -2; pointer-events: none;
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 52% 50%, rgba(58, 10, 10, 0.22) 0%, rgba(24, 3, 3, 0.56) 100%),
+                linear-gradient(45deg, rgba(255, 94, 108, 0.08), transparent),
+                linear-gradient(90deg, rgba(48, 5, 5, 0.38), rgba(48, 5, 5, 0.06) 52%, rgba(48, 5, 5, 0.32)),
+                repeating-linear-gradient(90deg, rgba(255, 242, 215, 0.018) 0 1px, transparent 1px 76px);
         }
 
-        #canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        #canvas-bg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-        /* --- NAVBAR --- */
+        .intro-lock {
+            overflow: hidden;
+        }
+
+        .cinematic-intro {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            place-items: center;
+            overflow: hidden;
+            isolation: isolate;
+            color: var(--crema);
+            background: var(--ink);
+        }
+
+        .js .cinematic-intro {
+            display: grid;
+        }
+
+        .cinematic-intro::before,
+        .cinematic-intro::after {
+            content: "";
+            position: absolute;
+            top: -2%;
+            bottom: -2%;
+            z-index: -2;
+            width: 52%;
+            background:
+                linear-gradient(115deg, rgba(18, 6, 5, 0.98), rgba(79, 23, 16, 0.92)),
+                url('assets/texture.png') center / cover;
+            box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.52);
+            transition: transform 0.95s cubic-bezier(0.7, 0, 0.2, 1);
+        }
+
+        .cinematic-intro::before {
+            left: -2%;
+            transform-origin: left center;
+        }
+
+        .cinematic-intro::after {
+            right: -2%;
+            transform-origin: right center;
+        }
+
+        .intro-grid {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.46;
+            background:
+                radial-gradient(circle at 50% 45%, rgba(243, 197, 68, 0.24), transparent 18rem),
+                linear-gradient(90deg, transparent 49.9%, rgba(255, 242, 215, 0.24) 50%, transparent 50.1%),
+                repeating-linear-gradient(90deg, transparent 0 11vw, rgba(255, 242, 215, 0.06) 11vw 11.08vw),
+                repeating-linear-gradient(0deg, transparent 0 14vh, rgba(255, 242, 215, 0.04) 14vh 14.08vh);
+            mask-image: radial-gradient(circle at center, #000 0 38%, transparent 78%);
+        }
+
+        .intro-grid::before,
+        .intro-grid::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(110, 215, 191, 0.54);
+            border-radius: 50%;
+            transform: rotate(-12deg);
+        }
+
+        .intro-grid::before {
+            width: min(54vw, 650px);
+            aspect-ratio: 1;
+            top: 10%;
+            left: 23%;
+            animation: intro-orbit 13s linear infinite;
+        }
+
+        .intro-grid::after {
+            width: min(28vw, 330px);
+            aspect-ratio: 1;
+            right: 14%;
+            bottom: 12%;
+            border-color: rgba(255, 95, 101, 0.54);
+            animation: intro-orbit 9s linear infinite reverse;
+        }
+
+        .intro-core {
+            display: grid;
+            justify-items: center;
+            width: min(90vw, 700px);
+            text-align: center;
+            animation: intro-core-in 1.2s 0.1s both cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+
+        .intro-signal {
+            position: relative;
+            width: clamp(110px, 15vw, 176px);
+            aspect-ratio: 1;
+            margin-bottom: clamp(1.4rem, 4vw, 2.6rem);
+        }
+
+        .intro-signal::before,
+        .intro-signal::after {
+            content: "";
+            position: absolute;
+            inset: 14%;
+            border: 1px solid rgba(255, 242, 215, 0.72);
+            border-radius: 46% 54% 48% 52%;
+            transform: rotate(22deg);
+        }
+
+        .intro-signal::after {
+            inset: 0;
+            border-color: rgba(110, 215, 191, 0.58);
+            transform: rotate(-28deg) scale(0.82);
+            animation: intro-signal-pulse 2.2s ease-in-out infinite;
+        }
+
+        .intro-signal span {
+            position: absolute;
+            display: block;
+            border-radius: 999px;
+        }
+
+        .intro-signal .signal-core {
+            inset: 36%;
+            z-index: 2;
+            background: var(--mango);
+            box-shadow: 0 0 0 9px rgba(243, 197, 68, 0.1), 0 0 42px rgba(243, 197, 68, 0.55);
+            animation: intro-core-pulse 1.4s ease-in-out infinite;
+        }
+
+        .intro-signal .signal-ray {
+            top: 48%;
+            left: -12%;
+            width: 124%;
+            height: 2px;
+            background: var(--guayaba);
+            transform: rotate(-18deg);
+            transform-origin: center;
+            box-shadow: 0 0 18px rgba(255, 95, 101, 0.5);
+        }
+
+        .intro-signal .signal-ray:nth-of-type(3) {
+            transform: rotate(18deg);
+        }
+
+        .intro-kicker,
+        .intro-caption {
+            color: var(--mango);
+            font-size: clamp(0.68rem, 1.2vw, 0.86rem);
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        .intro-kicker {
+            animation: intro-rise 0.8s 0.42s both ease-out;
+        }
+
+        .intro-title {
+            display: grid;
+            margin: 0.75rem 0 1rem;
+            font-family: var(--wordmark);
+            font-size: clamp(3.8rem, 11vw, 9.8rem);
+            font-weight: 900;
+            letter-spacing: -0.055em;
+            line-height: 0.76;
+            text-transform: uppercase;
+            animation: intro-title-in 1s 0.52s both cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .intro-title span:first-child {
+            color: transparent;
+            -webkit-text-stroke: clamp(1px, 0.18vw, 3px) var(--crema);
+        }
+
+        .intro-title span:last-child {
+            color: var(--guayaba);
+            text-shadow: 0.06em 0.05em 0 var(--ink), 0 0 32px rgba(255, 95, 101, 0.32);
+        }
+
+        .intro-note {
+            max-width: 420px;
+            color: rgba(255, 242, 215, 0.76);
+            font-size: clamp(0.95rem, 1.8vw, 1.22rem);
+            line-height: 1.45;
+            animation: intro-rise 0.8s 0.72s both ease-out;
+        }
+
+        .intro-meter {
+            display: flex;
+            gap: 0.35rem;
+            width: min(34vw, 240px);
+            margin-top: 1.6rem;
+            animation: intro-rise 0.8s 0.9s both ease-out;
+        }
+
+        .intro-meter span {
+            flex: 1;
+            height: 3px;
+            overflow: hidden;
+            border-radius: 99px;
+            background: rgba(255, 242, 215, 0.18);
+        }
+
+        .intro-meter span::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: var(--menta);
+            transform: translateX(-100%);
+            animation: intro-meter-fill 3.4s 0.2s both cubic-bezier(0.55, 0, 0.45, 1);
+        }
+
+        .intro-meter span:nth-child(2)::after {
+            animation-delay: 0.46s;
+            background: var(--mango);
+        }
+
+        .intro-meter span:nth-child(3)::after {
+            animation-delay: 0.72s;
+            background: var(--guayaba);
+        }
+
+        .intro-caption {
+            position: absolute;
+            bottom: 1.65rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 242, 215, 0.56);
+            font-size: 0.66rem;
+            white-space: nowrap;
+        }
+
+        .intro-skip {
+            position: absolute;
+            right: clamp(1rem, 4vw, 3.5rem);
+            bottom: 1.5rem;
+            min-height: 42px;
+            padding: 0.7rem 1rem;
+            border: 1px solid rgba(255, 242, 215, 0.3);
+            border-radius: 999px;
+            background: rgba(18, 6, 5, 0.2);
+            color: rgba(255, 242, 215, 0.82);
+            font-family: var(--body);
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+        }
+
+        .intro-skip:hover,
+        .intro-skip:focus-visible {
+            border-color: var(--mango);
+            color: var(--mango);
+            transform: translateY(-2px);
+        }
+
+        .cinematic-intro.is-leaving::before {
+            transform: translateX(-104%);
+        }
+
+        .cinematic-intro.is-leaving::after {
+            transform: translateX(104%);
+        }
+
+        .cinematic-intro.is-leaving .intro-core {
+            opacity: 0;
+            transform: translateY(-1rem) scale(0.96);
+        }
+
+        .cinematic-intro.is-leaving {
+            pointer-events: none;
+        }
+
+        .cinematic-intro.is-hidden {
+            display: none;
+        }
+
+        @keyframes intro-core-in {
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes intro-title-in {
+            from { opacity: 0; transform: translateY(1.4rem) skewX(-5deg); }
+            to { opacity: 1; transform: translateY(0) skewX(0); }
+        }
+
+        @keyframes intro-rise {
+            from { opacity: 0; transform: translateY(0.75rem); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes intro-orbit {
+            to { transform: rotate(348deg); }
+        }
+
+        @keyframes intro-signal-pulse {
+            0%, 100% { opacity: 0.35; transform: rotate(-28deg) scale(0.78); }
+            50% { opacity: 0.88; transform: rotate(-12deg) scale(0.98); }
+        }
+
+        @keyframes intro-core-pulse {
+            0%, 100% { transform: scale(0.82); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes intro-meter-fill {
+            to { transform: translateX(0); }
+        }
+
+        a {
+            color: inherit;
+        }
+
         .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem 2rem; position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
-            background: linear-gradient(to bottom, rgba(48, 5, 5, 0.8), transparent);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1.25rem clamp(1rem, 4vw, 3.5rem);
+            transition: background 0.3s ease, padding 0.3s ease, border-color 0.3s ease;
+        }
+
+        .navbar.scrolled,
+        .nav-links.active {
+            border-bottom: 1px solid var(--line);
+            background: rgba(20, 8, 6, 0.78);
+            backdrop-filter: blur(18px);
         }
 
         .logo a {
-            font-family: 'Abril Fatface', cursive; font-size: 1.5rem; color: var(--color-secondary);
-            letter-spacing: 1px; text-decoration: none; text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            font-family: var(--display);
+            font-size: clamp(1.35rem, 2.5vw, 2rem);
+            color: var(--mango);
+            letter-spacing: 0;
+            text-decoration: none;
+            text-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
         }
 
-        .nav-links { list-style: none; display: flex; gap: 2rem; }
-        .nav-links li a {
-            text-decoration: none; color: var(--color-text); font-weight: 500;
-            text-transform: uppercase; font-size: 0.9rem; transition: all 0.3s ease;
-            position: relative;
-        }
-        .nav-links li a::after {
-            content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0;
-            background-color: var(--color-accent); transition: width 0.3s;
-        }
-        .nav-links li a:hover::after { width: 100%; }
-        .nav-links li a:hover { color: var(--color-accent); text-shadow: 0 0 5px var(--color-accent); }
-
-        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-        .hamburger span { width: 25px; height: 3px; background-color: white; transition: transform 0.3s; }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            min-height: 90vh;
+        .nav-links {
             display: flex;
             align-items: center;
-            justify-content: center; /* Centrado */
-            gap: 5rem;
-            padding: 0 5%;
-            padding-top: 80px;
-            position: relative;
+            gap: clamp(1rem, 2vw, 2rem);
+            list-style: none;
         }
 
-        .hero-content { max-width: 600px; z-index: 2; }
+        .nav-links a {
+            position: relative;
+            display: inline-flex;
+            padding: 0.45rem 0;
+            color: rgba(255, 242, 215, 0.82);
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--guayaba);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.28s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.is-active {
+            color: var(--crema);
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.is-active::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .hamburger {
+            display: none;
+            width: 44px;
+            height: 44px;
+            place-items: center;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 242, 215, 0.06);
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            margin: 3px 0;
+            background: var(--crema);
+            transition: transform 0.24s ease, opacity 0.24s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: translateY(5px) rotate(45deg);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: translateY(-5px) rotate(-45deg);
+        }
+
+        .hero {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.72fr);
+            align-items: center;
+            min-height: calc(100svh - 4.5rem);
+            padding: 6rem clamp(1rem, 5vw, 5rem) 1.75rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background:
+                linear-gradient(110deg, rgba(18, 6, 5, 0.12) 0 44%, rgba(18, 6, 5, 0.03) 44%),
+                radial-gradient(circle at 78% 54%, rgba(243, 197, 68, 0.16), transparent 19rem);
+            pointer-events: none;
+        }
+
+        .hero-content,
+        .hero-stage {
+            position: relative;
+            z-index: 2;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.15rem;
+            color: var(--mango);
+            font-size: 0.86rem;
+            font-weight: 900;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 44px;
+            height: 2px;
+            background: var(--mango);
+        }
 
         .hero-title {
-            font-family: 'Abril Fatface', cursive; font-size: 5rem; line-height: 0.9;
-            margin-bottom: 1rem; text-transform: uppercase;
+            width: min(55vw, 700px);
+            max-width: 100%;
+            line-height: 0;
         }
 
-        .outline-text { -webkit-text-stroke: 2px var(--color-outline); text-stroke: 2px var(--color-outline); color: transparent; }
-        .filled-text { color: var(--color-accent); text-shadow: 0 0 20px rgba(255, 94, 108, 0.3); }
+        .hero-wordmark {
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+            filter: drop-shadow(7px 9px 0 rgba(18, 6, 5, 0.62)) drop-shadow(0 0 30px rgba(255, 95, 101, 0.16));
+        }
+
+        .wordmark-letter {
+            font-family: var(--wordmark);
+            font-size: 108px;
+            font-weight: 900;
+            letter-spacing: 0.025em;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .wordmark-letter.lower {
+            font-size: 112px;
+            letter-spacing: 0.018em;
+        }
+
+        .wordmark-outline {
+            fill: rgba(255, 242, 215, 0.02);
+            stroke: rgba(255, 242, 215, 0.96);
+            stroke-width: 2.2;
+            paint-order: stroke;
+        }
+
+        .wordmark-fill {
+            fill: var(--guayaba);
+            stroke: rgba(18, 6, 5, 0.78);
+            stroke-width: 1.9;
+            paint-order: stroke;
+        }
+
+        .wordmark-shadow {
+            fill: rgba(18, 6, 5, 0.5);
+        }
+
+        .wordmark-inner-line {
+            fill: none;
+            stroke: rgba(255, 242, 215, 0.7);
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.72;
+        }
+
+        .wordmark-vine,
+        .wordmark-stem {
+            fill: none;
+            stroke: var(--menta);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .wordmark-stem {
+            stroke: rgba(110, 215, 191, 0.78);
+            stroke-width: 2.2;
+        }
+
+        .wordmark-root {
+            fill: none;
+            stroke: rgba(110, 215, 191, 0.42);
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .wordmark-palm-leaf,
+        .wordmark-pringamosa-leaf {
+            fill: #6ed7bf;
+            stroke: rgba(18, 6, 5, 0.42);
+            stroke-width: 1;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .wordmark-palm-rib,
+        .wordmark-pringamosa-vein,
+        .wordmark-pringamosa-hair {
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .wordmark-palm-rib {
+            stroke: rgba(255, 242, 215, 0.64);
+            stroke-width: 1.25;
+        }
+
+        .wordmark-pringamosa-leaf {
+            fill: #7ddfbc;
+        }
+
+        .wordmark-pringamosa-vein {
+            stroke: rgba(18, 6, 5, 0.34);
+            stroke-width: 1.1;
+        }
+
+        .wordmark-pringamosa-hair {
+            stroke: rgba(255, 242, 215, 0.62);
+            stroke-width: 0.9;
+        }
+
+        .wordmark-percussion {
+            fill: var(--mango);
+            stroke: rgba(18, 6, 5, 0.58);
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .wordmark-guira-line {
+            stroke: var(--mango);
+            stroke-width: 2.6;
+            stroke-linecap: round;
+            opacity: 0.9;
+        }
+
+        .wordmark-drum {
+            fill: rgba(255, 242, 215, 0.12);
+            stroke: var(--mango);
+            stroke-width: 2.2;
+        }
+
+        .wordmark-drum-skin {
+            fill: rgba(255, 242, 215, 0.36);
+        }
+
+        .wordmark-ready .wordmark-letter,
+        .wordmark-ready .wordmark-shadow,
+        .wordmark-ready .wordmark-inner-line,
+        .wordmark-ready .wordmark-vine,
+        .wordmark-ready .wordmark-root,
+        .wordmark-ready .wordmark-palm-leaf,
+        .wordmark-ready .wordmark-palm-rib,
+        .wordmark-ready .wordmark-pringamosa-leaf,
+        .wordmark-ready .wordmark-pringamosa-vein,
+        .wordmark-ready .wordmark-pringamosa-hair,
+        .wordmark-ready .wordmark-percussion,
+        .wordmark-ready .wordmark-guira-line,
+        .wordmark-ready .wordmark-drum,
+        .wordmark-ready .wordmark-drum-skin {
+            opacity: 0;
+        }
+
+        .outline-text {
+            color: transparent;
+            -webkit-text-stroke: clamp(1px, 0.18vw, 3px) rgba(255, 242, 215, 0.9);
+            text-stroke: clamp(1px, 0.18vw, 3px) rgba(255, 242, 215, 0.9);
+        }
+
+        .filled-text {
+            color: var(--guayaba);
+            text-shadow: 0.055em 0.045em 0 var(--ink), 0 0 34px rgba(255, 95, 101, 0.4);
+        }
 
         .hero-subtitle {
-            font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 2.5rem;
-            color: var(--color-secondary); font-weight: 300;
+            max-width: 520px;
+            margin-top: 1.4rem;
+            color: rgba(255, 242, 215, 0.82);
+            font-size: clamp(1.05rem, 1.7vw, 1.45rem);
+            line-height: 1.55;
         }
 
-        .cta-button {
-            display: inline-block; padding: 1rem 3rem; background-color: var(--color-accent);
-            color: white; text-decoration: none; border-radius: 50px; font-weight: 700;
-            font-size: 1.1rem; transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 94, 108, 0.3);
-        }
-        .cta-button:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 25px rgba(255, 94, 108, 0.6); background-color: #ff7a85;
-        }
-
-        /* Imagen Héroe */
-        .hero-image-container { position: relative; max-width: 500px; display: flex; justify-content: center; }
-        .hero-image {
-            width: 100%; border-radius: 30px;
-            filter: contrast(1.1) saturate(1.1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(255, 215, 0, 0.2);
-            transition: transform 0.5s ease;
-        }
-        .hero-image-container:hover .hero-image { transform: scale(1.02) rotate(1deg); }
-
-        .floating-element { position: absolute; border-radius: 50%; opacity: 0.8; animation: float 6s ease-in-out infinite; z-index: -1; }
-        .fruit-1 { width: 80px; height: 80px; background: radial-gradient(circle, var(--color-accent), transparent); top: -30px; right: 30px; filter: blur(8px); }
-        .fruit-2 { width: 120px; height: 120px; background: radial-gradient(circle, var(--color-secondary), transparent); bottom: 30px; left: -50px; animation-delay: 2s; filter: blur(10px); }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
-
-        /* --- MARQUEE --- */
-        .marquee-container {
-            background: var(--color-secondary); color: var(--color-bg); padding: 15px 0;
-            overflow: hidden; position: relative; width: 105%; margin-left: -2.5%;
-            margin-bottom: 4rem; transform: rotate(-1deg);
-            border-top: 3px solid var(--color-bg); border-bottom: 3px solid var(--color-bg);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); display: flex;
-        }
-        .marquee-track { display: flex; width: max-content; white-space: nowrap; animation: marquee 20s linear infinite; }
-        .marquee-group { display: flex; }
-        .marquee-item { font-family: 'Abril Fatface', cursive; font-size: 1.5rem; text-transform: uppercase; padding: 0 2rem; line-height: 1; flex-shrink: 0; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* --- SECCIÓN MULTIMEDIA --- */
-        #listen {
-            padding: 4rem 5%;
-            text-align: center;
-        }
-
-        .section-title {
-            font-family: 'Abril Fatface', cursive; font-size: 3rem; margin-bottom: 1rem;
-            color: var(--color-text); text-align: center;
-            text-shadow: 0 0 15px rgba(255, 94, 108, 0.3);
-        }
-
-        /* Contenedor flexible para poner Spotify y Youtube lado a lado */
-        .multimedia-wrapper {
+        .hero-actions {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            flex-wrap: wrap; /* Para movil */
+            flex-wrap: wrap;
+            gap: 0.9rem;
             margin-top: 2rem;
         }
 
-        /* --- SPOTIFY --- */
-        .spotify-container {
-            display: flex;
+        .cta-button,
+        .ghost-button,
+        .ticket-btn {
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            padding: 2rem 0;
+            min-height: 48px;
+            padding: 0.85rem 1.35rem;
+            border-radius: 999px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+        }
+
+        .cta-button {
+            background: var(--mango);
+            color: var(--ink);
+            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
+        }
+
+        .ghost-button,
+        .ticket-btn {
+            border: 1px solid var(--line);
+            color: var(--crema);
+            background: rgba(255, 242, 215, 0.06);
+        }
+
+        .cta-button:hover,
+        .ghost-button:hover,
+        .ticket-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .ghost-button:hover,
+        .ticket-btn:hover {
+            border-color: var(--guayaba);
+            background: var(--guayaba);
+            color: var(--ink);
+        }
+
+        .hero-stage {
+            display: grid;
+            place-items: center;
+            justify-self: end;
+            min-height: min(66vh, 610px);
+            transform: translateY(-2.4vh);
+        }
+
+        .portrait-wrap {
+            position: relative;
+            width: min(35vw, 450px);
+            min-width: 292px;
+            aspect-ratio: 0.82;
+        }
+
+        .portrait-wrap::before {
+            content: "";
+            position: absolute;
+            inset: 8% -8% -4% 12%;
+            border: 2px solid rgba(243, 197, 68, 0.58);
+            border-radius: 48% 52% 45% 55%;
+            transform: rotate(-7deg);
+        }
+
+        .portrait-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 16% 6% 6% -10%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(110, 215, 191, 0.28), transparent 64%);
+            filter: blur(10px);
+            transform: rotate(8deg);
+        }
+
+        .hero-image {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 46% 54% 42% 58%;
+            filter: contrast(1.12) saturate(1.2);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.48);
+        }
+
+        .portrait-caption {
+            position: absolute;
+            right: -4%;
+            bottom: 10%;
+            z-index: 4;
+            display: grid;
+            gap: 0.15rem;
+            padding: 0.55rem 0.7rem;
+            border-left: 2px solid var(--mango);
+            background: rgba(18, 6, 5, 0.72);
+            color: var(--crema);
+            transform: rotate(-7deg);
+        }
+
+        .portrait-caption span {
+            font-size: 0.68rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+        }
+
+        .portrait-caption small {
+            color: var(--mango);
+            font-size: 0.63rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .vinyl {
+            position: absolute;
+            right: -9%;
+            bottom: 4%;
+            z-index: 3;
+            width: clamp(96px, 12vw, 154px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle, var(--mango) 0 11%, var(--ink) 11.5% 16%, transparent 16.5%),
+                repeating-radial-gradient(circle, #110908 0 4px, #24100d 4px 8px);
+            border: 8px solid rgba(255, 242, 215, 0.08);
+            box-shadow: 0 22px 44px rgba(0, 0, 0, 0.42);
+        }
+
+        .guira-lines {
+            position: absolute;
+            top: 9%;
+            left: -4%;
+            z-index: 3;
+            display: grid;
+            gap: 9px;
+            transform: rotate(-12deg);
+        }
+
+        .guira-lines span {
+            display: block;
+            width: clamp(86px, 11vw, 150px);
+            height: 5px;
+            border-radius: 999px;
+            background: var(--mango);
+            box-shadow: 0 0 18px rgba(243, 197, 68, 0.42);
+        }
+
+        .side-social {
+            position: fixed;
+            right: clamp(0.8rem, 2vw, 2rem);
+            bottom: 2rem;
+            z-index: 50;
+            display: grid;
+            gap: 0.55rem;
+        }
+
+        .side-social a {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            background: rgba(18, 6, 5, 0.5);
+            color: var(--crema);
+            font-size: 0.72rem;
+            font-weight: 900;
+            text-decoration: none;
+            backdrop-filter: blur(12px);
+        }
+
+        .marquee-container {
+            position: relative;
+            z-index: 4;
+            width: 108%;
+            margin: -2.35rem 0 0 -4%;
+            overflow: hidden;
+            transform: rotate(-1.5deg);
+            border-block: 2px solid var(--ink);
+            background: var(--mango);
+            color: var(--ink);
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 24s linear infinite;
+        }
+
+        .marquee-group {
+            display: flex;
+        }
+
+        .marquee-item {
+            flex: 0 0 auto;
+            padding: 0.95rem 1.5rem;
+            font-family: var(--display);
+            font-size: clamp(1.15rem, 2.4vw, 2.1rem);
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        @keyframes marquee {
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        section {
+            position: relative;
+            z-index: 2;
+            padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 5vw, 5rem);
+        }
+
+        .section-kicker {
+            margin-bottom: 0.65rem;
+            color: var(--mango);
+            font-size: 0.78rem;
+            font-weight: 900;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            max-width: 860px;
+            font-family: var(--display);
+            font-size: clamp(2.8rem, 7vw, 6.8rem);
+            font-weight: 400;
+            line-height: 0.88;
+            letter-spacing: 0;
+        }
+
+        #listen .section-title {
+            max-width: min(1180px, 100%);
+            font-size: clamp(3rem, 8.2vw, 7.8rem);
+        }
+
+        .listen-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 420px) minmax(300px, 1fr);
+            gap: clamp(2rem, 5vw, 5rem);
+            align-items: end;
+            max-width: 1160px;
+            margin: 3rem auto 0;
+        }
+
+        .player-shell {
+            position: relative;
+            padding: 1rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255, 242, 215, 0.07);
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28);
         }
 
         .spotify-embed {
-            width: 25vw;
-            min-width: 280px;
-            max-width: 420px;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: block;
+            width: 100%;
+            min-height: 352px;
+            border: 0;
+            border-radius: 8px;
+        }
+
+        .video-stack {
+            display: grid;
+            gap: 1.1rem;
+        }
+
+        .video-carousel {
+            display: grid;
+            gap: 0.85rem;
+        }
+
+        .youtube-box,
+        .video-frame {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #000;
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.28);
+        }
+
+        .youtube-box iframe,
+        .video-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .video-frame iframe {
+            display: block;
+        }
+
+        .video-controls {
+            display: grid;
+            grid-template-columns: 48px minmax(0, 1fr) 48px;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .video-nav {
+            display: grid;
+            place-items: center;
+            width: 48px;
+            height: 48px;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            background: rgba(255, 242, 215, 0.07);
+            color: var(--crema);
+            cursor: pointer;
+            transition: transform 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+        }
+
+        .video-nav:hover {
+            border-color: var(--mango);
+            background: rgba(243, 197, 68, 0.16);
+            transform: translateY(-2px);
+        }
+
+        .video-nav svg {
+            width: 22px;
+            height: 22px;
+            stroke-width: 2.4;
+        }
+
+        .video-meta {
+            min-width: 0;
+            text-align: center;
+        }
+
+        .video-title {
+            display: block;
+            overflow: hidden;
+            color: var(--crema);
+            font-weight: 900;
+            text-overflow: ellipsis;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .video-count {
+            display: block;
+            margin-top: 0.2rem;
+            color: rgba(255, 242, 215, 0.62);
+            font-size: 0.84rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        .video-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.45rem;
+        }
+
+        .video-dot {
+            width: 8px;
+            height: 8px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 242, 215, 0.28);
+            cursor: pointer;
+        }
+
+        .video-dot.is-active {
+            width: 24px;
+            border-radius: 999px;
+            background: var(--mango);
+        }
+
+        .media-copy {
+            max-width: 620px;
+            color: rgba(255, 242, 215, 0.76);
+            font-size: 1.08rem;
+            line-height: 1.65;
         }
 
         .spotify-fallback {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            width: 100%;
+            color: rgba(255, 242, 215, 0.72);
+            font-size: 0.92rem;
         }
 
         .spotify-fallback a {
-            color: var(--color-secondary);
-            font-weight: 700;
+            color: var(--mango);
+            font-weight: 900;
         }
 
-        /* YouTube */
-        .youtube-box {
-            width: 25vw;
-            min-width: 280px;
-            max-width: 420px;
-            aspect-ratio: 16/9;
-            border-radius: 12px;
+        .release-strip {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            max-width: 1160px;
+            margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .release-card {
+            position: relative;
+            display: grid;
+            align-content: space-between;
+            min-height: 214px;
+            padding: 1rem 1.05rem 1.15rem;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        .youtube-box iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
+            border-right: 1px solid var(--line);
+            color: var(--crema);
+            text-decoration: none;
+            transition: color 0.28s ease, background 0.28s ease, transform 0.28s ease;
         }
 
-        /* --- TOUR SECTION --- */
+        .release-card:last-child {
+            border-right: 0;
+        }
+
+        .release-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -24% -42% 22%;
+            height: 74%;
+            border-radius: 50%;
+            background: var(--accent, rgba(255, 95, 101, 0.28));
+            filter: blur(24px);
+            opacity: 0.48;
+            transition: transform 0.35s ease, opacity 0.35s ease;
+        }
+
+        .release-card:nth-child(1) { --accent: rgba(110, 215, 191, 0.4); }
+        .release-card:nth-child(2) { --accent: rgba(255, 95, 101, 0.38); }
+        .release-card:nth-child(3) { --accent: rgba(243, 197, 68, 0.42); }
+        .release-card:nth-child(4) { --accent: rgba(110, 215, 191, 0.32); }
+
+        .release-card:hover,
+        .release-card:focus-visible {
+            z-index: 1;
+            background: rgba(255, 242, 215, 0.08);
+            color: var(--mango);
+            transform: translateY(-4px);
+        }
+
+        .release-card:hover::before,
+        .release-card:focus-visible::before {
+            opacity: 0.76;
+            transform: scale(1.18);
+        }
+
+        .release-index,
+        .release-meta,
+        .release-link,
+        .release-card strong {
+            position: relative;
+            z-index: 1;
+        }
+
+        .release-index {
+            color: var(--mango);
+            font-family: var(--display);
+            font-size: 1.8rem;
+            line-height: 0.9;
+        }
+
+        .release-meta {
+            display: block;
+            margin-top: 0.55rem;
+            color: rgba(255, 242, 215, 0.58);
+            font-size: 0.68rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .release-card strong {
+            max-width: 10ch;
+            margin-top: auto;
+            color: inherit;
+            font-family: var(--display);
+            font-size: clamp(1.7rem, 3vw, 2.7rem);
+            font-weight: 400;
+            line-height: 0.9;
+        }
+
+        .release-link {
+            margin-top: 1.4rem;
+            color: rgba(255, 242, 215, 0.7);
+            font-size: 0.75rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .story-section {
+            display: grid;
+            grid-template-columns: minmax(280px, 0.9fr) minmax(300px, 1.1fr);
+            gap: clamp(2rem, 5vw, 5rem);
+            align-items: center;
+            background: linear-gradient(180deg, rgba(255, 242, 215, 0.04), rgba(20, 60, 45, 0.16));
+        }
+
+        .story-copy {
+            max-width: 620px;
+            color: rgba(255, 242, 215, 0.8);
+            font-size: clamp(1.12rem, 2vw, 1.55rem);
+            line-height: 1.55;
+        }
+
+        .rhythm-map {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .rhythm-row {
+            display: grid;
+            grid-template-columns: 92px minmax(0, 1fr);
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .rhythm-row strong {
+            color: var(--mango);
+            font-family: var(--display);
+            font-size: 2rem;
+            font-weight: 400;
+        }
+
+        .rhythm-row span {
+            color: rgba(255, 242, 215, 0.82);
+            font-size: 1.04rem;
+            line-height: 1.45;
+        }
+
         .tour-section {
-            padding: 4rem 2rem; background: rgba(48, 5, 5, 0.5);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            text-align: center; margin: 4rem 5%; border-radius: 30px;
-            border: 1px solid rgba(255, 94, 108, 0.3);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            background:
+                linear-gradient(90deg, rgba(18, 6, 5, 0.58), rgba(79, 23, 16, 0.16)),
+                radial-gradient(circle at 82% 24%, rgba(255, 95, 101, 0.16), transparent 22rem);
         }
 
-        .tour-dates { max-width: 900px; margin: 0 auto; }
+        .route-panel {
+            display: grid;
+            grid-template-columns: minmax(180px, 0.7fr) minmax(260px, 1.3fr) auto;
+            gap: clamp(1.5rem, 4vw, 4rem);
+            align-items: center;
+            max-width: 1160px;
+            margin: 3rem auto 0;
+            padding: clamp(1.2rem, 3vw, 2.2rem);
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(120deg, rgba(20, 60, 45, 0.44), rgba(255, 242, 215, 0.05)),
+                rgba(18, 6, 5, 0.35);
+            box-shadow: 0 28px 70px rgba(0, 0, 0, 0.22);
+        }
+
+        .route-stamp {
+            display: grid;
+            gap: 0.6rem;
+            align-content: center;
+            min-height: 150px;
+            padding: 1rem;
+            border: 1px solid rgba(243, 197, 68, 0.48);
+            background: rgba(243, 197, 68, 0.08);
+            transform: rotate(-3deg);
+        }
+
+        .route-stamp span {
+            color: var(--mango);
+            font-family: var(--display);
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            line-height: 0.72;
+        }
+
+        .route-stamp strong {
+            max-width: 12ch;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .route-copy {
+            max-width: 560px;
+        }
+
+        .route-copy p {
+            color: rgba(255, 242, 215, 0.8);
+            font-size: clamp(1.05rem, 2vw, 1.4rem);
+            line-height: 1.5;
+        }
+
+        .route-copy .ghost-button {
+            margin-top: 1.2rem;
+        }
+
+        .route-note {
+            color: var(--guayaba);
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.16em;
+            writing-mode: vertical-rl;
+            text-transform: uppercase;
+        }
+
+        .tour-dates {
+            max-width: 1020px;
+            margin: 3rem auto 0;
+            border-top: 1px solid var(--line);
+        }
+
         .tour-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.8rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            display: grid;
+            grid-template-columns: 150px minmax(160px, 1fr) minmax(140px, 0.75fr) auto;
+            gap: 1.25rem;
+            align-items: center;
+            padding: 1.35rem 0;
+            border-bottom: 1px solid var(--line);
         }
-        .tour-item:hover { background: rgba(255, 255, 255, 0.08); padding-left: 1.5rem; }
-        .tour-item:last-child { border-bottom: none; }
 
-        .date { color: var(--color-secondary); font-weight: 700; font-size: 1.6rem; width: 18%; text-align: left; font-family: 'Abril Fatface', cursive; }
-        .city { font-weight: 700; font-size: 1.3rem; width: 28%; text-align: left; }
-        .venue { font-weight: 300; width: 30%; text-align: left; opacity: 0.8; font-size: 1.1rem;}
-
-        .ticket-btn {
-            padding: 0.8rem 2rem; border: 2px solid var(--color-accent); color: var(--color-accent);
-            text-decoration: none; border-radius: 30px; font-size: 0.9rem; font-weight: 700;
-            transition: all 0.3s; letter-spacing: 1px;
+        .date {
+            color: var(--mango);
+            font-family: var(--display);
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            line-height: 0.9;
         }
-        .ticket-btn:hover { background: var(--color-accent); color: white; box-shadow: 0 0 20px rgba(255, 94, 108, 0.5); }
 
-        /* --- FOOTER --- */
+        .city {
+            font-size: clamp(1.15rem, 2vw, 1.7rem);
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .venue {
+            color: rgba(255, 242, 215, 0.72);
+        }
+
         footer {
-            text-align: center; padding: 4rem 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: auto; background: linear-gradient(to top, rgba(20, 3, 3, 0.8), transparent);
+            position: relative;
+            z-index: 2;
+            padding: 4rem clamp(1rem, 5vw, 5rem);
+            border-top: 1px solid var(--line);
+            background: rgba(18, 6, 5, 0.62);
         }
-        .social-links { margin-bottom: 2rem; }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
         .social-links a {
-            color: var(--color-text); margin: 0 20px; text-decoration: none; font-weight: 700;
-            text-transform: uppercase; font-size: 0.9rem; transition: all 0.3s; letter-spacing: 1px;
-        }
-        .social-links a:hover { color: var(--color-secondary); text-shadow: 0 0 10px var(--color-secondary); }
-        footer p { opacity: 0.6; font-size: 0.9rem; }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 968px) {
-             .hero { flex-direction: column-reverse; text-align: center; padding-top: 120px; gap: 3rem; }
-             .hero-content { max-width: 100%; }
-             .hero-image-container { max-width: 80%; }
-             .hero-title { font-size: 3.5rem; }
+            color: rgba(255, 242, 215, 0.72);
+            font-weight: 900;
+            text-decoration: none;
+            text-transform: uppercase;
         }
 
-        @media (max-width: 768px) {
-            .navbar { padding: 1rem; }
-            .nav-links {
-                display: none; flex-direction: column; position: absolute; top: 70px; right: 20px;
-                background-color: rgba(48, 5, 5, 0.95); padding: 2rem; border: 1px solid var(--color-accent);
-                border-radius: 15px; z-index: 1000; backdrop-filter: blur(10px);
-                opacity: 0; transform: translateY(-20px); transition: all 0.3s ease;
+        .social-links a:hover {
+            color: var(--mango);
+        }
+
+        footer p {
+            color: rgba(255, 242, 215, 0.58);
+            font-size: 0.9rem;
+        }
+
+        .reveal {
+            opacity: 1;
+            transform: none;
+        }
+
+        @media (max-width: 980px) {
+            .hero,
+            .story-section,
+            .listen-grid {
+                grid-template-columns: 1fr;
             }
-            .nav-links.active { display: flex; opacity: 1; transform: translateY(0); }
-            .hamburger { display: flex; }
 
-            .hero-subtitle { font-size: 1rem; }
-            .marquee-item { font-size: 1.2rem; padding: 0 1rem; }
+            .hero {
+                min-height: auto;
+                padding-top: 6.25rem;
+                padding-bottom: 1.75rem;
+            }
 
-            .multimedia-wrapper { flex-direction: column; gap: 2rem; }
-            .spotify-embed, .youtube-box { width: 100%; max-width: 100%; min-width: 0; }
-            .spotify-embed { width: 80vw; }
+            .hero-title {
+                width: min(78vw, 620px);
+            }
 
-            .tour-section { margin: 3rem 1rem; padding: 2rem 1rem; }
-            .tour-item { flex-direction: column; gap: 15px; text-align: center; padding: 1.5rem 0; }
-            .tour-item:hover { padding-left: 0; background: transparent; }
-            .date, .city, .venue { width: 100%; text-align: center; }
-            .date { font-size: 2rem; margin-bottom: 0.5rem; }
-            .ticket-btn { width: 100%; max-width: 200px; margin-top: 1rem;}
+            .hero-stage {
+                min-height: auto;
+                padding-top: 1rem;
+                transform: translateY(-0.5rem);
+            }
+
+            .portrait-wrap {
+                width: min(64vw, 390px);
+            }
+
+            .tour-item {
+                grid-template-columns: 120px minmax(0, 1fr);
+            }
+
+            .ticket-btn {
+                grid-column: 2;
+                justify-self: start;
+            }
+
+            .release-strip {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .release-card:nth-child(2) {
+                border-right: 0;
+            }
+
+            .release-card:nth-child(-n + 2) {
+                border-bottom: 1px solid var(--line);
+            }
+
+            .route-panel {
+                grid-template-columns: minmax(160px, 0.7fr) minmax(0, 1.3fr);
+            }
+
+            .route-note {
+                grid-column: 2;
+            }
+        }
+
+        @media (min-width: 981px) and (max-height: 780px) {
+            .hero {
+                padding-top: 5.35rem;
+                padding-bottom: 1.15rem;
+            }
+
+            .hero-title {
+                width: min(50vw, 650px);
+            }
+
+            .hero-subtitle {
+                margin-top: 0.9rem;
+                font-size: 1.05rem;
+            }
+
+            .hero-actions {
+                margin-top: 1.15rem;
+            }
+
+            .hero-stage {
+                min-height: min(58vh, 500px);
+                transform: translateY(-3vh);
+            }
+
+            .portrait-wrap {
+                width: min(31vw, 390px);
+                min-width: 260px;
+            }
+        }
+
+        @media (max-width: 740px) {
+            .navbar {
+                padding: 0.85rem 1rem;
+            }
+
+            .hamburger {
+                display: grid;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 66px;
+                right: 1rem;
+                display: none;
+                width: min(290px, calc(100vw - 2rem));
+                padding: 1.25rem;
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                font-size: 0.95rem;
+            }
+
+            .intro-title {
+                font-size: clamp(3.35rem, 18vw, 6.7rem);
+            }
+
+            .intro-caption {
+                bottom: 5.15rem;
+            }
+
+            .intro-skip {
+                right: 50%;
+                bottom: 1.25rem;
+                transform: translateX(50%);
+            }
+
+            .intro-skip:hover,
+            .intro-skip:focus-visible {
+                transform: translate(50%, -2px);
+            }
+
+            .hero {
+                padding-inline: 1rem;
+                padding-top: 5.25rem;
+                padding-bottom: 1.25rem;
+            }
+
+            .hero-actions {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 0.65rem;
+                margin-top: 1.2rem;
+            }
+
+            .hero-subtitle {
+                margin-top: 1rem;
+                font-size: 1rem;
+                line-height: 1.45;
+            }
+
+            .cta-button,
+            .ghost-button {
+                width: 100%;
+            }
+
+            .portrait-wrap {
+                min-width: 0;
+                width: min(72vw, 300px);
+            }
+
+            .hero-title {
+                width: 100%;
+            }
+
+            .marquee-container {
+                margin-top: -1.4rem;
+            }
+
+            .side-social {
+                display: none;
+            }
+
+            section {
+                padding-inline: 1rem;
+            }
+
+            .listen-grid {
+                margin-top: 2rem;
+            }
+
+            .rhythm-row {
+                grid-template-columns: 1fr;
+                gap: 0.35rem;
+            }
+
+            .tour-item {
+                grid-template-columns: 1fr;
+                gap: 0.55rem;
+                padding: 1.45rem 0;
+            }
+
+            .ticket-btn {
+                grid-column: auto;
+                width: 100%;
+            }
+
+            .footer-content {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .release-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .release-card,
+            .release-card:nth-child(2) {
+                min-height: 170px;
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .release-card:last-child {
+                border-bottom: 0;
+            }
+
+            .route-panel {
+                grid-template-columns: 1fr;
+                gap: 1.4rem;
+            }
+
+            .route-note {
+                grid-column: auto;
+                writing-mode: horizontal-tb;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .reveal {
+                opacity: 1;
+                transform: none;
+            }
+
+            .cinematic-intro::before,
+            .cinematic-intro::after,
+            .intro-core,
+            .intro-kicker,
+            .intro-title,
+            .intro-note,
+            .intro-meter,
+            .intro-grid::before,
+            .intro-grid::after,
+            .intro-signal::after,
+            .intro-signal .signal-core,
+            .intro-meter span::after {
+                animation: none !important;
+                transition: none !important;
+            }
         }
     </style>
 </head>
 
 <body>
+    <div class="cinematic-intro" data-cinematic-intro role="dialog" aria-modal="true" aria-labelledby="intro-title" aria-describedby="intro-note" aria-hidden="false">
+        <div class="intro-grid" aria-hidden="true"></div>
+        <div class="intro-core">
+            <div class="intro-signal" aria-hidden="true">
+                <span class="signal-core"></span>
+                <span class="signal-ray"></span>
+                <span class="signal-ray"></span>
+            </div>
+            <p class="intro-kicker">Señal 01 / República Dominicana</p>
+            <h2 id="intro-title" class="intro-title"><span>Riccie</span><span>Oriach</span></h2>
+            <p id="intro-note" class="intro-note">Rock con folclor. Una isla, muchas formas de sonar.</p>
+            <div class="intro-meter" aria-hidden="true"><span></span><span></span><span></span></div>
+        </div>
+        <p class="intro-caption">Enciende el pulso</p>
+        <button class="intro-skip" type="button" data-skip-intro>Entrar al sitio</button>
+    </div>
+
+    <div class="site-shell" data-site-shell>
     <canvas id="canvas-bg"></canvas>
 
     <nav class="navbar">
-        <div class="logo"><a href="index.html">RICCIE ORIACH</a></div>
+        <div class="logo"><a href="index.html">Riccie Oriach</a></div>
         <ul class="nav-links">
-            <li><a href="index.html" style="color: var(--color-accent);">INICIO</a></li>
-            <li><a href="music.html">MÚSICA</a></li>
-            <li><a href="events.html">TICKETS</a></li>
-            <li><a href="blog.html">BLOG</a></li>
-            <li><a href="contact.html">CONTACTO</a></li>
+            <li><a class="is-active" href="index.html">Inicio</a></li>
+            <li><a href="music.html">Música</a></li>
+            <li><a href="#tour">En vivo</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="contact.html">Contacto</a></li>
         </ul>
-        <div class="hamburger" aria-label="Abrir menú" role="button" tabindex="0">
+        <button class="hamburger" aria-label="Abrir menu" aria-expanded="false">
             <span></span><span></span><span></span>
-        </div>
+        </button>
     </nav>
 
+    <aside class="side-social" aria-label="Redes">
+        <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank" rel="noopener noreferrer">SP</a>
+        <a href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A" target="_blank" rel="noopener noreferrer">YT</a>
+        <a href="https://www.instagram.com/riccieoriach/" target="_blank" rel="noopener noreferrer">IG</a>
+    </aside>
+
+    <main id="main-content">
     <header class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="outline-text">RICCIE</span><br>
-                <span class="filled-text">ORIACH</span>
+            <p class="eyebrow">República Dominicana / Rock con folclor</p>
+            <h1 class="hero-title" aria-label="Riccie Oriach">
+                <svg class="hero-wordmark" viewBox="0 0 650 246" role="img" aria-labelledby="wordmark-title wordmark-desc" xmlns="http://www.w3.org/2000/svg">
+                    <title id="wordmark-title">Riccie Oriach</title>
+                    <desc id="wordmark-desc">Wordmark de Riccie Oriach con letras de alto contraste, líneas vegetales, güira, tambora y palitos de percusión integrados como acentos.</desc>
+
+                    <g class="wordmark-shadows" aria-hidden="true">
+                        <text class="wordmark-letter wordmark-shadow" x="12" y="103">RICCIE</text>
+                        <text class="wordmark-letter lower wordmark-shadow" x="10" y="213">ORIACH</text>
+                    </g>
+
+                    <g class="wordmark-letters" aria-hidden="true">
+                        <text class="wordmark-letter wordmark-outline" x="4" y="95">RICCIE</text>
+                        <text class="wordmark-letter lower wordmark-fill" x="0" y="205">ORIACH</text>
+                    </g>
+
+                    <g class="wordmark-botanical" aria-hidden="true">
+                        <path class="wordmark-vine" d="M18 113 C108 96 170 115 244 100 S380 84 462 104 S548 123 625 98" />
+                        <path class="wordmark-stem" d="M28 217 C125 198 196 222 286 203 S430 188 520 207 S590 220 636 194" />
+                        <path class="wordmark-inner-line" d="M88 82 C113 70 146 70 172 84" />
+                        <path class="wordmark-inner-line" d="M358 72 C338 86 338 103 360 116" />
+                        <path class="wordmark-inner-line" d="M428 72 C449 88 450 105 426 120" />
+                        <path class="wordmark-root" d="M254 202 C244 217 242 229 249 239" />
+                        <path class="wordmark-root" d="M560 206 C548 221 546 233 553 242" />
+                    </g>
+
+                    <g class="wordmark-palm" aria-hidden="true">
+                        <g transform="translate(80 105) rotate(-7)">
+                            <path class="wordmark-palm-leaf" d="M0 12 C28 -8 62 -9 104 6 C69 18 34 22 0 12Z" />
+                            <path class="wordmark-palm-rib" d="M8 11 C35 6 68 4 96 6" />
+                            <path class="wordmark-palm-rib" d="M24 9 L14 2" />
+                            <path class="wordmark-palm-rib" d="M42 7 L31 -2" />
+                            <path class="wordmark-palm-rib" d="M60 6 L49 -3" />
+                            <path class="wordmark-palm-rib" d="M77 6 L67 -1" />
+                        </g>
+                        <g transform="translate(507 121) rotate(5)">
+                            <path class="wordmark-palm-leaf" d="M0 14 C31 -10 69 -10 114 8 C78 21 37 25 0 14Z" />
+                            <path class="wordmark-palm-rib" d="M9 13 C40 7 76 5 106 8" />
+                            <path class="wordmark-palm-rib" d="M28 10 L17 2" />
+                            <path class="wordmark-palm-rib" d="M50 8 L38 -2" />
+                            <path class="wordmark-palm-rib" d="M72 8 L60 -2" />
+                            <path class="wordmark-palm-rib" d="M92 9 L80 1" />
+                        </g>
+                    </g>
+
+                    <g class="wordmark-pringamosa" aria-hidden="true">
+                        <g transform="translate(312 91) rotate(13) scale(0.72)">
+                            <path class="wordmark-pringamosa-leaf" d="M33 0 L39 10 L51 9 L47 20 L58 26 L46 31 L48 43 L36 40 L29 51 L23 39 L11 42 L14 29 L2 24 L14 18 L11 6 L24 10Z" />
+                            <path class="wordmark-pringamosa-vein" d="M30 8 L29 44" />
+                            <path class="wordmark-pringamosa-vein" d="M29 24 L45 16" />
+                            <path class="wordmark-pringamosa-vein" d="M29 29 L45 34" />
+                            <path class="wordmark-pringamosa-vein" d="M29 24 L14 15" />
+                            <path class="wordmark-pringamosa-vein" d="M29 30 L14 35" />
+                            <path class="wordmark-pringamosa-hair" d="M18 7 L15 0" />
+                            <path class="wordmark-pringamosa-hair" d="M47 20 L56 17" />
+                            <path class="wordmark-pringamosa-hair" d="M12 39 L5 45" />
+                        </g>
+                        <g transform="translate(560 205) rotate(-12) scale(0.62)">
+                            <path class="wordmark-pringamosa-leaf" d="M33 0 L39 10 L51 9 L47 20 L58 26 L46 31 L48 43 L36 40 L29 51 L23 39 L11 42 L14 29 L2 24 L14 18 L11 6 L24 10Z" />
+                            <path class="wordmark-pringamosa-vein" d="M30 8 L29 44" />
+                            <path class="wordmark-pringamosa-vein" d="M29 24 L45 16" />
+                            <path class="wordmark-pringamosa-vein" d="M29 29 L45 34" />
+                            <path class="wordmark-pringamosa-vein" d="M29 24 L14 15" />
+                            <path class="wordmark-pringamosa-vein" d="M29 30 L14 35" />
+                            <path class="wordmark-pringamosa-hair" d="M18 7 L15 0" />
+                            <path class="wordmark-pringamosa-hair" d="M47 20 L56 17" />
+                            <path class="wordmark-pringamosa-hair" d="M12 39 L5 45" />
+                        </g>
+                    </g>
+
+                    <g class="wordmark-drum-set" aria-hidden="true">
+                        <ellipse class="wordmark-drum" cx="56" cy="170" rx="31" ry="23" />
+                        <ellipse class="wordmark-drum-skin" cx="56" cy="163" rx="24" ry="10" />
+                        <path class="wordmark-percussion" d="M31 164 L84 185" />
+                        <path class="wordmark-percussion" d="M84 164 L31 185" />
+                    </g>
+
+                    <g class="wordmark-guira" aria-hidden="true">
+                        <path class="wordmark-percussion" d="M500 126 C539 106 583 113 610 139 C572 162 528 155 500 126Z" />
+                        <path class="wordmark-guira-line" d="M522 125 L586 141" />
+                        <path class="wordmark-guira-line" d="M516 135 L578 151" />
+                        <path class="wordmark-guira-line" d="M536 118 L598 133" />
+                    </g>
+
+                    <g class="wordmark-sticks" aria-hidden="true">
+                        <path class="wordmark-percussion" d="M380 20 L435 83" />
+                        <path class="wordmark-percussion" d="M438 20 L384 83" />
+                        <circle class="wordmark-percussion" cx="380" cy="20" r="4.5" />
+                        <circle class="wordmark-percussion" cx="438" cy="20" r="4.5" />
+                    </g>
+                </svg>
             </h1>
-            <p class="hero-subtitle">FOLCLORE FUTURISTA</p>
-            <a href="#listen" class="cta-button">ESCUCHAR AHORA</a>
+            <p class="hero-subtitle">Tambora, güira, bachata y sintetizadores con olor a calle caliente. Entra al pulso de un artista que convierte la isla en una canción mutante.</p>
+            <div class="hero-actions">
+                <a href="#listen" class="cta-button">Escuchar ahora</a>
+                <a href="contact.html" class="ghost-button">Contratar en vivo</a>
+            </div>
         </div>
 
-        <div class="hero-image-container">
-            <img src="https://e.snmc.io/i/1200/s/4f296b59611b91c0ba6b29605cc567ac/6878615" alt="Riccie Oriach" class="hero-image">
-            <div class="floating-element fruit-1"></div>
-            <div class="floating-element fruit-2"></div>
+        <div class="hero-stage">
+            <div class="portrait-wrap">
+                <img src="assets/hero.png" alt="Portada del EP Mi derriengue, de Riccie Oriach." class="hero-image">
+                <div class="portrait-caption"><span>MI DERRIENGUE</span><small>EP / 2020</small></div>
+                <div class="vinyl"></div>
+                <div class="guira-lines">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+            </div>
         </div>
     </header>
 
-    <div class="marquee-container">
+    <div class="marquee-container" aria-hidden="true">
         <div class="marquee-track">
             <div class="marquee-group">
-                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
-                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+                <span class="marquee-item">Maquiné / Mi derriengue / Viaje al infinito / Arregoso vaya y sea / Riccie Oriach /</span>
+                <span class="marquee-item">Maquiné / Mi derriengue / Viaje al infinito / Arregoso vaya y sea / Riccie Oriach /</span>
             </div>
-            <div class="marquee-group" aria-hidden="true">
-                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
-                <span class="marquee-item">MAQUINÉ • LA GUAYABA • PRIMA TECATA • FOLCLORE DEL FUTURO • RICCIE ORIACH •</span>
+            <div class="marquee-group">
+                <span class="marquee-item">Maquiné / Mi derriengue / Viaje al infinito / Arregoso vaya y sea / Riccie Oriach /</span>
+                <span class="marquee-item">Maquiné / Mi derriengue / Viaje al infinito / Arregoso vaya y sea / Riccie Oriach /</span>
             </div>
         </div>
     </div>
 
     <section id="listen">
-        <h2 class="section-title">MÚSICA & VIDEO</h2>
+        <p class="section-kicker reveal">La señal sonora</p>
+        <h2 class="section-title reveal">Música y video para poner la casa a vibrar.</h2>
 
-        <div class="multimedia-wrapper">
-
-            <div class="spotify-container">
-                <!-- ✅ Riccie Oriach (ID correcto) -->
+        <div class="listen-grid">
+            <div class="player-shell reveal">
                 <iframe
                     class="spotify-embed"
-                    src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&theme=0"
-                    height="352"
+                    src="https://open.spotify.com/embed/artist/3b12EGhDU7EhHcuZmMG3oV?utm_source=generator&amp;theme=0"
                     title="Riccie Oriach en Spotify"
                     loading="lazy"
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
@@ -360,178 +1873,494 @@
                 ></iframe>
             </div>
 
-            <div class="youtube-box">
-                <iframe
-                    src="https://www.youtube.com/embed/6Zn7H97v1HM"
-                    title="Riccie Oriach - La Guayaba (Official Video)"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowfullscreen
-                ></iframe>
-            </div>
+            <div class="video-stack reveal">
+                <div class="video-carousel" aria-label="Videos de Riccie Oriach en YouTube">
+                    <div class="video-frame">
+                        <iframe
+                            id="youtube-carousel-frame"
+                            src="https://www.youtube.com/embed/6Zn7H97v1HM"
+                            title="Riccie Oriach - La Guayaba (Official Video)"
+                            loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
 
+                    <div class="video-controls">
+                        <button class="video-nav" type="button" data-video-prev aria-label="Video anterior">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <path d="M15 18l-6-6 6-6" />
+                            </svg>
+                        </button>
+
+                        <div class="video-meta" aria-live="polite">
+                            <span class="video-title" data-video-title>Riccie Oriach - La Guayaba (Official Video)</span>
+                            <span class="video-count" data-video-count>1 / 6</span>
+                        </div>
+
+                        <button class="video-nav" type="button" data-video-next aria-label="Siguiente video">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <path d="M9 6l6 6-6 6" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="video-dots" data-video-dots aria-label="Seleccionar video"></div>
+                </div>
+                <p class="media-copy">De la calle al escenario: canciones que mezclan raíz dominicana, psicodelia tropical y la energía de una banda tocando en vivo.</p>
+                <p class="spotify-fallback">
+                    Si el reproductor no carga,
+                    <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank" rel="noopener noreferrer">abre Spotify</a>.
+                </p>
+            </div>
         </div>
 
-        <p class="spotify-fallback">
-            ¿No carga el reproductor?
-            <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank" rel="noopener noreferrer">
-                Abrir perfil en Spotify
+        <div class="release-strip reveal" aria-label="Selección de lanzamientos">
+            <a class="release-card" href="https://riccieoriach.bandcamp.com/album/viaje-al-infinito" target="_blank" rel="noopener noreferrer">
+                <span><span class="release-index">01</span><span class="release-meta">EP / 2017</span></span>
+                <strong>Viaje al infinito</strong>
+                <span class="release-link">Escuchar ↗</span>
             </a>
-        </p>
+            <a class="release-card" href="https://riccieoriach.bandcamp.com/album/mi-derriengue" target="_blank" rel="noopener noreferrer">
+                <span><span class="release-index">02</span><span class="release-meta">EP / 2020</span></span>
+                <strong>Mi derriengue</strong>
+                <span class="release-link">Escuchar ↗</span>
+            </a>
+            <a class="release-card" href="https://riccieoriach.bandcamp.com/album/maquin" target="_blank" rel="noopener noreferrer">
+                <span><span class="release-index">03</span><span class="release-meta">Álbum / 2021</span></span>
+                <strong>Maquiné</strong>
+                <span class="release-link">Escuchar ↗</span>
+            </a>
+            <a class="release-card" href="https://open.spotify.com/album/2Qy9CVgdBqHYtDOWKuJ33w" target="_blank" rel="noopener noreferrer">
+                <span><span class="release-index">04</span><span class="release-meta">Sencillo / 2023</span></span>
+                <strong>Arregoso vaya y sea</strong>
+                <span class="release-link">Escuchar ↗</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="story-section">
+        <div>
+            <p class="section-kicker reveal">La firma sonora</p>
+            <h2 class="section-title reveal">Raíz popular con voltaje raro.</h2>
+        </div>
+        <div class="story-copy reveal">
+            <p>Riccie Oriach suena a República Dominicana sin postal: percusión seca, voces de barrio, guitarras torcidas y coros que se quedan pegados como un pregón de madrugada.</p>
+        </div>
+        <div class="rhythm-map reveal">
+            <div class="rhythm-row">
+                <strong>01</strong>
+                <span>Rock, merengue, bachata y otros ritmos de raíz puestos en tensión con texturas alternativas.</span>
+            </div>
+            <div class="rhythm-row">
+                <strong>02</strong>
+                <span>Historias de la isla, humor, naturaleza y calle; una narrativa que se mueve entre lo íntimo y lo fantástico.</span>
+            </div>
+            <div class="rhythm-row">
+                <strong>03</strong>
+                <span>Una identidad visual cálida y dibujada: agua turquesa, tierra, guayaba, hojas y textura de afiche.</span>
+            </div>
+        </div>
     </section>
 
     <section id="tour" class="tour-section">
-        <h2 class="section-title" style="margin-bottom: 2rem;">TOUR 2025</h2>
-        <div class="tour-dates">
-            <div class="tour-item">
-                <span class="date">15 MAR</span>
-                <span class="city">SANTO DOMINGO</span>
-                <span class="venue">Teatro Nacional</span>
-                <a href="#" class="ticket-btn">TICKETS</a>
+        <p class="section-kicker reveal">En vivo</p>
+        <h2 class="section-title reveal">La música también se encuentra cara a cara.</h2>
+
+        <div class="route-panel reveal">
+            <div class="route-stamp">
+                <span>RD</span>
+                <strong>La banda está lista</strong>
             </div>
-            <div class="tour-item">
-                <span class="date">22 MAR</span>
-                <span class="city">SANTIAGO</span>
-                <span class="venue">Gran Teatro</span>
-                <a href="#" class="ticket-btn">TICKETS</a>
+            <div class="route-copy">
+                <p>Conciertos, festivales y colaboraciones: lleva el viaje de Riccie al escenario. La agenda se actualizará aquí desde el panel del equipo.</p>
+                <a href="contact.html" class="ghost-button">Hablar con el equipo</a>
             </div>
-            <div class="tour-item">
-                <span class="date">05 ABR</span>
-                <span class="city">BOGOTÁ</span>
-                <span class="venue">Estéreo Picnic</span>
-                <a href="#" class="ticket-btn">TICKETS</a>
-            </div>
-            <div class="tour-item">
-                <span class="date">12 MAY</span>
-                <span class="city">MADRID</span>
-                <span class="venue">Sala La Riviera</span>
-                <a href="#" class="ticket-btn">TICKETS</a>
-            </div>
+            <span class="route-note">Agenda / Próximamente</span>
         </div>
     </section>
+    </main>
 
     <footer>
         <div class="footer-content">
-            <div class="logo" style="margin-bottom: 1.5rem;"><a href="index.html">RICCIE ORIACH</a></div>
-            <div class="social-links">
-                <a href="#" rel="noopener">Instagram</a>
-                <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank" rel="noopener noreferrer">Spotify</a>
-                <a href="#" rel="noopener">YouTube</a>
+            <div>
+                <div class="logo" style="margin-bottom: 0.75rem;"><a href="index.html">Riccie Oriach</a></div>
+                <p>© 2026 Riccie Oriach. Todos los derechos reservados.</p>
             </div>
-            <p>© 2025 Riccie Oriach. Todos los derechos reservados.</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/riccieoriach/" target="_blank" rel="noopener noreferrer">Instagram</a>
+                <a href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV" target="_blank" rel="noopener noreferrer">Spotify</a>
+                <a href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A" target="_blank" rel="noopener noreferrer">YouTube</a>
+            </div>
         </div>
     </footer>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
     <script>
-        const canvas = document.getElementById('canvas-bg');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.querySelector('.navbar');
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const intro = document.querySelector('[data-cinematic-intro]');
+            const introSkip = document.querySelector('[data-skip-intro]');
+            const siteShell = document.querySelector('[data-site-shell]');
+            const introStorageKey = 'riccie-oriach-intro-seen';
+            let introTimer;
+            let introFinished = false;
 
-        let particlesArray;
-        let speedMultiplier = 1;
-        let scrollTimeout;
+            const setSiteInert = (isInert) => {
+                if (!siteShell) return;
+                siteShell.inert = isInert;
+                siteShell.toggleAttribute('inert', isInert);
+            };
 
-        window.addEventListener('resize', function() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            initParticles();
-        });
-
-        class Particle {
-            constructor() {
-                const hues = [90, 110, 135, 155, 180];
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 0.5;
-                const depthSpeed = this.size * 0.15;
-                this.speedX = (Math.random() * 2 - 1) * depthSpeed;
-                this.speedY = (Math.random() * 2 - 1) * depthSpeed;
-                const hue = hues[Math.floor(Math.random() * hues.length)];
-                const lightness = 45 + Math.random() * 35;
-                const alpha = 0.18 + Math.random() * 0.32;
-                this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
-            }
-            update() {
-                this.x += this.speedX * speedMultiplier;
-                this.y += this.speedY * speedMultiplier;
-                if (this.x > canvas.width) this.x = 0; else if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0; else if (this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particlesArray = [];
-            let numberOfParticles = (canvas.height * canvas.width) / 9000;
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            requestAnimationFrame(animateParticles);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-        }
-
-        initParticles();
-        animateParticles();
-
-        const resetMultiplier = () => {
-            speedMultiplier = 1;
-        };
-
-        window.addEventListener('wheel', () => {
-            speedMultiplier = 3;
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(resetMultiplier, 250);
-        });
-
-        // --- SCRIPT DE NAVEGACIÓN ---
-        const hamburger = document.querySelector('.hamburger');
-        const navLinks = document.querySelector('.nav-links');
-
-        const toggleMenu = () => {
-            navLinks.classList.toggle('active');
-            hamburger.style.transform = navLinks.classList.contains('active') ? 'rotate(90deg)' : 'rotate(0)';
-        };
-
-        hamburger.addEventListener('click', toggleMenu);
-        hamburger.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleMenu();
-            }
-        });
-
-        document.querySelectorAll('.nav-links li a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                    hamburger.style.transform = 'rotate(0)';
+            const readIntroSeen = () => {
+                try {
+                    return window.sessionStorage.getItem(introStorageKey) === '1';
+                } catch {
+                    return false;
                 }
+            };
+
+            const finishIntro = () => {
+                if (!intro || introFinished) return;
+                introFinished = true;
+                window.clearTimeout(introTimer);
+                intro.inert = true;
+                intro.setAttribute('inert', '');
+                intro.setAttribute('aria-hidden', 'true');
+                setSiteInert(false);
+                document.documentElement.classList.remove('intro-lock');
+
+                try {
+                    window.sessionStorage.setItem(introStorageKey, '1');
+                } catch {
+                    // The intro still works when storage is unavailable.
+                }
+
+                if (reducedMotion) {
+                    intro.classList.add('is-hidden');
+                } else {
+                    intro.classList.add('is-leaving');
+                    window.setTimeout(() => intro.classList.add('is-hidden'), 1020);
+                }
+
+                document.querySelector('.hero-actions .cta-button')?.focus({ preventScroll: true });
+                document.removeEventListener('keydown', handleIntroKeydown);
+            };
+
+            const handleIntroKeydown = (event) => {
+                if (event.key === 'Escape') finishIntro();
+            };
+
+            if (intro && !readIntroSeen()) {
+                setSiteInert(true);
+                document.documentElement.classList.add('intro-lock');
+                introTimer = window.setTimeout(finishIntro, reducedMotion ? 700 : 3600);
+                introSkip?.addEventListener('click', finishIntro);
+                document.addEventListener('keydown', handleIntroKeydown);
+                introSkip?.focus({ preventScroll: true });
+            } else {
+                setSiteInert(false);
+                intro?.remove();
+            }
+
+            const onScroll = () => {
+                navbar.classList.toggle('scrolled', window.scrollY > 30);
+            };
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            const closeMenu = () => {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+            };
+
+            hamburger.addEventListener('click', () => {
+                const isOpen = navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active', isOpen);
+                hamburger.setAttribute('aria-expanded', String(isOpen));
             });
-        });
 
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth' });
+            document.querySelectorAll('.nav-links a').forEach((link) => {
+                link.addEventListener('click', closeMenu);
+            });
+
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener('click', (event) => {
+                    const targetId = anchor.getAttribute('href');
+                    const target = document.querySelector(targetId);
+                    if (!target) return;
+                    event.preventDefault();
+                    target.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+                });
+            });
+
+            const riccieVideos = [
+                {
+                    id: '6Zn7H97v1HM',
+                    title: 'Riccie Oriach - La Guayaba (Official Video)'
+                },
+                {
+                    id: '8Eies6dWJLg',
+                    title: 'Riccie Oriach - Viaje al infinito (Official Video)'
+                },
+                {
+                    id: 'rByJw1ofNCA',
+                    title: 'Riccie Oriach - La dueña'
+                },
+                {
+                    id: 'd0jUZkRwvp0',
+                    title: 'Riccie Oriach - Mi Derriengue'
+                },
+                {
+                    id: 'fePDw9QDJzM',
+                    title: "Riccie Oriach - Pa' Que Suba (Official Video)"
+                },
+                {
+                    id: 'bDHeq9ESwSo',
+                    title: 'Riccie Oriach - Prima Tecata'
                 }
+            ];
+
+            const videoFrame = document.getElementById('youtube-carousel-frame');
+            const videoTitle = document.querySelector('[data-video-title]');
+            const videoCount = document.querySelector('[data-video-count]');
+            const videoDots = document.querySelector('[data-video-dots]');
+            let activeVideoIndex = 0;
+
+            const renderVideoDots = () => {
+                if (!videoDots) return;
+                videoDots.innerHTML = riccieVideos.map((video, index) => (
+                    `<button class="video-dot" type="button" data-video-index="${index}" aria-label="Ver ${video.title}"></button>`
+                )).join('');
+            };
+
+            const setActiveVideo = (index) => {
+                activeVideoIndex = (index + riccieVideos.length) % riccieVideos.length;
+                const video = riccieVideos[activeVideoIndex];
+                videoFrame.src = `https://www.youtube.com/embed/${video.id}`;
+                videoFrame.title = video.title;
+                videoTitle.textContent = video.title;
+                videoCount.textContent = `${activeVideoIndex + 1} / ${riccieVideos.length}`;
+
+                document.querySelectorAll('.video-dot').forEach((dot, dotIndex) => {
+                    dot.classList.toggle('is-active', dotIndex === activeVideoIndex);
+                    dot.setAttribute('aria-current', dotIndex === activeVideoIndex ? 'true' : 'false');
+                });
+            };
+
+            renderVideoDots();
+            setActiveVideo(0);
+
+            document.querySelector('[data-video-prev]')?.addEventListener('click', () => {
+                setActiveVideo(activeVideoIndex - 1);
+            });
+
+            document.querySelector('[data-video-next]')?.addEventListener('click', () => {
+                setActiveVideo(activeVideoIndex + 1);
+            });
+
+            videoDots?.addEventListener('click', (event) => {
+                const dot = event.target.closest('[data-video-index]');
+                if (!dot) return;
+                setActiveVideo(Number(dot.dataset.videoIndex));
+            });
+
+            const canvas = document.getElementById('canvas-bg');
+            const ctx = canvas.getContext('2d', { alpha: true });
+            const particles = [];
+            let speedMultiplier = 1;
+            let scrollTimeout;
+            let particleAnimationId;
+
+            const resizeCanvas = () => {
+                const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+                canvas.width = Math.floor(window.innerWidth * dpr);
+                canvas.height = Math.floor(window.innerHeight * dpr);
+                canvas.style.width = `${window.innerWidth}px`;
+                canvas.style.height = `${window.innerHeight}px`;
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                initParticles();
+            };
+
+            class Particle {
+                constructor() {
+                    const hues = [90, 110, 135, 155, 180];
+                    this.x = Math.random() * window.innerWidth;
+                    this.y = Math.random() * window.innerHeight;
+                    this.size = Math.random() * 3.4 + 1;
+                    const depthSpeed = this.size * 0.12;
+                    this.speedX = (Math.random() * 2 - 1) * depthSpeed;
+                    this.speedY = (Math.random() * 2 - 1) * depthSpeed;
+                    const hue = hues[Math.floor(Math.random() * hues.length)];
+                    const lightness = 45 + Math.random() * 35;
+                    const alpha = 0.32 + Math.random() * 0.28;
+                    this.color = `hsla(${hue}, 70%, ${lightness}%, ${alpha})`;
+                }
+
+                update() {
+                    this.x += this.speedX * speedMultiplier;
+                    this.y += this.speedY * speedMultiplier;
+                    if (this.x > window.innerWidth) this.x = 0;
+                    else if (this.x < 0) this.x = window.innerWidth;
+                    if (this.y > window.innerHeight) this.y = 0;
+                    else if (this.y < 0) this.y = window.innerHeight;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles.length = 0;
+                const count = Math.min(150, Math.max(58, Math.floor((window.innerWidth * window.innerHeight) / 10500)));
+                for (let i = 0; i < count; i += 1) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                particles.forEach((particle) => {
+                    particle.update();
+                    particle.draw();
+                });
+                particleAnimationId = requestAnimationFrame(animateParticles);
+            }
+
+            resizeCanvas();
+            animateParticles();
+
+            window.addEventListener('resize', resizeCanvas, { passive: true });
+            window.addEventListener('wheel', () => {
+                speedMultiplier = 2.4;
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    speedMultiplier = 1;
+                }, 220);
+            }, { passive: true });
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    cancelAnimationFrame(particleAnimationId);
+                    return;
+                }
+                animateParticles();
+            });
+
+            if (!window.anime || reducedMotion) {
+                document.querySelectorAll('.reveal').forEach((el) => {
+                    el.style.opacity = 1;
+                    el.style.transform = 'none';
+                });
+                return;
+            }
+
+            const wordmark = document.querySelector('.hero-wordmark');
+            wordmark.classList.add('wordmark-ready');
+
+            anime.timeline({ easing: 'easeOutExpo' })
+                .add({
+                    targets: '.logo, .nav-links li, .hamburger',
+                    opacity: [0, 1],
+                    translateY: [-12, 0],
+                    delay: anime.stagger(55),
+                    duration: 760
+                })
+                .add({
+                    targets: '.hero-wordmark .wordmark-letter, .hero-wordmark .wordmark-shadow',
+                    opacity: [0, 1],
+                    translateY: [28, 0],
+                    translateX: [-8, 0],
+                    rotate: [-1.5, 0],
+                    delay: anime.stagger(52),
+                    duration: 560
+                }, '-=280')
+                .add({
+                    targets: '.wordmark-vine, .wordmark-stem, .wordmark-root, .wordmark-inner-line, .wordmark-drum, .wordmark-drum-skin, .wordmark-percussion, .wordmark-guira-line, .wordmark-palm-leaf, .wordmark-palm-rib, .wordmark-pringamosa-leaf, .wordmark-pringamosa-vein, .wordmark-pringamosa-hair',
+                    opacity: [0, 1],
+                    scale: [0.82, 1],
+                    rotate: [-2, 0],
+                    delay: anime.stagger(34),
+                    duration: 560
+                }, '-=520')
+                .add({
+                    targets: '.eyebrow, .hero-subtitle, .hero-actions a',
+                    opacity: [0, 1],
+                    translateY: [22, 0],
+                    delay: anime.stagger(80),
+                    duration: 720
+                }, '-=520')
+                .add({
+                    targets: '.portrait-wrap',
+                    opacity: [0, 1],
+                    scale: [0.9, 1],
+                    rotate: [4, 0],
+                    duration: 920
+                }, '-=760')
+                .add({
+                    targets: '.guira-lines span',
+                    scaleX: [0, 1],
+                    translateX: [-26, 0],
+                    delay: anime.stagger(65),
+                    duration: 640
+                }, '-=520');
+
+            anime({
+                targets: '.vinyl',
+                rotate: '1turn',
+                duration: 5200,
+                easing: 'linear',
+                loop: true
+            });
+
+            anime({
+                targets: '.guira-lines',
+                translateY: [-7, 7],
+                rotate: [-13, -9],
+                duration: 1500,
+                easing: 'easeInOutSine',
+                direction: 'alternate',
+                loop: true
+            });
+
+            anime({
+                targets: '.side-social a',
+                translateY: [0, -8],
+                delay: anime.stagger(180),
+                duration: 1200,
+                easing: 'easeInOutSine',
+                direction: 'alternate',
+                loop: true
+            });
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    anime({
+                        targets: entry.target,
+                        translateY: [12, 0],
+                        duration: 420,
+                        easing: 'easeOutCubic'
+                    });
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.04, rootMargin: '0px 0px 28% 0px' });
+
+            document.querySelectorAll('.reveal').forEach((element) => {
+                observer.observe(element);
             });
         });
     </script>
 </body>
+
 </html>
