@@ -154,7 +154,19 @@ assert.equal(
 
 // Past events and drafts are excluded, while a future active event needs a real ticket URL.
 const agenda = await boot({
-  selectors: ["#event-list", "#events-empty"],
+  selectors: [
+    "#event-list",
+    "#events-empty",
+    "#event-modal",
+    "#event-modal-title",
+    "#event-modal-date",
+    "#event-modal-status",
+    "#event-modal-location",
+    "#event-modal-description",
+    "#event-modal-tickets",
+    "#event-modal-contact",
+    "#event-modal-close",
+  ],
   publicContent: {
     posts: [],
     events: [
@@ -171,10 +183,16 @@ const agenda = await boot({
 });
 assert.equal(agenda.elements["#event-list"].childElementCount, 1);
 assert.equal(
-  agenda.elements["#event-list"].children[0].children[2].href,
-  "contact.html",
+  agenda.elements["#event-list"].children[0].children[2].type,
+  "button",
 );
 assert.equal(agenda.elements["#events-empty"].hidden, true);
+agenda.elements["#event-list"].children[0].children[2].events.get("click")();
+assert.equal(agenda.elements["#event-modal"].open, true);
+assert.equal(agenda.elements["#event-modal-title"].textContent, "Future");
+assert.equal(agenda.elements["#event-modal-tickets"].hidden, true);
+agenda.elements["#event-modal-close"].events.get("click")();
+assert.equal(agenda.elements["#event-modal"].open, false);
 
 const cinemaSelectors = [
   "#cinema",

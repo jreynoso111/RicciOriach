@@ -10,6 +10,9 @@
   const menu = $("#main-nav");
   const menuToggle = $(".menu-toggle");
   const mediaModal = $("#media-modal");
+  const mediaModalClose = mediaModal?.querySelector?.(".modal-close");
+  const eventModal = $("#event-modal");
+  const eventModalClose = $("#event-modal-close");
   const siteHeader = $(".site-header");
   const updateHeader = () =>
     siteHeader?.classList.toggle("is-scrolled", window.scrollY > 20);
@@ -19,6 +22,7 @@
   let exitTimer;
   let introReturnFocus;
   let mediaReturnFocus;
+  let eventReturnFocus;
 
   const safeUrl = (value, image = false) => {
     if (typeof value !== "string" || !value.trim()) return "";
@@ -49,6 +53,7 @@
       Boolean(
         intro?.open ||
           mediaModal?.open ||
+          eventModal?.open ||
           menuToggle?.getAttribute("aria-expanded") === "true",
       ),
     );
@@ -173,10 +178,10 @@
       $("#video-player").replaceChildren(frame);
       mediaModal.showModal();
       syncScrollLock();
-      $(".modal-close").focus();
+      mediaModalClose?.focus({ preventScroll: true });
     });
   });
-  $(".modal-close")?.addEventListener("click", closeVideo);
+  mediaModalClose?.addEventListener("click", closeVideo);
   mediaModal?.addEventListener("click", (event) => {
     if (event.target !== mediaModal) return;
     const box = mediaModal.getBoundingClientRect();
@@ -192,6 +197,81 @@
     $("#video-player").replaceChildren();
     syncScrollLock();
     mediaReturnFocus?.focus({ preventScroll: true });
+  });
+
+  function closeEventModal() {
+    if (eventModal?.open) eventModal.close();
+  }
+
+  function openEventModal(event, trigger) {
+    if (!eventModal || typeof eventModal.showModal !== "function") return;
+    const date = new Date(`${event.date}T12:00:00`);
+    const ticketUrl = safeUrl(event.ticketUrl);
+    const status = event.ticketStatus || "available";
+    const statusLabels = {
+      available: "Boletas disponibles",
+      free: "Entrada libre",
+      soldout: "Entradas agotadas",
+      cancelled: "Cancelado",
+      postponed: "Pospuesto",
+    };
+    const dateLabel = Number.isNaN(date.getTime())
+      ? event.date || "Fecha por confirmar"
+      : date.toLocaleDateString("es", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+    $("#event-modal-title").textContent = event.title || "Presentación";
+    $("#event-modal-date").textContent = dateLabel;
+    $("#event-modal-status").textContent =
+      statusLabels[status] || "Presentación";
+    $("#event-modal-location").textContent = [
+      event.city,
+      event.venue,
+      event.time,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    $("#event-modal-description").textContent =
+      event.description ||
+      "Pronto compartiremos más detalles de esta presentación.";
+    const tickets = $("#event-modal-tickets");
+    if (tickets) {
+      tickets.hidden = !ticketUrl;
+      tickets.href = ticketUrl || "contact.html";
+    }
+    const contact = $("#event-modal-contact");
+    if (contact)
+      contact.textContent = ticketUrl
+        ? "¿Necesitas más información? Hablemos ↗"
+        : "Consulta disponibilidad y detalles ↗";
+    eventReturnFocus = trigger;
+    eventModal.showModal();
+    syncScrollLock();
+    eventModalClose?.focus({ preventScroll: true });
+  }
+
+  eventModalClose?.addEventListener("click", closeEventModal);
+  eventModal?.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeEventModal();
+  });
+  eventModal?.addEventListener("click", (event) => {
+    const box = eventModal.getBoundingClientRect();
+    if (
+      event.clientX < box.left ||
+      event.clientX > box.right ||
+      event.clientY < box.top ||
+      event.clientY > box.bottom
+    )
+      closeEventModal();
+  });
+  eventModal?.addEventListener("close", () => {
+    syncScrollLock();
+    eventReturnFocus?.focus({ preventScroll: true });
+    eventReturnFocus = null;
   });
 
   document.querySelectorAll("[data-year]").forEach((element) => {
@@ -331,7 +411,7 @@
         const state = event.ticketStatus || "available";
         const inactive =
           past || ["soldout", "cancelled", "postponed"].includes(state);
-        const action = document.createElement(inactive ? "span" : "a");
+        const action = document.createElement(inactive ? "span" : "button");
         if (inactive) {
           action.className = "event-status";
           action.textContent =
@@ -341,19 +421,11 @@
               soldout: "Entradas agotadas",
             }[state] || "Así lo vivimos";
         } else {
-          const url = safeUrl(event.ticketUrl);
+          action.type = "button";
           action.className = "button button-outline";
-          action.href = url || "contact.html";
           action.textContent =
-            state === "free"
-              ? "Entrada libre"
-              : url
-                ? "Entradas ↗"
-                : "Consultar detalles ↗";
-          if (url) {
-            action.target = "_blank";
-            action.rel = "noopener noreferrer";
-          }
+            state === "free" ? "Entrada libre" : "Consultar detalles ↗";
+          action.addEventListener("click", () => openEventModal(event, action));
         }
         row.append(when, info, action);
         eventsRoot.append(row);

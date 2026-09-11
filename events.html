@@ -28,11 +28,11 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260915" />
+    <link rel="stylesheet" href="assets/site.css?v=20260917" />
     <script>
       document.documentElement.classList.add("js");
     </script>
-    <script src="assets/site.js?v=20260911" defer></script>
+    <script src="assets/site.js?v=20260917" defer></script>
   </head>
   <body class="page-events">
     <div class="site-shell">
@@ -277,6 +277,44 @@
         </div>
       </footer>
     </div>
+    <dialog
+      class="event-modal"
+      id="event-modal"
+      aria-labelledby="event-modal-title"
+      aria-describedby="event-modal-description"
+    >
+      <div class="modal-heading">
+        <h2 id="event-modal-title">Detalles de la presentación</h2>
+        <button
+          class="modal-close"
+          id="event-modal-close"
+          type="button"
+          aria-label="Cerrar detalles"
+        >
+          ×
+        </button>
+      </div>
+      <div class="event-modal-meta">
+        <time id="event-modal-date"></time>
+        <span id="event-modal-status"></span>
+      </div>
+      <p class="event-modal-location" id="event-modal-location"></p>
+      <p class="event-modal-description" id="event-modal-description"></p>
+      <div class="event-modal-actions">
+        <a
+          class="button"
+          id="event-modal-tickets"
+          href="contact.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          hidden
+          >Comprar boletas ↗</a
+        >
+        <a class="text-link" id="event-modal-contact" href="contact.html"
+          >Consulta disponibilidad y detalles ↗</a
+        >
+      </div>
+    </dialog>
     <dialog class="media-modal" id="media-modal" aria-labelledby="media-title">
       <div class="modal-heading">
         <h2 id="media-title">Riccie Oriach · Video</h2>
