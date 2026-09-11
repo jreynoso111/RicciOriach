@@ -980,8 +980,8 @@ button {
 .footer-admin-link {
   display: inline-grid !important;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border: 1px solid var(--line);
   border-radius: 50%;
   color: var(--muted) !important;
@@ -991,7 +991,7 @@ button {
     transform 0.2s;
 }
 .footer-admin-link span[aria-hidden="true"] {
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1;
 }
 .footer-admin-link:hover,
@@ -1014,7 +1014,7 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 14px;
+  gap: 10px;
 }
 .footer-bottom p:last-child,
 .footer-signature p {
@@ -2442,8 +2442,8 @@ dialog:not([open]) {
     margin-top: 55px;
   }
   .footer-admin-link {
-    width: 34px;
-    height: 34px;
+    width: 28px;
+    height: 28px;
   }
   .page-events .live-hero {
     grid-template-columns: 1fr;
