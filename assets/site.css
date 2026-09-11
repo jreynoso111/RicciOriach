@@ -977,6 +977,28 @@ button {
 .footer-links button:hover {
   color: var(--yellow);
 }
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.footer-social-link {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--muted) !important;
+}
+.footer-social-link svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+.footer-social-link:hover,
+.footer-social-link:focus-visible {
+  color: var(--yellow) !important;
+}
 .footer-admin-link {
   display: inline-grid !important;
   place-items: center;
