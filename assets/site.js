@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   "use strict";
 
   const $ = (selector) => document.querySelector(selector);
@@ -19,15 +19,6 @@
   let exitTimer;
   let introReturnFocus;
   let mediaReturnFocus;
-
-  const readStorage = (key, fallback) => {
-    try {
-      const value = JSON.parse(localStorage.getItem(key));
-      return Array.isArray(value) ? value : fallback;
-    } catch {
-      return fallback;
-    }
-  };
 
   const safeUrl = (value, image = false) => {
     if (typeof value !== "string" || !value.trim()) return "";
@@ -57,8 +48,8 @@
       "locked",
       Boolean(
         intro?.open ||
-        mediaModal?.open ||
-        menuToggle?.getAttribute("aria-expanded") === "true",
+          mediaModal?.open ||
+          menuToggle?.getAttribute("aria-expanded") === "true",
       ),
     );
   }
@@ -207,59 +198,6 @@
     element.textContent = new Date().getFullYear();
   });
 
-  // Retain compatibility with existing editor data without inventing live events
-  // or displaying drafts, demo schedules, or nonfunctional purchase controls.
-  const eventsRoot = $("#event-list");
-  if (eventsRoot) {
-    const today = new Date();
-    const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-    const events = readStorage("ricciEvents", [])
-      .filter(
-        (event) =>
-          event &&
-          event.status === "Activo" &&
-          /^\d{4}-\d{2}-\d{2}$/.test(event.date) &&
-          event.date >= todayKey,
-      )
-      .sort((a, b) => a.date.localeCompare(b.date));
-    events.forEach((event) => {
-      const date = new Date(`${event.date}T12:00:00`);
-      if (Number.isNaN(date.getTime())) return;
-      const row = document.createElement("article");
-      row.className = "event-row";
-      const when = document.createElement("time");
-      when.className = "event-date";
-      when.dateTime = event.date;
-      when.textContent = String(date.getDate()).padStart(2, "0");
-      const month = document.createElement("small");
-      month.textContent = date
-        .toLocaleDateString("es", { month: "short", year: "numeric" })
-        .toUpperCase();
-      when.append(month);
-      const info = document.createElement("div");
-      info.className = "event-info";
-      const title = document.createElement("h3");
-      title.textContent = event.title || "Riccie Oriach en vivo";
-      const place = document.createElement("p");
-      place.textContent = [event.city, event.venue].filter(Boolean).join(" · ");
-      const description = document.createElement("p");
-      description.textContent = event.description || "";
-      info.append(title, place, description);
-      const action = document.createElement("a");
-      action.className = "button button-outline";
-      const tickets = safeUrl(event.ticketUrl);
-      action.href = tickets || "contact.html";
-      action.textContent = tickets ? "Entradas ↗" : "Consultar detalles ↗";
-      if (tickets) {
-        action.target = "_blank";
-        action.rel = "noopener noreferrer";
-      }
-      row.append(when, info, action);
-      eventsRoot.append(row);
-    });
-    $("#events-empty").hidden = eventsRoot.childElementCount > 0;
-  }
-
   const editorialPosts = [
     {
       slug: "pa-que-bailemos",
@@ -295,19 +233,160 @@
       link: "https://riccieoriach.bandcamp.com/album/mi-derriengue",
     },
   ];
-  const legacyDemoSlugs = new Set([
-    "sesion-en-vivo-desde-santo-domingo",
-    "gira-caribe-2024",
-    "merch-drop-ritmo-solar",
-  ]);
-  const storedPosts = readStorage("public_blog_posts", [])
+  let content = { events: [], posts: [] };
+  let contentLoaded = false;
+  try {
+    const response = await fetch("content/published.json", {
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) throw new Error("Content unavailable");
+    content = await response.json();
+    if (
+      !content ||
+      !Array.isArray(content.events) ||
+      !Array.isArray(content.posts)
+    )
+      throw new Error("Invalid content");
+    contentLoaded = true;
+  } catch {
+    content = { events: [], posts: [] };
+    const message = $("#event-count");
+    if (message)
+      message.textContent =
+        "No pudimos cargar la agenda. Vuelve a intentarlo en unos minutos.";
+  }
+  const storedPosts = (Array.isArray(content.posts) ? content.posts : [])
     .filter((post) => post && post.status === "Publicado")
     .map((post) => ({ ...post, slug: post.slug || slugify(post.title) }))
     .filter(
-      (post) =>
-        !legacyDemoSlugs.has(post.slug) &&
-        !editorialPosts.some((entry) => entry.slug === post.slug),
+      (post) => !editorialPosts.some((entry) => entry.slug === post.slug),
     );
+
+  const eventsRoot = $("#event-list");
+  if (eventsRoot) {
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const events = (Array.isArray(content.events) ? content.events : []).filter(
+      (event) => {
+        if (
+          !event ||
+          event.status !== "Publicado" ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(event.date)
+        )
+          return false;
+        const date = new Date(`${event.date}T12:00:00`);
+        return (
+          !Number.isNaN(date.getTime()) &&
+          date.toISOString().slice(0, 10) === event.date
+        );
+      },
+    );
+    const citySelect = $("#event-city");
+    [...new Set(events.map((event) => event.city).filter(Boolean))]
+      .sort()
+      .forEach((city) => {
+        const option = document.createElement("option");
+        option.value = city;
+        option.textContent = city;
+        citySelect?.append(option);
+      });
+    let period = "upcoming";
+    function renderEvents() {
+      const past = period === "past";
+      const selected = events
+        .filter(
+          (event) =>
+            (past ? event.date < today : event.date >= today) &&
+            (!citySelect?.value || event.city === citySelect.value),
+        )
+        .sort((a, b) =>
+          past ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date),
+        );
+      eventsRoot.replaceChildren();
+      selected.forEach((event) => {
+        const date = new Date(`${event.date}T12:00:00`);
+        const row = document.createElement("article");
+        row.className = "event-row";
+        const when = document.createElement("time");
+        when.className = "event-date";
+        when.dateTime = event.date;
+        when.textContent = String(date.getDate()).padStart(2, "0");
+        const month = document.createElement("small");
+        month.textContent = date
+          .toLocaleDateString("es", { month: "short", year: "numeric" })
+          .toUpperCase();
+        when.append(month);
+        const info = document.createElement("div");
+        info.className = "event-info";
+        const title = document.createElement("h3");
+        title.textContent = event.title;
+        const place = document.createElement("p");
+        place.textContent = [event.city, event.venue, event.time]
+          .filter(Boolean)
+          .join(" · ");
+        const description = document.createElement("p");
+        description.textContent = event.description || "";
+        info.append(title, place, description);
+        const state = event.ticketStatus || "available";
+        const inactive =
+          past || ["soldout", "cancelled", "postponed"].includes(state);
+        const action = document.createElement(inactive ? "span" : "a");
+        if (inactive) {
+          action.className = "event-status";
+          action.textContent =
+            {
+              cancelled: "Cancelado",
+              postponed: "Pospuesto",
+              soldout: "Entradas agotadas",
+            }[state] || "Así lo vivimos";
+        } else {
+          const url = safeUrl(event.ticketUrl);
+          action.className = "button button-outline";
+          action.href = url || "contact.html";
+          action.textContent =
+            state === "free"
+              ? "Entrada libre"
+              : url
+                ? "Entradas ↗"
+                : "Consultar detalles ↗";
+          if (url) {
+            action.target = "_blank";
+            action.rel = "noopener noreferrer";
+          }
+        }
+        row.append(when, info, action);
+        eventsRoot.append(row);
+      });
+      $("#events-empty").hidden = selected.length > 0;
+      if ($("#event-count") && contentLoaded)
+        $("#event-count").textContent =
+          `${selected.length} ${selected.length === 1 ? "presentación" : "presentaciones"}${past ? " en el archivo" : " por venir"}`;
+      if ($("#events-empty-title"))
+        $("#events-empty-title").textContent = citySelect?.value
+          ? "Todavía no hay fechas en esta ciudad."
+          : past
+            ? "Cada coro deja una historia."
+            : "La próxima parada se está cocinando.";
+      if ($("#events-empty-copy"))
+        $("#events-empty-copy").textContent = past
+          ? "Aquí reuniremos las presentaciones pasadas de Riccie. El archivo se irá llenando de encuentros."
+          : "Las fechas confirmadas aparecerán aquí. Sigue los anuncios oficiales de Riccie para conocer la próxima parada.";
+    }
+    document.querySelectorAll("[data-period]").forEach((button) =>
+      button.addEventListener("click", () => {
+        period = button.dataset.period;
+        document
+          .querySelectorAll("[data-period]")
+          .forEach((item) =>
+            item.setAttribute("aria-pressed", String(item === button)),
+          );
+        renderEvents();
+      }),
+    );
+    citySelect?.addEventListener("change", renderEvents);
+    renderEvents();
+  }
 
   const blogRoot = $("#blog-grid");
   if (blogRoot && storedPosts.length) {

@@ -28,13 +28,13 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css" />
+    <link rel="stylesheet" href="assets/site.css?v=20260911" />
     <script>
       document.documentElement.classList.add("js");
     </script>
-    <script src="assets/site.js" defer></script>
+    <script src="assets/site.js?v=20260911" defer></script>
   </head>
-  <body class="">
+  <body class="page-events">
     <div class="site-shell">
       <a class="skip-link" href="#main-content">Saltar al contenido</a>
       <header class="site-header">
@@ -63,24 +63,74 @@
         </button>
       </header>
       <main id="main-content" tabindex="-1">
-        <section class="page-hero wrap">
-          <p class="eyebrow"><span class="dot"></span>La música se comparte</p>
-          <h1>Nos vemos<br /><em>en el coro.</em></h1>
-          <div class="page-hero-bottom">
-            <p>
-              Hay canciones que se escuchan. Y otras que se viven entre la
-              gente. Esta es una invitación a lo segundo.
+        <section class="page-hero wrap live-hero">
+          <div class="live-hero-copy">
+            <p class="eyebrow">
+              <span class="dot"></span>La música se comparte
             </p>
+            <h1>Nos vemos<br /><em>en el coro.</em></h1>
+            <div class="page-hero-bottom">
+              <p>
+                Hay canciones que se escuchan. Y otras que se viven entre la
+                gente. Esta es una invitación a lo segundo.
+              </p>
+            </div>
+            <a class="text-link" href="#agenda"
+              >Explorar las presentaciones ↓</a
+            >
           </div>
+          <figure class="live-hero-photo">
+            <img
+              src="assets/images/riccie-portrait.jpg"
+              alt="Riccie Oriach, una invitación a compartir su música"
+              width="640"
+              height="639"
+            />
+            <figcaption>La banda. La gente. El momento.</figcaption>
+            <span aria-hidden="true">✳</span>
+          </figure>
         </section>
-        <section class="section wrap" aria-label="Agenda de conciertos">
-          <div class="eyebrow">Agenda / Próximos encuentros</div>
+        <section
+          class="section wrap agenda-section"
+          id="agenda"
+          aria-label="Agenda de conciertos"
+        >
+          <div class="section-top">
+            <div>
+              <p class="eyebrow">En vivo / La ruta</p>
+              <h2>Encuentra el <em>coro.</em></h2>
+            </div>
+            <a class="text-link" href="contact.html">Booking & contacto ↗</a>
+          </div>
+          <div class="agenda-controls">
+            <div
+              class="agenda-tabs"
+              role="group"
+              aria-label="Fechas de presentaciones"
+            >
+              <button type="button" data-period="upcoming" aria-pressed="true">
+                Próximas fechas
+              </button>
+              <button type="button" data-period="past" aria-pressed="false">
+                Así lo vivimos
+              </button>
+            </div>
+            <label class="agenda-city"
+              >Ciudad
+              <select id="event-city">
+                <option value="">Todas las ciudades</option>
+              </select></label
+            >
+          </div>
+          <p class="agenda-count" id="event-count" role="status"></p>
           <div class="event-list" id="event-list"></div>
           <div class="empty-state" id="events-empty">
             <div class="empty-mark" aria-hidden="true"><span>✳</span></div>
             <div>
-              <h2>La próxima parada<br />se está cocinando.</h2>
-              <p>
+              <h2 id="events-empty-title">
+                La próxima parada<br />se está cocinando.
+              </h2>
+              <p id="events-empty-copy">
                 Los nuevos encuentros aparecerán aquí. Mientras tanto, sigue a
                 Riccie en Instagram para enterarte de los anuncios y vivir lo
                 que pasa detrás de la tarima.

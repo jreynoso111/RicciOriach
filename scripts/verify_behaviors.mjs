@@ -56,9 +56,10 @@ class Element {
   }
 }
 
-function boot({
+async function boot({
   selectors = [],
   stored = {},
+  publicContent = { events: [], posts: [] },
   blockedStorage = false,
   reducedMotion = false,
 } = {}) {
@@ -84,7 +85,9 @@ function boot({
       if (blockedStorage) throw new Error("Storage unavailable");
     },
   };
-  runInNewContext(source, {
+  await runInNewContext(source, {
+    AbortSignal,
+    fetch: async () => ({ ok: true, json: async () => publicContent }),
     document,
     localStorage: storage,
     sessionStorage: storage,
@@ -113,8 +116,8 @@ function boot({
 }
 
 // The page stays usable when users block both storage APIs.
-assert.doesNotThrow(() => boot({ blockedStorage: true }));
-assert.doesNotThrow(() =>
+await assert.doesNotReject(() => boot({ blockedStorage: true }));
+await assert.doesNotReject(() =>
   boot({
     stored: {
       public_blog_posts: { unexpected: "object" },
@@ -124,10 +127,11 @@ assert.doesNotThrow(() =>
 );
 
 // Published posts are retained; drafts, unsafe images and seeded demo stories are not promoted.
-const journal = boot({
+const journal = await boot({
   selectors: ["#blog-grid", "#published-journal"],
-  stored: {
-    public_blog_posts: [
+  publicContent: {
+    events: [],
+    posts: [
       {
         slug: "real-entry",
         title: "<img onerror=alert(1)>",
@@ -135,7 +139,6 @@ const journal = boot({
         image: "javascript:alert(1)",
       },
       { slug: "draft", title: "Private draft", status: "Borrador" },
-      { slug: "gira-caribe-2024", title: "Old demo", status: "Publicado" },
     ],
   },
 });
@@ -150,16 +153,17 @@ assert.equal(
 );
 
 // Past events and drafts are excluded, while a future active event needs a real ticket URL.
-const agenda = boot({
+const agenda = await boot({
   selectors: ["#event-list", "#events-empty"],
-  stored: {
-    ricciEvents: [
-      { date: "2020-01-01", title: "Past", status: "Activo" },
+  publicContent: {
+    posts: [],
+    events: [
+      { date: "2020-01-01", title: "Past", status: "Publicado" },
       { date: "2099-01-01", title: "Draft", status: "Borrador" },
       {
         date: "2099-01-01",
         title: "Future",
-        status: "Activo",
+        status: "Publicado",
         ticketUrl: "javascript:alert(1)",
       },
     ],
@@ -178,12 +182,12 @@ const cinemaSelectors = [
   "[data-skip-intro]",
   "[data-replay-intro]",
 ];
-const quiet = boot({ selectors: cinemaSelectors, reducedMotion: true });
+const quiet = await boot({ selectors: cinemaSelectors, reducedMotion: true });
 assert.equal(quiet.elements["#cinema"].open, false);
 assert.equal(quiet.document.body.classList.contains("locked"), false);
 
 // A blocked preference store must not prevent the timed entrance or its exit.
-const cinema = boot({ selectors: cinemaSelectors, blockedStorage: true });
+const cinema = await boot({ selectors: cinemaSelectors, blockedStorage: true });
 assert.equal(cinema.elements["#cinema"].open, true);
 assert.equal(cinema.elements[".site-shell"].inert, true);
 cinema.timers.shift()(); // End of the film.

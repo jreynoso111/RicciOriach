@@ -2058,7 +2058,7 @@ dialog:not([open]) {
     gap: 18px;
   }
   .hero-stamp {
-    bottom: 230px;
+    bottom: 330px;
     right: 10%;
   }
   .hero-bottom .eyebrow {
@@ -2260,5 +2260,131 @@ dialog:not([open]) {
   .motion-ready .reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Music title stays together without crowding its link. */
+.music-section .section-top {
+  flex-wrap: wrap;
+}
+.music-section .section-top h2 {
+  font-size: clamp(27px, 7.8vw, 68px);
+  white-space: nowrap;
+}
+.page-events .live-hero {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 7vw;
+  align-items: center;
+  padding-bottom: 64px;
+}
+.page-events .live-hero h1 {
+  font-size: clamp(52px, 6.8vw, 106px);
+}
+.live-hero-copy > .text-link {
+  margin-top: 26px;
+}
+.live-hero-photo {
+  position: relative;
+  transform: rotate(3deg);
+  margin: 20px 0;
+}
+.live-hero-photo img {
+  width: 100%;
+  aspect-ratio: 1.12;
+  object-fit: cover;
+  filter: saturate(0.75);
+  border-radius: 50% 50% 3px 3px;
+}
+.live-hero-photo figcaption {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  margin-top: 16px;
+}
+.live-hero-photo > span {
+  position: absolute;
+  bottom: 20px;
+  left: -24px;
+  color: var(--pink);
+  font-size: 100px;
+}
+.agenda-section {
+  padding-top: 45px;
+}
+.agenda-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 22px 0;
+  border-block: 1px solid var(--line);
+}
+.agenda-tabs {
+  display: flex;
+  gap: 8px;
+}
+.agenda-tabs button,
+.agenda-city select {
+  color: var(--cream);
+  border: 1px solid var(--line);
+  background: var(--wine);
+  padding: 13px 18px;
+  font: inherit;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.agenda-tabs button[aria-pressed="true"] {
+  background: var(--pink);
+  color: var(--wine-dark);
+  border-color: var(--pink);
+}
+.agenda-city {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.agenda-count {
+  font-size: 12px;
+  color: var(--muted);
+  padding-top: 22px;
+}
+.event-status {
+  display: inline-block;
+  font-size: 11px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+@media (max-width: 780px) {
+  .page-events .live-hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-bottom: 30px;
+  }
+  .live-hero-photo {
+    max-width: 440px;
+    width: 85%;
+    margin: 10px auto;
+  }
+  .agenda-controls {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .agenda-tabs button {
+    flex: 1;
+    padding-inline: 12px;
+    font-size: 12px;
+  }
+  .agenda-city select {
+    flex: 1;
+    min-width: 0;
+  }
+  .agenda-section .section-top h2 {
+    font-size: clamp(34px, 7vw, 52px);
   }
 }

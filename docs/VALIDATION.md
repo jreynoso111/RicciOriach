@@ -25,3 +25,13 @@ Verificado con el navegador conectado de Codex; `agent-browser` no estaba instal
 ## Dependencias externas
 
 Las fotografías y portadas se sirven desde `assets/images`. Google Fonts aporta tipografía. Los videos usan el reproductor oficial de YouTube y tienen enlace alternativo. Las fechas y entradas del editor original continúan siendo locales al navegador: no se añadió un CMS remoto ni un servicio de pagos.
+
+## 2026-09-10 — Agenda y gestión local
+
+- Reproducido: volver al inicio desde el puerto 8000 mostró el portafolio de Juan Reynoso en el navegador, aunque el servidor devolvía el HTML correcto de Riccie. El origen dedicado `127.0.0.1:4180` y los recursos versionados evitaron la mezcla de caché.
+- `scripts/serve.py` fija la raíz del proyecto y expone un gestor solo en loopback. Borradores y copias de seguridad quedan fuera de rutas estáticas y despliegues.
+- Navegador: agenda en escritorio y a 390 px; portada y título en una línea a 320, 390 y 1440 px. Formulario de gestión revisado a 390 px.
+- Flujo real en navegador: crear presentación, publicar, recargar, verla en la agenda, archivar; crear historia y abrir su artículo público. Datos temporales retirados al terminar.
+- Comprobaciones HTTP aisladas: guardado en disco, filtro de publicación, archivo, revisiones concurrentes (409), acceso a borradores (404), origen externo (403), fechas y enlaces inválidos (400).
+- Pasaron sintaxis JS, verificación de referencias HTML, pruebas de comportamiento y pruebas HTTP del gestor.
+- Pendiente: elegir la organización/proyecto para gestión remota con autenticación. La versión actual administra eventos y nuevas historias desde esta Mac; guardar no despliega automáticamente a internet.

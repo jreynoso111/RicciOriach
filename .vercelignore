@@ -3,3 +3,4 @@ scripts/
 *.md
 *.backup
 __pycache__/
+.local-cms/
