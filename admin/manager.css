@@ -80,6 +80,26 @@
   justify-content: space-between;
   margin-bottom: 28px;
 }
+.manager-context {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin: -8px 0 28px;
+  padding: 14px 17px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--yellow);
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.manager-context strong {
+  flex: 0 0 auto;
+  color: var(--cream);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 .manager-toolbar nav button,
 #archive-record {
   background: none;
@@ -169,6 +189,80 @@
 .manager-page textarea {
   resize: vertical;
 }
+.image-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.018);
+}
+.image-editor label {
+  margin-bottom: 14px;
+}
+.file-picker {
+  position: relative;
+}
+.file-picker input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.file-picker-button {
+  display: inline-block;
+  width: fit-content;
+  padding: 10px 13px;
+  border: 1px solid #71505f;
+  color: var(--cream);
+  cursor: pointer;
+  font-size: 12px;
+}
+.file-picker:hover .file-picker-button,
+.file-picker:focus-within .file-picker-button {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.field-note {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.field-note.is-error {
+  color: var(--pink);
+}
+.text-button {
+  margin-top: 12px;
+  padding: 0;
+  background: none;
+  color: var(--pink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.image-preview-card {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.image-preview-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  margin-bottom: 9px;
+  border: 1px solid var(--line);
+  background: #1d1017;
+  object-fit: cover;
+}
 .editor-actions {
   display: flex;
   flex-wrap: wrap;
@@ -198,6 +292,21 @@
   color: var(--cream);
   cursor: pointer;
 }
+.record-has-image {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+}
+.record-thumb {
+  width: 62px;
+  height: 62px;
+  border: 1px solid var(--line);
+  object-fit: cover;
+}
+.record-copy {
+  min-width: 0;
+}
 .record:hover,
 .record[aria-current="true"] {
   border-color: var(--pink);
@@ -219,6 +328,11 @@
   text-transform: uppercase;
   font-size: 9px;
   letter-spacing: 0.12em;
+}
+.record .record-status,
+.record strong,
+.record small {
+  overflow-wrap: anywhere;
 }
 .records-empty {
   color: var(--muted);
@@ -252,6 +366,17 @@
   }
   .editor {
     padding: 20px;
+  }
+  .manager-context {
+    align-items: start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .image-editor {
+    grid-template-columns: 1fr;
+  }
+  .image-preview-card {
+    width: min(150px, 100%);
   }
 }
 @media (max-width: 380px) {

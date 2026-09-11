@@ -9,6 +9,114 @@
     dirty = false,
     saving = false;
   const field = (name) => form.elements.namedItem(name);
+  const imageFile = $("#image-file");
+  const imagePreviewCard = $("#image-preview-card");
+  const imagePreview = $("#image-preview");
+  const imageStatus = $("#image-status");
+  const clearImage = $("#clear-image");
+  const MAX_IMAGE_BYTES = 900_000;
+  const MAX_IMAGE_SIDE = 1800;
+  const kindCopy = {
+    events: {
+      label: "Presentaciones",
+      copy: "Añade la fecha, el lugar y la información que necesita la gente para encontrarte.",
+    },
+    posts: {
+      label: "Bitácora",
+      copy: "Escribe una historia breve, elige una foto y publícala cuando esté lista.",
+    },
+  };
+  const imageSource = (value) => {
+    if (typeof value !== "string" || !value.trim()) return "";
+    if (/^data:image\/(?:png|jpeg|webp|gif);base64,[a-z0-9+/]+=*$/i.test(value))
+      return value;
+    try {
+      const url = new URL(value, location.href);
+      if (url.protocol === "https:") return url.href;
+    } catch {
+      /* Ignore malformed image values. */
+    }
+    return "";
+  };
+  const updateImageStatus = (text, error = false) => {
+    if (!imageStatus) return;
+    imageStatus.textContent = text;
+    imageStatus.classList.toggle("is-error", error);
+  };
+  const syncImageValidity = () => {
+    const input = field("image");
+    if (!input) return;
+    input.setCustomValidity(
+      input.value && !imageSource(input.value)
+        ? "Escribe una URL HTTPS válida o sube una foto."
+        : "",
+    );
+  };
+  const updateImagePreview = (value = field("image")?.value || "") => {
+    if (!imagePreviewCard || !imagePreview) return;
+    const source = imageSource(value);
+    if (!source) {
+      imagePreview.removeAttribute("src");
+      imagePreview.alt = "";
+      imagePreviewCard.hidden = true;
+      if (clearImage) clearImage.hidden = true;
+      return;
+    }
+    imagePreview.src = source;
+    imagePreview.alt = `Vista previa de ${field("title")?.value || "la historia"}`;
+    imagePreviewCard.hidden = false;
+    if (clearImage) clearImage.hidden = false;
+  };
+  const updateKindHelp = () => {
+    const copy = kindCopy[kind];
+    $("#kind-help-label").textContent = copy.label;
+    $("#kind-help-copy").textContent = copy.copy;
+  };
+  async function fileToImageData(file) {
+    if (!/^image\/(?:jpeg|png|webp)$/i.test(file.type))
+      throw new Error("Elige una foto JPG, PNG o WebP.");
+    if (file.size > 8_000_000)
+      throw new Error("La foto supera 8 MB. Elige una más ligera.");
+    const objectUrl = URL.createObjectURL(file);
+    try {
+      const image = await new Promise((resolve, reject) => {
+        const preview = new Image();
+        preview.onload = () => resolve(preview);
+        preview.onerror = () => reject(new Error("No se pudo leer la foto."));
+        preview.src = objectUrl;
+      });
+      const scale = Math.min(
+        1,
+        MAX_IMAGE_SIDE / Math.max(image.naturalWidth, image.naturalHeight),
+      );
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      canvas
+        .getContext("2d")
+        .drawImage(image, 0, 0, canvas.width, canvas.height);
+      let blob;
+      for (const quality of [0.82, 0.68, 0.54]) {
+        blob = await new Promise((resolve) =>
+          canvas.toBlob(resolve, "image/jpeg", quality),
+        );
+        if (blob && blob.size <= MAX_IMAGE_BYTES) break;
+      }
+      if (!blob || blob.size > MAX_IMAGE_BYTES)
+        throw new Error(
+          "La foto sigue siendo muy pesada. Elige otra más ligera.",
+        );
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () =>
+          reject(new Error("No se pudo preparar la foto."));
+        reader.readAsDataURL(blob);
+      });
+    } finally {
+      URL.revokeObjectURL(objectUrl);
+    }
+  }
   const message = (text) => {
     $("#save-status").textContent = text;
   };
@@ -45,7 +153,14 @@
     const query = $("#record-search").value.toLocaleLowerCase("es");
     const records = content[kind]
       .filter((item) =>
-        [item.title, item.city, item.venue]
+        [
+          item.title,
+          item.city,
+          item.venue,
+          item.category,
+          item.author,
+          item.excerpt,
+        ]
           .join(" ")
           .toLocaleLowerCase("es")
           .includes(query),
@@ -73,7 +188,19 @@
       detail.textContent = [item.date, item.city, item.venue]
         .filter(Boolean)
         .join(" · ");
-      button.append(state, title, detail);
+      const copy = document.createElement("span");
+      copy.className = "record-copy";
+      copy.append(state, title, detail);
+      const source = kind === "posts" ? imageSource(item.image) : "";
+      if (source) {
+        button.classList.add("record-has-image");
+        const thumb = document.createElement("img");
+        thumb.className = "record-thumb";
+        thumb.src = source;
+        thumb.alt = "";
+        thumb.loading = "lazy";
+        button.append(thumb, copy);
+      } else button.append(copy);
       button.addEventListener("click", () => {
         if (!saving && canLeave()) edit(item);
       });
@@ -94,6 +221,15 @@
         const input = field(key);
         if (input) input.value = value;
       });
+    if (imageFile) imageFile.value = "";
+    syncImageValidity();
+    updateImagePreview();
+    updateImageStatus(
+      field("image")?.value
+        ? "Foto lista. Puedes cambiarla o quitarla antes de guardar."
+        : "JPG, PNG o WebP. La foto se ajusta automáticamente para cargarla rápido.",
+    );
+    updateKindHelp();
     $("#editor-title").textContent =
       `${item ? "Editar" : kind === "events" ? "Nueva" : "Nueva"} ${kind === "events" ? "presentación" : "historia"}`;
     $("#record-state").textContent = item?.status || "Borrador";
@@ -122,6 +258,46 @@
       edit();
       field("title").focus();
     }
+  });
+  field("image")?.addEventListener("input", () => {
+    if (imageFile) imageFile.value = "";
+    syncImageValidity();
+    updateImagePreview();
+    updateImageStatus(
+      field("image").value
+        ? imageSource(field("image").value)
+          ? "Vista previa actualizada desde la URL."
+          : "Usa una URL HTTPS válida para mostrar la foto."
+        : "JPG, PNG o WebP. La foto se ajusta automáticamente para cargarla rápido.",
+      Boolean(field("image").value && !imageSource(field("image").value)),
+    );
+  });
+  imageFile?.addEventListener("change", async () => {
+    const file = imageFile.files?.[0];
+    if (!file) return;
+    updateImageStatus("Preparando la foto…");
+    try {
+      const value = await fileToImageData(file);
+      field("image").value = value;
+      syncImageValidity();
+      dirty = true;
+      updateImagePreview(value);
+      updateImageStatus("Foto lista. Se guardará con esta historia.");
+      message("Foto lista. Guarda los cambios para conservarla.");
+    } catch (error) {
+      imageFile.value = "";
+      updateImageStatus(error.message, true);
+      message("No se pudo preparar la foto.");
+    }
+  });
+  clearImage?.addEventListener("click", () => {
+    field("image").value = "";
+    if (imageFile) imageFile.value = "";
+    syncImageValidity();
+    dirty = true;
+    updateImagePreview();
+    updateImageStatus("Foto quitada. Guarda los cambios para confirmar.");
+    message("Foto quitada. Guarda los cambios para confirmar.");
   });
   async function save() {
     if (saving || !form.reportValidity()) return;

@@ -1,6 +1,9 @@
 """Riccie's dedicated local editor. Run: python3 scripts/serve.py."""
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+import base64
+import binascii
 from pathlib import Path
+import re
 from urllib.parse import urlsplit
 import argparse
 import json
@@ -14,6 +17,10 @@ PRIVATE = ROOT / '.local-cms' / 'content.json'
 PUBLIC = ROOT / 'content' / 'published.json'
 LOCK = threading.Lock()
 LIMIT = 2_000_000
+IMAGE_DATA_LIMIT = 900_000
+IMAGE_DATA_PATTERN = re.compile(
+    r'^data:image/(?:png|jpeg|webp|gif);base64,[A-Za-z0-9+/]+=*$', re.IGNORECASE
+)
 
 
 def validate(data):
@@ -26,8 +33,13 @@ def validate(data):
         for item in items:
             if not isinstance(item, dict):
                 raise ValueError('Registro inválido.')
-            if any(not isinstance(value, str) or len(value) > 50000 for value in item.values()):
-                raise ValueError('Los campos deben ser texto y tener menos de 50.000 caracteres.')
+            if any(
+                not isinstance(value, str)
+                or len(value)
+                > (1_250_000 if key == 'image' and value.startswith('data:image/') else 50000)
+                for key, value in item.items()
+            ):
+                raise ValueError('Los campos deben ser texto y tener un tamaño válido.')
             if not item.get('id') or item['id'] in ids:
                 raise ValueError('Identificador inválido o duplicado.')
             ids.add(item['id'])
@@ -42,7 +54,19 @@ def validate(data):
                 raise ValueError('Selecciona una fecha válida.')
             for field in ('ticketUrl', 'link', 'image'):
                 value = item.get(field, '')
-                if value and (urlsplit(value).scheme != 'https' or not urlsplit(value).netloc):
+                if not value:
+                    continue
+                if field == 'image' and value.lower().startswith('data:image/'):
+                    if not IMAGE_DATA_PATTERN.fullmatch(value):
+                        raise ValueError('La foto subida no tiene un formato válido.')
+                    try:
+                        image_bytes = base64.b64decode(value.split(',', 1)[1], validate=True)
+                    except (ValueError, binascii.Error):
+                        raise ValueError('La foto subida no tiene un formato válido.')
+                    if len(image_bytes) > IMAGE_DATA_LIMIT:
+                        raise ValueError('La foto subida supera el tamaño permitido.')
+                    continue
+                if urlsplit(value).scheme != 'https' or not urlsplit(value).netloc:
                     raise ValueError('Los enlaces y las imágenes deben usar una dirección HTTPS completa.')
             if kind == 'events':
                 if not item.get('city', '').strip() or not item.get('venue', '').strip():

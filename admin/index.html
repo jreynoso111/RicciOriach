@@ -7,8 +7,8 @@
     <title>Gestión | Riccie Oriach</title>
     <link rel="icon" href="../assets/favicon.svg" />
     <link rel="stylesheet" href="../assets/site.css?v=20260915" />
-    <link rel="stylesheet" href="manager.css?v=20260912" />
-    <script src="manager.js?v=20260911" defer></script>
+    <link rel="stylesheet" href="manager.css?v=20260916" />
+    <script src="manager.js?v=20260916" defer></script>
   </head>
   <body class="manager-page">
     <a class="skip-link" href="#manager-main">Saltar al contenido</a>
@@ -57,6 +57,13 @@
           <button type="button" class="button" id="new-record">
             Nueva presentación +
           </button>
+        </div>
+        <div class="manager-context" id="kind-help" role="status">
+          <strong id="kind-help-label">Presentaciones</strong>
+          <span id="kind-help-copy"
+            >Añade la fecha, el lugar y la información que necesita la gente
+            para encontrarte.</span
+          >
         </div>
         <div class="manager-grid">
           <section aria-label="Contenido guardado">
@@ -152,13 +159,45 @@
                     >Categoría<input name="category" maxlength="120" /></label
                   ><label>Autor<input name="author" maxlength="120" /></label>
                 </div>
-                <label
-                  >Imagen (URL)<input
-                    name="image"
-                    type="url"
-                    placeholder="https://"
-                    pattern="https://.*"
-                /></label>
+                <div class="image-editor">
+                  <div>
+                    <label
+                      >Imagen (URL opcional)<input
+                        name="image"
+                        type="text"
+                        inputmode="url"
+                        placeholder="https://" /></label
+                    ><label class="file-picker"
+                      >Subir una foto desde esta Mac<input
+                        id="image-file"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                      /><span class="file-picker-button"
+                        >Elegir foto</span
+                      ></label
+                    >
+                    <small id="image-status" class="field-note"
+                      >JPG, PNG o WebP. La foto se ajusta automáticamente para
+                      cargarla rápido.</small
+                    >
+                    <button
+                      type="button"
+                      id="clear-image"
+                      class="text-button"
+                      hidden
+                    >
+                      Quitar foto
+                    </button>
+                  </div>
+                  <figure
+                    id="image-preview-card"
+                    class="image-preview-card"
+                    hidden
+                  >
+                    <img id="image-preview" alt="" />
+                    <figcaption>Vista previa</figcaption>
+                  </figure>
+                </div>
                 <label
                   >Resumen<textarea
                     name="excerpt"

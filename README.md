@@ -34,6 +34,7 @@ Abre [el gestor local](http://127.0.0.1:4180/admin/) para crear, editar y archiv
 - `content/published.json` contiene exclusivamente los registros con estado `Publicado`. La agenda y la bitácora leen este archivo; los cambios dejan de depender de `localStorage`.
 - Las próximas presentaciones se ordenan por fecha ascendente y el historial por fecha descendente. Hay filtro por ciudad y estados de entradas.
 - Las historias editoriales existentes permanecen en el código. El gestor administra las historias adicionales.
+- En una historia nueva o editada puedes pegar una URL HTTPS o subir una foto JPG, PNG o WebP desde esta Mac. El gestor la comprime y muestra una vista previa antes de guardarla.
 - Para publicar cambios en internet, revisar y desplegar `content/published.json` con la web. Guardar desde el gestor actual actualiza únicamente la web local.
 - El gestor remoto con autenticación y base de datos compartida está pendiente de definir la organización/proyecto de Riccie. No se ha creado ni modificado un proyecto de Supabase ajeno.
 - No hay pasarela de pago, compra interna de entradas ni servidor de correo. Los enlaces de entradas llevan al proveedor externo.
