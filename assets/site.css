@@ -1010,7 +1010,14 @@ button {
   font-size: 9px;
   color: var(--muted);
 }
-.footer-bottom p:last-child {
+.footer-signature {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+}
+.footer-bottom p:last-child,
+.footer-signature p {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
