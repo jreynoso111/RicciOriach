@@ -639,6 +639,48 @@ button {
 .music-section {
   background: var(--wine-dark);
 }
+.music-catalog {
+  background: var(--wine-dark);
+}
+.music-catalog-heading {
+  margin-bottom: 54px;
+}
+.music-catalog-heading h2 {
+  font-size: clamp(46px, 5.5vw, 82px);
+  line-height: 0.98;
+}
+.music-catalog-heading h2 em {
+  color: var(--pink);
+  font-style: normal;
+}
+.catalog-albums {
+  margin-top: 84px;
+}
+.catalog-subhead {
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+  margin-bottom: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+}
+.catalog-subhead .eyebrow {
+  color: var(--pink);
+  margin: 0;
+}
+.catalog-subhead h3 {
+  font-family: var(--display);
+  font-size: clamp(28px, 3.4vw, 54px);
+  font-weight: 400;
+  line-height: 1;
+}
+.catalog-tracks {
+  margin-top: 76px;
+}
+.catalog-tracks .track-list {
+  margin-top: 0;
+}
 .album-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -934,6 +976,29 @@ button {
 .footer-links a:hover,
 .footer-links button:hover {
   color: var(--yellow);
+}
+.footer-admin-link {
+  display: inline-grid !important;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--muted) !important;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    transform 0.2s;
+}
+.footer-admin-link span[aria-hidden="true"] {
+  font-size: 18px;
+  line-height: 1;
+}
+.footer-admin-link:hover,
+.footer-admin-link:focus-visible {
+  color: var(--yellow) !important;
+  border-color: var(--yellow);
+  transform: rotate(18deg);
 }
 .footer-bottom {
   border-top: 1px solid var(--line);
@@ -2360,6 +2425,19 @@ dialog:not([open]) {
   letter-spacing: 0.08em;
 }
 @media (max-width: 780px) {
+  .catalog-subhead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .catalog-albums,
+  .catalog-tracks {
+    margin-top: 55px;
+  }
+  .footer-admin-link {
+    width: 34px;
+    height: 34px;
+  }
   .page-events .live-hero {
     grid-template-columns: 1fr;
     gap: 20px;

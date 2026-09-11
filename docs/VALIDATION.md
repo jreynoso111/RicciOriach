@@ -35,3 +35,9 @@ Las fotografías y portadas se sirven desde `assets/images`. Google Fonts aporta
 - Comprobaciones HTTP aisladas: guardado en disco, filtro de publicación, archivo, revisiones concurrentes (409), acceso a borradores (404), origen externo (403), fechas y enlaces inválidos (400).
 - Pasaron sintaxis JS, verificación de referencias HTML, pruebas de comportamiento y pruebas HTTP del gestor.
 - Pendiente: elegir la organización/proyecto para gestión remota con autenticación. La versión actual administra eventos y nuevas historias desde esta Mac; guardar no despliega automáticamente a internet.
+
+## 2026-09-10 — Música y acceso al gestor
+
+- Música quedó en dos recorridos: un catálogo único con lanzamiento, discografía, plataformas y solo los dos sencillos independientes; el archivo audiovisual queda como la segunda sección principal.
+- El pie de página de las seis páginas públicas incluye un engranaje accesible que lleva a `admin/index.html`.
+- Navegador real: Música verificada a 390 px y escritorio, sin desbordamiento horizontal; el enlace de engranaje abrió el panel local correctamente.
