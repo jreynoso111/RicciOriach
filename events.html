@@ -28,13 +28,16 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260917" />
+    <link rel="stylesheet" href="assets/site.css?v=20260919" />
     <script>
       document.documentElement.classList.add("js");
     </script>
     <script src="assets/supabase-config.js?v=20260918"></script>
     <script src="assets/supabase-client.js?v=20260918" defer></script>
-    <script src="assets/site.js?v=20260917" defer></script>
+    <script src="assets/content-model.js?v=20260919" defer></script>
+    <script src="assets/photos.js?v=20260919" defer></script>
+    <script src="assets/commerce.js?v=20260919" defer></script>
+    <script src="assets/site.js?v=20260919" defer></script>
   </head>
   <body class="page-events">
     <div class="site-shell">
@@ -49,6 +52,7 @@
             <li><a href="music.html">Música</a></li>
             <li><a href="events.html" aria-current="page">En vivo</a></li>
             <li><a href="blog.html">Bitácora</a></li>
+            <li><a href="store.html">Tienda</a></li>
           </ul>
         </nav>
         <a class="header-contact" href="contact.html"
@@ -82,7 +86,7 @@
             >
           </div>
           <figure class="live-hero-photo">
-            <img
+            <img data-photo-slot="events-hero"
               src="assets/images/riccie-portrait.jpg"
               alt="Riccie Oriach, una invitación a compartir su música"
               width="640"
@@ -302,6 +306,8 @@
       </div>
       <p class="event-modal-location" id="event-modal-location"></p>
       <p class="event-modal-description" id="event-modal-description"></p>
+      <img id="event-modal-image" class="event-modal-image" alt="" hidden>
+      <section id="event-tickets" aria-label="Taquillas de la presentación"></section>
       <div class="event-modal-actions">
         <a
           class="button"

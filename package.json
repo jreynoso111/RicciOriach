@@ -7,8 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "bundle:supabase": "esbuild src/supabase-client.js --bundle --format=iife --global-name=RiccieSupabaseBundle --outfile=assets/supabase-client.js --minify"
+    "test": "node --check admin/manager.js && node --check assets/commerce.js && python3 scripts/verify_site.py && node scripts/verify_behaviors.mjs && node scripts/test_commerce.mjs && node scripts/test_payments.cjs",
+    "bundle:supabase": "esbuild src/supabase-client.js --bundle --format=iife --global-name=RiccieSupabaseBundle --outfile=assets/supabase-client.js --minify",
+    "dev": "python3 scripts/serve.py",
+    "test:preview": "node scripts/preview_manager.mjs"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,7 @@
     "@supabase/supabase-js": "2.116.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "esbuild": "0.25.12"
   }
 }

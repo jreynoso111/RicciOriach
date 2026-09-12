@@ -124,6 +124,8 @@ class Handler(SimpleHTTPRequestHandler):
         if not self.local_request():
             return self.json_response(403, {'error': 'Abre el gestor desde 127.0.0.1.'})
         path = urlsplit(self.path).path
+        if path == '/api/payments':
+            return self.json_response(200, {'enabled': False, 'provider': 'paypal', 'currencies': ['USD', 'EUR']})
         if path == '/api/manage/content':
             with LOCK:
                 return self.json_response(200, {'content': read_content(), 'revision': revision(), 'mode': 'local'})
@@ -144,7 +146,7 @@ class Handler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Cache-Control', 'no-store')
         self.send_header('X-Content-Type-Options', 'nosniff')
-        self.send_header('Content-Security-Policy', "frame-ancestors 'none'")
+        self.send_header('Content-Security-Policy', "frame-ancestors 'none'" if self.path.startswith('/admin') else "frame-ancestors 'self'")
         super().end_headers()
 
     def do_PUT(self):

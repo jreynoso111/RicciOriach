@@ -28,7 +28,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260917" />
+    <link rel="stylesheet" href="assets/site.css?v=20260919" />
     <script>
       document.documentElement.classList.add("js");
       try {
@@ -46,7 +46,9 @@
     </script>
     <script src="assets/supabase-config.js?v=20260918"></script>
     <script src="assets/supabase-client.js?v=20260918" defer></script>
-    <script src="assets/site.js?v=20260917" defer></script>
+    <script src="assets/content-model.js?v=20260919" defer></script>
+    <script src="assets/photos.js?v=20260919" defer></script>
+    <script src="assets/site.js?v=20260919" defer></script>
   </head>
   <body class="">
     <dialog
@@ -62,19 +64,19 @@
         </button>
       </div>
       <div class="cinema-frame" aria-hidden="true">
-        <img
+        <img data-photo-slot="intro-one"
           class="cinema-image"
           src="assets/images/riccie-portrait.jpg"
           alt=""
           width="640"
           height="639"
-        /><img
+        /><img data-photo-slot="intro-two"
           class="cinema-image"
           src="assets/images/riccie-bandcamp.jpg"
           alt=""
           width="820"
           height="1024"
-        /><img
+        /><img data-photo-slot="intro-three"
           class="cinema-image"
           src="assets/images/riccie-portrait.jpg"
           alt=""
@@ -117,6 +119,7 @@
             <li><a href="music.html">Música</a></li>
             <li><a href="events.html">En vivo</a></li>
             <li><a href="blog.html">Bitácora</a></li>
+            <li><a href="store.html">Tienda</a></li>
           </ul>
         </nav>
         <a class="header-contact" href="contact.html"
@@ -136,7 +139,7 @@
         <section class="hero" aria-labelledby="hero-title">
           <div class="hero-orbit" aria-hidden="true"></div>
           <div class="hero-visual">
-            <img
+            <img data-photo-slot="home-hero"
               src="assets/images/riccie-portrait.jpg"
               alt="Riccie Oriach con una maraca, sombrero negro y poncho rojo"
               width="640"
@@ -204,7 +207,7 @@
               data-video="1S2t2gNuf8M"
               data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach"
               aria-label="Ver Pa’ que bailemos"
-              ><img
+              ><img data-photo-slot="music-feature"
                 src="assets/images/pa-que-bailemos-cover.webp"
                 alt="Portada del sencillo Pa’ que bailemos, de Lena Dardelet y Riccie Oriach"
                 width="480"
@@ -439,7 +442,7 @@
               >
             </div>
             <figure class="universe-photo reveal">
-              <img
+              <img data-photo-slot="home-universe"
                 src="assets/images/riccie-bandcamp.jpg"
                 alt="Riccie Oriach sonriendo con su guitarra acústica"
                 width="820"

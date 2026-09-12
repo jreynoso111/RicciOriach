@@ -1,6 +1,10 @@
-docs/
+.git/
+node_modules/
+.local-cms/
+supabase/
 scripts/
+docs/
 *.md
 *.backup
+.env*
 __pycache__/
-.local-cms/

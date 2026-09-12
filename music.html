@@ -28,13 +28,15 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260917" />
+    <link rel="stylesheet" href="assets/site.css?v=20260919" />
     <script>
       document.documentElement.classList.add("js");
     </script>
     <script src="assets/supabase-config.js?v=20260918"></script>
     <script src="assets/supabase-client.js?v=20260918" defer></script>
-    <script src="assets/site.js?v=20260917" defer></script>
+    <script src="assets/content-model.js?v=20260919" defer></script>
+    <script src="assets/photos.js?v=20260919" defer></script>
+    <script src="assets/site.js?v=20260919" defer></script>
   </head>
   <body class="page-music">
     <div class="site-shell">
@@ -49,6 +51,7 @@
             <li><a href="music.html" aria-current="page">Música</a></li>
             <li><a href="events.html">En vivo</a></li>
             <li><a href="blog.html">Bitácora</a></li>
+            <li><a href="store.html">Tienda</a></li>
           </ul>
         </nav>
         <a class="header-contact" href="contact.html"
@@ -102,7 +105,7 @@
               data-video="1S2t2gNuf8M"
               data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach"
               aria-label="Ver Pa’ que bailemos"
-              ><img
+              ><img data-photo-slot="music-feature"
                 src="assets/images/pa-que-bailemos-cover.webp"
                 alt="Portada del sencillo Pa’ que bailemos, de Lena Dardelet y Riccie Oriach"
                 width="480"

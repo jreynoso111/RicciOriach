@@ -28,13 +28,15 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260917" />
+    <link rel="stylesheet" href="assets/site.css?v=20260919" />
     <script>
       document.documentElement.classList.add("js");
     </script>
     <script src="assets/supabase-config.js?v=20260918"></script>
     <script src="assets/supabase-client.js?v=20260918" defer></script>
-    <script src="assets/site.js?v=20260917" defer></script>
+    <script src="assets/content-model.js?v=20260919" defer></script>
+    <script src="assets/photos.js?v=20260919" defer></script>
+    <script src="assets/site.js?v=20260919" defer></script>
   </head>
   <body class="">
     <div class="site-shell">
@@ -49,6 +51,7 @@
             <li><a href="music.html">Música</a></li>
             <li><a href="events.html">En vivo</a></li>
             <li><a href="blog.html" aria-current="page">Bitácora</a></li>
+            <li><a href="store.html">Tienda</a></li>
           </ul>
         </nav>
         <a class="header-contact" href="contact.html"
@@ -81,7 +84,7 @@
               <a
                 href="blog-post.html?slug=pa-que-bailemos"
                 aria-label="Leer Un encuentro pa’ que bailemos."
-                ><img
+                ><img data-photo-slot="journal-pa-que-bailemos"
                   src="assets/images/pa-que-bailemos.jpg"
                   alt="Un encuentro pa’ que bailemos."
                   width="700"
@@ -107,7 +110,7 @@
               <a
                 href="blog-post.html?slug=maquine"
                 aria-label="Leer Las muchas formas de Maquiné."
-                ><img
+                ><img data-photo-slot="journal-maquine"
                   src="assets/images/maquine.jpg"
                   alt="Las muchas formas de Maquiné."
                   width="700"
@@ -132,7 +135,7 @@
               <a
                 href="blog-post.html?slug=mi-derriengue"
                 aria-label="Leer Una isla dentro de Mi Derriengue."
-                ><img
+                ><img data-photo-slot="journal-mi-derriengue"
                   src="assets/images/mi-derriengue.jpg"
                   alt="Una isla dentro de Mi Derriengue."
                   width="700"

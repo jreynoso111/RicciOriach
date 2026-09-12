@@ -119,7 +119,7 @@
     } catch {
       /* No storage required. */
     }
-    if (!replay && (seen || motionPreference.matches || location.hash)) return;
+    if (!replay && (seen || motionPreference.matches || location.hash || new URLSearchParams(location.search).has("photo-preview"))) return;
     introReturnFocus = replay ? $("[data-replay-intro]") : null;
     intro.classList.toggle("cinema-reduced", motionPreference.matches);
     intro.showModal();
@@ -247,6 +247,9 @@
       contact.textContent = ticketUrl
         ? "¿Necesitas más información? Hablemos ↗"
         : "Consulta disponibilidad y detalles ↗";
+    window.RiccieCommerce?.showTickets(event);
+    const poster = $("#event-modal-image");
+    if (poster) { poster.hidden = !safeUrl(event.image_url, true); if (!poster.hidden) { poster.src = safeUrl(event.image_url, true); poster.alt = event.title; } }
     eventReturnFocus = trigger;
     eventModal.showModal();
     syncScrollLock();
@@ -539,6 +542,7 @@
       document.title = `${post.title} | Riccie Oriach`;
       $("#post-title").textContent = post.title;
       $("#post-category").textContent = post.category || "Historias del camino";
+      if (editorialPosts.some((p) => p.slug === slug)) $("#post-cover").dataset.photoSlot = `journal-${slug}`;
       $("#post-meta").textContent = [post.author || "Riccie Oriach", post.date]
         .filter(Boolean)
         .join(" · ");
@@ -566,10 +570,12 @@
     }
   }
 
+  window.RicciePhotos?.apply();
+
   // Stored images can disappear or be malformed. Keep the layout and alt text intact.
   document.querySelectorAll("img").forEach((image) => {
     image.addEventListener("error", () => {
-      if (image.dataset.fallback) return;
+      if (image.dataset.fallback || image.dataset.photoSlot) return;
       image.dataset.fallback = "true";
       image.src = "assets/images/mi-derriengue.jpg";
     });

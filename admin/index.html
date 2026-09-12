@@ -1,263 +1,37 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="robots" content="noindex,nofollow" />
-    <title>Gestión | Riccie Oriach</title>
-    <link rel="icon" href="../assets/favicon.svg" />
-    <link rel="stylesheet" href="../assets/site.css?v=20260917" />
-    <link rel="stylesheet" href="manager.css?v=20260916" />
-    <script src="../assets/supabase-config.js?v=20260918"></script>
-    <script src="../assets/supabase-client.js?v=20260918" defer></script>
-    <script src="manager.js?v=20260916" defer></script>
-  </head>
-  <body class="manager-page">
-    <a class="skip-link" href="#manager-main">Saltar al contenido</a>
-    <header class="manager-header">
-      <a class="brand" href="../index.html" aria-label="Riccie Oriach, inicio"
-        ><span>riccie</span><span>oriach.</span></a
-      ><span class="manager-label">Gestión del sitio</span
-      ><a class="text-link" href="../index.html">Ver la web ↗</a>
-    </header>
-    <main id="manager-main" class="manager-wrap">
-      <div class="manager-title">
-        <div>
-          <p class="eyebrow">Detrás del escenario</p>
-          <h1>Todo listo<br />para <em>compartir.</em></h1>
-        </div>
-        <p>
-          Organiza las presentaciones y escribe las historias que acompañan el
-          viaje.
-        </p>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+  <title>Gestión | Riccie Oriach</title><link rel="icon" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../assets/site.css?v=20260919"><link rel="stylesheet" href="manager.css?v=20260919">
+  <script src="../assets/supabase-config.js?v=20260918"></script><script src="../assets/supabase-client.js?v=20260918" defer></script>
+  <script src="../assets/content-model.js?v=20260919" defer></script><script src="manager.js?v=20260919" defer></script>
+</head>
+<body class="manager-page">
+  <a class="skip-link" href="#manager-main">Saltar al contenido</a>
+  <header class="manager-header"><a class="brand" href="../index.html" aria-label="Riccie Oriach, inicio"><span>riccie</span><span>oriach.</span></a><span class="manager-label">Detrás del escenario</span><a class="text-link" href="../index.html" target="_blank" rel="noopener">Ver la web ↗</a></header>
+  <main id="manager-main" class="manager-wrap">
+    <div class="manager-title"><div><p class="eyebrow">El centro de tu universo</p><h1>Tu web.<br><em>A tu manera.</em></h1></div><p>Fotos, historias, conciertos y todo lo que la gente se lleva del coro. Un solo lugar para gestionarlo.</p></div>
+    <p id="connection-status" class="manager-notice" role="status">Conectando con el gestor…</p>
+    <section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
+      <div><p class="eyebrow">Acceso privado</p><h2 id="auth-title">Entra con tu enlace mágico.</h2><p id="auth-copy">Usa el correo de tu cuenta administradora. El enlace de acceso llegará a tu bandeja de entrada.</p></div>
+      <form id="auth-form" class="auth-form"><label for="auth-email">Correo de la cuenta invitada</label><div class="auth-form-row"><input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com"><button class="button" type="submit" id="auth-submit">Enviar enlace</button></div></form>
+      <p id="auth-status" class="save-status" role="status"></p><button type="button" id="sign-out" class="text-button" hidden>Cerrar sesión</button>
+    </section>
+    <div id="manager-workspace" hidden>
+      <div class="manager-stats"><div><strong id="count-events">0</strong><span>Presentaciones publicadas</span></div><div><strong id="count-products">0</strong><span>Productos publicados</span></div><div><strong id="count-pending">0</strong><span>Solicitudes pendientes</span></div><div><strong id="count-drafts">0</strong><span>Borradores</span></div></div>
+      <div class="manager-toolbar"><nav aria-label="Contenido del sitio">
+        <button type="button" data-kind="page_images" aria-pressed="true">Fotos de la web</button><button type="button" data-kind="events" aria-pressed="false">Eventos</button><button type="button" data-kind="ticket_types" aria-pressed="false">Taquillas</button><button type="button" data-kind="products" aria-pressed="false">Tienda</button><button type="button" data-kind="orders" aria-pressed="false">Pedidos y reservas</button><button type="button" data-kind="posts" aria-pressed="false">Bitácora</button>
+      </nav></div>
+      <div class="manager-context"><strong id="kind-help-label">Fotos de la web</strong><span id="kind-help-copy">Cambia las fotos conservando sus colores, máscaras y animaciones.</span></div>
+      <div class="content-actions"><button type="button" class="text-link" id="refresh-records">Actualizar listado ↻</button><button type="button" class="button" id="new-record" hidden>Nuevo +</button></div>
+      <div class="manager-grid">
+        <section aria-label="Contenido guardado"><div class="list-filters"><label for="record-search">Buscar<input type="search" id="record-search" placeholder="Nombre, lugar o referencia…"></label><label id="filter-label" for="record-filter">Estado<select id="record-filter"><option value="">Todos</option></select></label></div><p id="record-count" class="field-note" role="status"></p><div id="records" class="records"></div><button type="button" id="load-more" class="text-button" hidden>Cargar más pedidos</button></section>
+        <section class="editor" aria-labelledby="editor-title"><div class="editor-heading"><h2 id="editor-title">Elige una foto</h2><span id="record-state"></span></div>
+          <form id="editor-form"><div id="editor-fields"></div><div class="editor-actions"><button class="button" id="save-record" type="submit">Guardar cambios</button><button type="button" id="archive-record" hidden>Archivar</button></div><p id="save-status" role="status" class="save-status"></p><p id="editor-help" class="editor-help">Los cambios publicados se reflejan en la web al guardar.</p></form>
+        </section>
       </div>
-      <p id="connection-status" class="manager-notice" role="status">
-        Conectando con el gestor…
-      </p>
-      <section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
-        <div>
-          <p class="eyebrow">Acceso privado</p>
-          <h2 id="auth-title">Entra con tu enlace mágico.</h2>
-          <p>
-            Solo las cuentas invitadas para este proyecto pueden administrar las
-            presentaciones y la bitácora. Te enviaremos un enlace de un solo uso.
-          </p>
-        </div>
-        <form id="auth-form" class="auth-form">
-          <label for="auth-email">Correo de la cuenta invitada</label>
-          <div class="auth-form-row">
-            <input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com" />
-            <button class="button" type="submit" id="auth-submit">Enviar enlace</button>
-          </div>
-          <p id="auth-status" class="save-status" role="status"></p>
-        </form>
-        <button type="button" id="sign-out" class="text-button" hidden>Cerrar sesión</button>
-      </section>
-      <div id="manager-workspace" hidden>
-        <div class="manager-stats">
-          <div>
-            <strong id="count-events">0</strong
-            ><span>Presentaciones publicadas</span>
-          </div>
-          <div>
-            <strong id="count-posts">0</strong><span>Historias publicadas</span>
-          </div>
-          <div>
-            <strong id="count-drafts">0</strong
-            ><span>Borradores por revisar</span>
-          </div>
-        </div>
-        <div class="manager-toolbar">
-          <nav aria-label="Contenido del sitio">
-            <button type="button" data-kind="events" aria-pressed="true">
-              Presentaciones</button
-            ><button type="button" data-kind="posts" aria-pressed="false">
-              Bitácora
-            </button>
-          </nav>
-          <button type="button" class="button" id="new-record">
-            Nueva presentación +
-          </button>
-        </div>
-        <div class="manager-context" id="kind-help" role="status">
-          <strong id="kind-help-label">Presentaciones</strong>
-          <span id="kind-help-copy"
-            >Añade la fecha, el lugar y la información que necesita la gente
-            para encontrarte.</span
-          >
-        </div>
-        <div class="manager-grid">
-          <section aria-label="Contenido guardado">
-            <label class="search-label" for="record-search"
-              >Buscar en el contenido</label
-            ><input
-              type="search"
-              id="record-search"
-              placeholder="Título, ciudad o lugar…"
-            />
-            <div id="records" class="records"></div>
-          </section>
-          <section class="editor" aria-labelledby="editor-title">
-            <div class="editor-heading">
-              <h2 id="editor-title">Nueva presentación</h2>
-              <span id="record-state">Borrador</span>
-            </div>
-            <form id="editor-form">
-              <label
-                >Título<input
-                  name="title"
-                  required
-                  maxlength="180"
-                  placeholder="Nombre de la presentación"
-              /></label>
-              <div class="field-grid">
-                <label>Fecha<input type="date" name="date" required /></label
-                ><label
-                  >Estado<select name="status">
-                    <option>Borrador</option>
-                    <option>Publicado</option>
-                    <option>Archivado</option>
-                  </select></label
-                >
-              </div>
-              <fieldset id="event-fields">
-                <legend>Presentación</legend>
-                <div class="field-grid">
-                  <label
-                    >Ciudad<input name="city" maxlength="120" required /></label
-                  ><label
-                    >Lugar<input name="venue" maxlength="180" required
-                  /></label>
-                </div>
-                <div class="field-grid">
-                  <label
-                    >Hora local del lugar<input
-                      name="time"
-                      type="time" /></label
-                  ><label
-                    >Entradas<select name="ticketStatus">
-                      <option value="available">
-                        Disponibles / por anunciar
-                      </option>
-                      <option value="soldout">Agotadas</option>
-                      <option value="free">Entrada libre</option>
-                      <option value="postponed">Pospuesto</option>
-                      <option value="cancelled">Cancelado</option>
-                    </select></label
-                  >
-                </div>
-                <label
-                  >Enlace de entradas<input
-                    name="ticketUrl"
-                    type="url"
-                    placeholder="https://"
-                    pattern="https://.*"
-                /></label>
-                <label
-                  >Detalles<textarea
-                    name="description"
-                    rows="3"
-                    maxlength="3000"
-                    placeholder="Información útil para quienes van al concierto"
-                  ></textarea>
-                </label>
-              </fieldset>
-              <fieldset id="post-fields" hidden disabled>
-                <legend>Historia</legend>
-                <label
-                  >Enlace de la historia<input
-                    name="slug"
-                    required
-                    pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                    placeholder="una-nueva-historia"
-                  /><small
-                    >Letras minúsculas, números y guiones. Debe ser
-                    único.</small
-                  ></label
-                >
-                <div class="field-grid">
-                  <label
-                    >Categoría<input name="category" maxlength="120" /></label
-                  ><label>Autor<input name="author" maxlength="120" /></label>
-                </div>
-                <div class="image-editor">
-                  <div>
-                    <label
-                      >Imagen (URL opcional)<input
-                        name="image"
-                        type="text"
-                        inputmode="url"
-                        placeholder="https://" /></label
-                    ><label class="file-picker"
-                      >Subir una foto desde esta Mac<input
-                        id="image-file"
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                      /><span class="file-picker-button"
-                        >Elegir foto</span
-                      ></label
-                    >
-                    <small id="image-status" class="field-note"
-                      >JPG, PNG o WebP. La foto se ajusta automáticamente para
-                      cargarla rápido.</small
-                    >
-                    <button
-                      type="button"
-                      id="clear-image"
-                      class="text-button"
-                      hidden
-                    >
-                      Quitar foto
-                    </button>
-                  </div>
-                  <figure
-                    id="image-preview-card"
-                    class="image-preview-card"
-                    hidden
-                  >
-                    <img id="image-preview" alt="" />
-                    <figcaption>Vista previa</figcaption>
-                  </figure>
-                </div>
-                <label
-                  >Resumen<textarea
-                    name="excerpt"
-                    rows="2"
-                    maxlength="600"
-                  ></textarea>
-                </label>
-                <label
-                  >Texto de la historia<textarea
-                    name="content"
-                    rows="9"
-                    maxlength="50000"
-                  ></textarea>
-                </label>
-                <label
-                  >Enlace relacionado<input
-                    name="link"
-                    type="url"
-                    placeholder="https://"
-                    pattern="https://.*"
-                /></label>
-              </fieldset>
-              <div class="editor-actions">
-                <button class="button" id="save-record" type="submit">
-                  Guardar cambios</button
-                ><button type="button" id="archive-record" hidden>
-                  Archivar
-                </button>
-              </div>
-              <p id="save-status" role="status" class="save-status"></p>
-              <p class="editor-help">
-                Publicado aparece en la web de esta Mac. Borrador y Archivado
-                quedan fuera de la web. La publicación en internet requiere
-                desplegar los cambios.
-              </p>
-            </form>
-          </section>
-        </div>
-      </div>
-    </main>
-  </body>
+    </div>
+  </main>
+</body>
 </html>

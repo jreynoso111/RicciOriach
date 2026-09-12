@@ -24,25 +24,13 @@ Abrir [http://127.0.0.1:4180](http://127.0.0.1:4180). El servidor fija la raíz 
 
 Los archivos antiguos `style.css` y `script.js` se conservan para compatibilidad con otras superficies. Las páginas públicas nuevas utilizan `assets/site.css` y `assets/site.js`. El directorio `admin/` contiene el gestor de presentaciones y nuevas historias; las rutas antiguas redirigen al nuevo panel.
 
-## Editar
+## Gestionar la web
 
-Los colores se definen en `:root` de `assets/site.css`. El contenido principal está en el HTML; los tres artículos editoriales están en `editorialPosts` de `assets/site.js`.
+Abre [el gestor](http://127.0.0.1:4180/admin/) para administrar fotos, eventos, taquillas, productos, pedidos, reservas e historias. Las fotos conservan los efectos de la web y permiten ajustar el encuadre. El catálogo está en [la tienda](http://127.0.0.1:4180/store.html).
 
-Abre [el gestor](http://127.0.0.1:4180/admin/) para crear, editar y archivar presentaciones y nuevas historias. Usa el mismo proyecto Supabase en local y en producción; no utiliza credenciales de demostración ni un login ficticio.
+La cuenta administradora y la activación de PayPal se dejan pendientes por decisión del propietario. Los pedidos manuales y reservas se confirman desde el panel. PayPal queda implementado y desactivado hasta completar su configuración y pruebas sandbox.
 
-- El gestor remoto usa el proyecto Supabase `Riccie Oriach`: las tablas `events` y `posts` tienen RLS, el acceso está limitado a cuentas incluidas en `site_admins` y las fotos se guardan en el bucket de medios `site-media` con URLs públicas de lectura.
-- `assets/supabase-config.js` contiene únicamente la URL del proyecto y su clave publicable, apta para navegador. Nunca pongas una clave `sb_secret_` o `service_role` en este repositorio.
-- La agenda y la bitácora consultan Supabase y conservan `content/published.json` como respaldo estático si la API no responde.
-- Las próximas presentaciones se ordenan por fecha ascendente y el historial por fecha descendente. Hay filtro por ciudad y estados de entradas.
-- Las historias editoriales existentes permanecen en el código. El gestor administra las historias adicionales.
-- En una historia nueva o editada puedes pegar una URL HTTPS o subir una foto JPG, PNG o WebP desde esta Mac. El gestor la comprime, la sube a Storage y muestra una vista previa antes de guardar.
-- Las publicaciones nuevas aparecen en la web pública sin editar archivos ni desplegar manualmente.
-- Para entrar, usa el enlace mágico que se envía a una cuenta invitada. El primer administrador debe añadirse a `site_admins` desde el dashboard después de crear o invitar su usuario en Auth.
-- No hay pasarela de pago, compra interna de entradas ni servidor de correo. Los enlaces de entradas llevan al proveedor externo.
-
-Para probar la web en esta Mac usa `serve.py`, que fija la raíz del proyecto y desactiva la caché. El gestor remoto guarda el contenido directamente en Supabase y ya no depende de archivos locales ni de `localStorage`.
-
-El intro guarda solo una preferencia de sesión con la clave `riccie-cinema-v2`. Respeta `prefers-reduced-motion`, funciona sin almacenamiento disponible y no reproduce audio automáticamente. Los iframes se crean al abrir un video y se eliminan al cerrarlo.
+Consulta [la guía de gestión y activación](docs/MANAGEMENT.md) para funcionamiento, inventario, acceso, secretos de servidor y límites de la integración de pagos.
 
 ## Verificar
 

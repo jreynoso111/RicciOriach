@@ -4,16 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#290e18" />
-    <title>Bitácora | Riccie Oriach</title>
+    <title>Tienda | Riccie Oriach</title>
     <meta
       name="description"
-      content="Historias del universo de Riccie Oriach."
+      content="La tienda oficial de Riccie Oriach. Explora productos, consulta disponibilidad y gestiona tu pedido."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Bitácora | Riccie Oriach" />
+    <meta property="og:title" content="Tienda | Riccie Oriach" />
     <meta
       property="og:description"
-      content="Historias del universo de Riccie Oriach."
+      content="La tienda oficial de Riccie Oriach. Explora productos, consulta disponibilidad y gestiona tu pedido."
     />
     <meta
       property="og:image"
@@ -21,13 +21,10 @@
     />
     <meta
       property="og:url"
-      content="https://riccie-oriach.vercel.app/blog-post.html"
+      content="https://riccie-oriach.vercel.app/store.html"
     />
     <meta name="twitter:card" content="summary_large_image" />
-    <link
-      rel="canonical"
-      href="https://riccie-oriach.vercel.app/blog-post.html"
-    />
+    <link rel="canonical" href="https://riccie-oriach.vercel.app/store.html" />
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,9 +36,10 @@
     <script src="assets/supabase-client.js?v=20260918" defer></script>
     <script src="assets/content-model.js?v=20260919" defer></script>
     <script src="assets/photos.js?v=20260919" defer></script>
+    <script src="assets/commerce.js?v=20260919" defer></script>
     <script src="assets/site.js?v=20260919" defer></script>
   </head>
-  <body class="">
+  <body class="page-store">
     <div class="site-shell">
       <a class="skip-link" href="#main-content">Saltar al contenido</a>
       <header class="site-header">
@@ -54,11 +52,11 @@
             <li><a href="music.html">Música</a></li>
             <li><a href="events.html">En vivo</a></li>
             <li><a href="blog.html">Bitácora</a></li>
-            <li><a href="store.html">Tienda</a></li>
+            <li><a href="store.html" aria-current="page">Tienda</a></li>
           </ul>
         </nav>
-        <a class="header-contact" href="contact.html"
-          >Hablemos <span class="arrow" aria-hidden="true">↗</span></a
+        <a class="header-contact" href="#catalogo"
+          >Comprar <span class="arrow" aria-hidden="true">↗</span></a
         >
         <button
           class="menu-toggle"
@@ -71,42 +69,21 @@
         </button>
       </header>
       <main id="main-content" tabindex="-1">
-        <article class="article-wrap" id="journal-article">
-          <a class="text-link" href="blog.html">← Volver a la bitácora</a>
-          <p class="eyebrow" id="post-category">Historias del camino</p>
-          <h1 id="post-title">El universo de Riccie.</h1>
-          <p class="article-meta" id="post-meta"></p>
-          <img
-            class="article-cover"
-            id="post-cover"
-            src="assets/images/maquine.jpg"
-            alt="Portada de Maquiné"
-            width="700"
-            height="700"
-            hidden
-          />
-          <div class="article-body" id="post-body"></div>
-          <div id="post-not-found" class="not-found" hidden>
-            <h2>Esta historia todavía no está aquí.</h2>
-            <p>Descubre los discos y colaboraciones en la bitácora.</p>
-          </div>
-          <a
-            class="text-link"
-            id="post-source"
-            href="https://riccieoriach.bandcamp.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            hidden
-            >Explorar la fuente original
-            <span class="arrow" aria-hidden="true">↗</span></a
-          ><noscript
-            ><p>
-              Activa JavaScript para leer este artículo, o descubre la
-              discografía en
-              <a href="https://riccieoriach.bandcamp.com/">Bandcamp</a>.
-            </p></noscript
-          >
-        </article>
+        <div class="store-announcement">TIENDA OFICIAL <span>✳</span> RICCIE ORIACH <span>✳</span> EL UNIVERSO, PARA LLEVAR</div>
+        <section class="store-banner wrap" aria-labelledby="store-title">
+          <div class="store-banner-copy"><p class="eyebrow">Merch / Música / Piezas especiales</p><h1 id="store-title">Llévate<br><em>el universo.</em></h1><p>Encuentra tu próxima pieza favorita.</p><a href="#catalogo" class="button">Ver productos <span aria-hidden="true">↓</span></a></div>
+          <div class="store-banner-art"><span class="store-orbit" aria-hidden="true"></span><img data-photo-slot="store-hero" src="assets/images/riccie-bandcamp.jpg" alt="Riccie Oriach con su guitarra" width="820" height="1024"><span class="store-stamp" aria-hidden="true">RICCIE<br>ORIACh. <b>✳</b></span></div>
+        </section>
+        <section class="store-catalog-shell" id="catalogo" aria-labelledby="shop-title"><div class="wrap">
+          <div class="store-breadcrumb"><a href="index.html">Inicio</a><span>/</span><span>Tienda</span></div>
+          <div class="store-catalog-top"><div><p class="eyebrow">La colección</p><h2 id="shop-title">Todos los productos<span class="shop-title-dot">.</span></h2></div><button type="button" class="store-cart-button" id="open-cart"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 7h14l1 14H4L5 7Zm3 0V5a4 4 0 0 1 8 0v2"/></svg>Carrito <span id="cart-count">0</span></button></div>
+          <div class="store-layout"><aside class="store-sidebar" aria-label="Filtros de productos"><h3>Explorar</h3><label for="product-category">Colección</label><select id="product-category"><option value="">Todos los productos</option></select><nav id="shop-categories" aria-label="Colecciones"><button type="button" aria-pressed="true" data-category="">Todos los productos</button></nav><label class="stock-filter"><input id="product-in-stock" type="checkbox"> Solo disponibles</label><div class="store-assistance"><span aria-hidden="true">✳</span><h4>¿Una mano con tu pedido?</h4><p>El equipo te ayuda a elegir y coordinar tu entrega.</p><a href="contact.html">Hablemos ↗</a></div></aside>
+          <div class="store-results"><div class="store-search-row"><label class="store-search" for="product-search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></svg><input id="product-search" aria-label="Buscar en la tienda" type="search" placeholder="Buscar en la tienda…"></label><label class="store-sort" for="product-sort">Ordenar<select id="product-sort"><option value="newest">Novedades</option><option value="price-asc">Precio: menor a mayor</option><option value="price-desc">Precio: mayor a menor</option><option value="name">Nombre: A–Z</option></select></label></div><p id="shop-count" role="status">Cargando productos…</p>
+          <div id="product-grid" class="product-grid"></div><div id="shop-empty" class="shop-empty" hidden><svg aria-hidden="true" class="empty-bag" viewBox="0 0 80 90"><path d="M15 27h50l5 55H10l5-55Zm14 0V17a11 11 0 0 1 22 0v10"/><path d="m30 53 20 20m0-20L30 73"/></svg><h3>La colección viene en camino.</h3><p>El catálogo todavía no tiene productos publicados. Vuelve pronto para descubrir las primeras piezas.</p><button type="button" class="store-reset" id="reset-shop-filters" hidden>Limpiar filtros</button></div>
+          <button type="button" id="shop-retry" class="store-reset" hidden>Volver a cargar productos</button></div></div>
+          <div class="store-service-strip"><div><span aria-hidden="true">✳</span><p><strong>Directo del universo de Riccie</strong><small>La tienda oficial del artista.</small></p></div><div><span aria-hidden="true">↗</span><p><strong>Tú eliges cómo pedir</strong><small>Consulta las modalidades de cada producto.</small></p></div><div><span aria-hidden="true">♡</span><p><strong>Atención del equipo</strong><small>Coordinamos los detalles de tu entrega.</small></p></div></div>
+          <p class="store-delivery-note">Los precios corresponden a los artículos. La entrega se coordina con el equipo; no se añaden gastos de envío en esta web.</p>
+        </div></section>
       </main>
       <footer class="site-footer wrap">
         <div class="footer-top">

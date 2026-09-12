@@ -1,0 +1,8 @@
+{
+  "headers": [
+    {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "Content-Security-Policy", "value": "frame-ancestors 'self'"}]},
+    {"source": "/admin/(.*)", "headers": [{"key": "Cache-Control", "value": "no-store"}, {"key": "X-Robots-Tag", "value": "noindex, nofollow"}]},
+    {"source": "/payment.html", "headers": [{"key": "Referrer-Policy", "value": "no-referrer"}, {"key": "Cache-Control", "value": "no-store"}]}
+  ],
+  "functions": {"api/*.js": {"maxDuration": 60}}
+}
