@@ -10,9 +10,6 @@
     ["music-feature", "Música · lanzamiento destacado", "music.html", "pa-que-bailemos.jpg", "cover", 50, 50],
     ["events-hero", "En vivo · foto principal", "events.html", "riccie-portrait.jpg", "live", 50, 50],
     ["contact-photo", "Contacto · retrato", "contact.html", "riccie-portrait.jpg", "contact", 50, 50],
-    ["journal-pa-que-bailemos", "Bitácora · Pa’ que bailemos", "blog.html", "pa-que-bailemos.jpg", "cover", 50, 50],
-    ["journal-maquine", "Bitácora · Maquiné", "blog.html", "maquine.jpg", "cover", 50, 50],
-    ["journal-mi-derriengue", "Bitácora · Mi Derriengue", "blog.html", "mi-derriengue.jpg", "cover", 50, 50],
     ["store-hero", "Tienda · foto principal", "store.html", "riccie-bandcamp.jpg", "store", 50, 38],
   ].map(([id, title, page, file, effect, focal_x, focal_y]) => ({
     id, title, page, effect, focal_x, focal_y,

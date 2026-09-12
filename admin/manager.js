@@ -11,7 +11,6 @@
     ticket_types: ["Taquillas", "Crea entradas General, VIP o por etapa; establece precio, cupo y modalidad de pago.", "taquilla"],
     products: ["Tienda", "Publica productos con precio e inventario. Crea un producto por talla o variante para controlar sus unidades.", "producto"],
     orders: ["Pedidos y reservas", "Revisa solicitudes, confirma disponibilidad y registra la entrega. Los pagos automáticos llegan confirmados por la pasarela.", "pedido"],
-    posts: ["Bitácora", "Escribe y publica nuevas historias con sus propias fotos.", "historia"],
   };
   let content = Object.fromEntries(Object.keys(kinds).map((key) => [key, []]));
   let kind = "page_images", editing = null, dirty = false, busy = false, preparing = false, imageGeneration = 0;
@@ -162,16 +161,12 @@
     else if (kind === "orders") { if (item) orderEditor(root, item); }
     else {
       root.append(text("title", "Título", 180, true));
-      if (["events", "posts"].includes(kind)) root.append(group(control("date", "Fecha", { type: "date", required: true }), standardStatus()));
+      if (kind === "events") root.append(group(control("date", "Fecha", { type: "date", required: true }), standardStatus()));
       else root.append(standardStatus());
       if (kind === "events") root.append(
         group(text("city", "Ciudad", 120, true), text("venue", "Lugar", 180, true)),
         group(control("time", "Hora local", { type: "time" }), control("ticket_status", "Estado de las entradas", { options: [["available", "Disponibles / por anunciar"], ["free", "Entrada libre"], ["soldout", "Agotadas"], ["postponed", "Pospuesto"], ["cancelled", "Cancelado"]] })),
         control("ticket_url", "Enlace externo de entradas (opcional)", { type: "url", pattern: "https://.*", note: "Las taquillas de esta web se configuran en la pestaña Taquillas." }), area("description", "Detalles"), imageEditor(),
-      );
-      if (kind === "posts") root.append(
-        control("slug", "Enlace de la historia", { required: true, maxLength: 180, pattern: "[a-z0-9]+(-[a-z0-9]+)*", placeholder: "una-nueva-historia" }),
-        group(text("category", "Categoría", 120), text("author", "Autor", 120)), imageEditor(), area("excerpt", "Resumen", 600), area("content", "Texto de la historia", 50000, 9), control("link", "Enlace relacionado", { type: "url", pattern: "https://.*" }),
       );
       if (kind === "ticket_types") root.append(control("event_id", "Presentación", { required: true, options: [["", "Selecciona una presentación"], ...content.events.map((e) => [e.id, `${e.title} · ${e.date} · ${e.status}`])], note: "Solo se venden entradas para presentaciones publicadas y vigentes." }));
       if (kind === "products") root.append(group(text("category", "Categoría", 120), text("variant", "Talla / variante", 120)), text("sku", "Referencia / SKU", 80), imageEditor());
@@ -225,7 +220,7 @@
     $("#count-events").textContent = content.events.filter((r) => r.status === "Publicado").length;
     $("#count-products").textContent = content.products.filter((r) => r.status === "Publicado").length;
     $("#count-pending").textContent = content.orders.filter((r) => r.status === "Pendiente").length;
-    $("#count-drafts").textContent = ["events", "products", "ticket_types", "posts"].flatMap((k) => content[k]).filter((r) => r.status === "Borrador").length;
+    $("#count-drafts").textContent = ["events", "products", "ticket_types"].flatMap((k) => content[k]).filter((r) => r.status === "Borrador").length;
   }
   function switchKind(next) {
     if (!leave()) return; kind = next;
@@ -248,7 +243,6 @@
   async function save() {
     if (busy || preparing || !form.reportValidity()) return;
     const values = Object.fromEntries([...new FormData(form)].filter(([name]) => name !== "photo-file").map(([k, v]) => [k, String(v).trim()]));
-    if (kind === "posts" && values.status === "Publicado" && !values.content) { msg("Escribe el texto antes de publicar.", true); return; }
     if (["products","ticket_types"].includes(kind) && values.sale_mode === "online" && values.currency === "DOP") { msg("Para PayPal elige USD o EUR. En DOP utiliza la confirmación manual.",true); return; }
     busy = true; lock(true); msg("Guardando…"); let uploaded;
     try {
@@ -275,8 +269,8 @@
     } finally { busy = false; lock(false); }
   }
   async function loadCatalog() {
-    const keys = ["events", "posts", "products", "ticket_types", "page_images"];
-    const results = await Promise.all(keys.map((key) => client.from(key).select("*").order(key === "page_images" ? "id" : key === "events" || key === "posts" ? "date" : "created_at", {ascending: false})));
+    const keys = ["events", "products", "ticket_types", "page_images"];
+    const results = await Promise.all(keys.map((key) => client.from(key).select("*").order(key === "page_images" ? "id" : key === "events" ? "date" : "created_at", {ascending: false})));
     results.forEach((result, i) => { if (result.error) throw new Error(`No se pudo cargar ${kinds[keys[i]][0]}: ${result.error.message}`); });
     results.forEach((result, i) => { content[keys[i]] = result.data; });
     content.page_images = photos.map((photo) => ({...photo, ...content.page_images.find((r) => r.id === photo.id)}));

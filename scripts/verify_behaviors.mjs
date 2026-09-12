@@ -126,31 +126,16 @@ await assert.doesNotReject(() =>
   }),
 );
 
-// Published posts are retained; drafts, unsafe images and seeded demo stories are not promoted.
-const journal = await boot({
+// Old snapshots may still contain posts, but the removed Bitácora is never rendered.
+const noJournal = await boot({
   selectors: ["#blog-grid", "#published-journal"],
   publicContent: {
     events: [],
-    posts: [
-      {
-        slug: "real-entry",
-        title: "<img onerror=alert(1)>",
-        status: "Publicado",
-        image: "javascript:alert(1)",
-      },
-      { slug: "draft", title: "Private draft", status: "Borrador" },
-    ],
+    posts: [{ slug: "archived-entry", title: "Archived", status: "Publicado" }],
   },
 });
-assert.equal(journal.elements["#blog-grid"].childElementCount, 1);
-assert.equal(
-  journal.elements["#blog-grid"].children[0].children[0].src,
-  "assets/images/mi-derriengue.jpg",
-);
-assert.equal(
-  journal.elements["#blog-grid"].children[0].children[2].textContent,
-  "<img onerror=alert(1)>",
-);
+assert.equal(noJournal.elements["#blog-grid"].childElementCount, 0);
+assert.equal(noJournal.elements["#published-journal"].childElementCount, 0);
 
 // Past events and drafts are excluded, while a future active event needs a real ticket URL.
 const agenda = await boot({
@@ -219,5 +204,5 @@ assert.equal(cinema.elements["#cinema"].open, false);
 assert.equal(cinema.elements["[data-replay-intro]"].focused, true);
 
 console.log(
-  "Behavior checks passed: blocked storage, malformed data, public posts, future events, reduced motion, intro exit and replay.",
+  "Behavior checks passed: blocked storage, malformed data, removed Bitácora, future events, reduced motion, intro exit and replay.",
 );

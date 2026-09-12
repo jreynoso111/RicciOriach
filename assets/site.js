@@ -39,14 +39,6 @@
     return "";
   };
 
-  const slugify = (value = "") =>
-    String(value)
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9ñáéíóúü\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .replace(/-+/g, "-");
-
   function syncScrollLock() {
     document.body.classList.toggle(
       "locked",
@@ -281,52 +273,13 @@
     element.textContent = new Date().getFullYear();
   });
 
-  const editorialPosts = [
-    {
-      slug: "pa-que-bailemos",
-      title: "Un encuentro pa’ que bailemos.",
-      category: "Música / Colaboraciones",
-      date: "2025-12-05",
-      image: "assets/images/pa-que-bailemos.jpg",
-      author: "Bitácora musical",
-      content:
-        "Lena Dardelet y Riccie Oriach se encuentran en Pa’ que bailemos, un sencillo publicado el 5 de diciembre de 2025. El encuentro lleva sus dos voces a una invitación compartida: moverse con la música.\n\nEl videoclip, publicado en el canal oficial de Lena Dardelet, fue dirigido por Eric Alvarez. La dirección de fotografía estuvo a cargo de Raymi Guzman, con producción ejecutiva de Guerrero Filmworks.\n\nDale play y descubre este cruce de universos caribeños.",
-      link: "https://www.youtube.com/watch?v=1S2t2gNuf8M",
-    },
-    {
-      slug: "maquine",
-      title: "Las muchas formas de Maquiné.",
-      category: "Discografía / Álbum",
-      date: "2021-05-28",
-      image: "assets/images/maquine.jpg",
-      author: "Bitácora musical",
-      content:
-        "Maquiné reúne ocho canciones y fue publicado el 28 de mayo de 2021. Del tema que le da nombre al disco a No me quieras tanto, el álbum abre distintas puertas al universo musical de Riccie.\n\nLa canción Maquiné fue producida por Munir Hossn, Riccie Oriach y Michael Olivera. Sus créditos reúnen percusión, guitarras, cuerdas, metales y voces: una muestra de las conversaciones musicales que atraviesan este trabajo.\n\nCaracolita, La Gomba y Yo propongo son otras paradas de este recorrido. Escucha el disco completo y consulta sus créditos en el Bandcamp del artista.",
-      link: "https://riccieoriach.bandcamp.com/album/maquin",
-    },
-    {
-      slug: "mi-derriengue",
-      title: "Una isla dentro de Mi Derriengue.",
-      category: "Discografía / EP",
-      date: "2020-02-14",
-      image: "assets/images/mi-derriengue.jpg",
-      author: "Bitácora musical",
-      content:
-        "Publicado el 14 de febrero de 2020, Mi Derriengue conecta ritmos dominicanos con el espíritu abierto del proyecto de Riccie Oriach. Fue producido por Eduardo Cabra.\n\nEn este EP, el merengue, la salve y otras expresiones de la isla conversan con el rock, el hip-hop y la salsa. Su presentación oficial también destaca colaboraciones con Vicente García, Yenni Nuñez, Nicola Santiago y Mártires.\n\nEs un viaje entre el baile, el humor y las historias. Descubre sus canciones, letras y créditos en el Bandcamp de Riccie.",
-      link: "https://riccieoriach.bandcamp.com/album/mi-derriengue",
-    },
-  ];
   const mapEvent = (row) => ({
     ...row,
     ticketStatus: row.ticket_status ?? row.ticketStatus ?? "available",
     ticketUrl: row.ticket_url ?? row.ticketUrl ?? "",
   });
-  const mapPost = (row) => ({
-    ...row,
-    image: row.image_url ?? row.image ?? "",
-  });
   const validContent = (value) =>
-    value && Array.isArray(value.events) && Array.isArray(value.posts);
+    value && Array.isArray(value.events);
   const readPublishedFile = async () => {
     const response = await fetch("content/published.json", {
       cache: "no-store",
@@ -340,26 +293,17 @@
   const readPublishedCloud = async () => {
     const client = window.riccieSupabase;
     if (!client) throw new Error("Supabase is not configured");
-    const [eventsResult, postsResult] = await Promise.all([
-      client
-        .from("events")
-        .select("*")
-        .eq("status", "Publicado")
-        .order("date", { ascending: true }),
-      client
-        .from("posts")
-        .select("*")
-        .eq("status", "Publicado")
-        .order("date", { ascending: false }),
-    ]);
+    const eventsResult = await client
+      .from("events")
+      .select("*")
+      .eq("status", "Publicado")
+      .order("date", { ascending: true });
     if (eventsResult.error) throw eventsResult.error;
-    if (postsResult.error) throw postsResult.error;
     return {
       events: (eventsResult.data || []).map(mapEvent),
-      posts: (postsResult.data || []).map(mapPost),
     };
   };
-  let content = { events: [], posts: [] };
+  let content = { events: [] };
   let contentLoaded = false;
   try {
     content = window.riccieSupabase
@@ -372,20 +316,13 @@
       content = await readPublishedFile();
       contentLoaded = true;
     } catch {
-      content = { events: [], posts: [] };
+      content = { events: [] };
       const message = $("#event-count");
       if (message)
         message.textContent =
           "No pudimos cargar la agenda. Vuelve a intentarlo en unos minutos.";
     }
   }
-  const storedPosts = (Array.isArray(content.posts) ? content.posts : [])
-    .filter((post) => post && post.status === "Publicado")
-    .map((post) => ({ ...post, slug: post.slug || slugify(post.title) }))
-    .filter(
-      (post) => !editorialPosts.some((entry) => entry.slug === post.slug),
-    );
-
   const eventsRoot = $("#event-list");
   if (eventsRoot) {
     const now = new Date();
@@ -501,73 +438,6 @@
     );
     citySelect?.addEventListener("change", renderEvents);
     renderEvents();
-  }
-
-  const blogRoot = $("#blog-grid");
-  if (blogRoot && storedPosts.length) {
-    $("#published-journal").hidden = false;
-    storedPosts.forEach((post) => {
-      const article = document.createElement("article");
-      article.className = "journal-card";
-      const cover = document.createElement("img");
-      cover.src =
-        safeUrl(post.image, true) || "assets/images/mi-derriengue.jpg";
-      cover.alt = String(post.title || "Historia de Riccie Oriach");
-      cover.loading = "lazy";
-      const category = document.createElement("p");
-      category.className = "eyebrow";
-      category.textContent = post.date || "Historias del camino";
-      const title = document.createElement("h2");
-      title.textContent = post.title || "Historia de Riccie Oriach";
-      const excerpt = document.createElement("p");
-      excerpt.textContent = post.excerpt || "";
-      const anchor = document.createElement("a");
-      anchor.className = "text-link";
-      anchor.href = `blog-post.html?slug=${encodeURIComponent(post.slug)}`;
-      anchor.textContent = "Seguir leyendo ↗";
-      article.append(cover, category, title, excerpt, anchor);
-      blogRoot.append(article);
-    });
-  }
-
-  if ($("#journal-article")) {
-    const slug = new URLSearchParams(location.search).get("slug");
-    const post = [...editorialPosts, ...storedPosts].find(
-      (entry) => entry.slug === slug,
-    );
-    if (!post) {
-      $("#post-title").textContent = "Nos falta esa historia.";
-      $("#post-not-found").hidden = false;
-    } else {
-      document.title = `${post.title} | Riccie Oriach`;
-      $("#post-title").textContent = post.title;
-      $("#post-category").textContent = post.category || "Historias del camino";
-      if (editorialPosts.some((p) => p.slug === slug)) $("#post-cover").dataset.photoSlot = `journal-${slug}`;
-      $("#post-meta").textContent = [post.author || "Riccie Oriach", post.date]
-        .filter(Boolean)
-        .join(" · ");
-      const canonical = document.querySelector('link[rel="canonical"]');
-      canonical.href = `https://riccie-oriach.vercel.app/blog-post.html?slug=${encodeURIComponent(post.slug)}`;
-      const imageUrl = safeUrl(post.image, true);
-      if (imageUrl) {
-        $("#post-cover").src = imageUrl;
-        $("#post-cover").alt = post.title;
-        $("#post-cover").hidden = false;
-      }
-      String(post.content || post.excerpt || "")
-        .split(/\n\n+/)
-        .filter(Boolean)
-        .forEach((text) => {
-          const paragraph = document.createElement("p");
-          paragraph.textContent = text;
-          $("#post-body").append(paragraph);
-        });
-      const source = safeUrl(post.link);
-      if (source) {
-        $("#post-source").href = source;
-        $("#post-source").hidden = false;
-      }
-    }
   }
 
   window.RicciePhotos?.apply();

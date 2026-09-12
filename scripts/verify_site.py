@@ -5,7 +5,14 @@ from urllib.parse import unquote, urlsplit
 import re
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ['index.html', 'music.html', 'events.html', 'contact.html', 'blog.html', 'blog-post.html', 'store.html', 'payment.html']
+PAGES = ['index.html', 'music.html', 'events.html', 'contact.html', 'store.html', 'payment.html']
+REMOVED_PAGES = ['blog.html', 'blog-post.html']
+
+for name in REMOVED_PAGES:
+    assert not (ROOT / name).exists(), ('removed page still exists', name)
+
+manager = (ROOT / 'admin/index.html').read_text()
+assert 'Bitácora' not in manager and 'data-kind="posts"' not in manager, 'Bitácora is still available in the manager'
 
 
 class Page(HTMLParser):
@@ -42,6 +49,8 @@ for name in PAGES:
     pages[name] = page
 
 for name, page in pages.items():
+    source = (ROOT / name).read_text()
+    assert 'blog.html' not in source and 'blog-post.html' not in source, (name, 'stale Bitácora link')
     for link in page.links:
         target = unquote(link.path) if link.path else name
         assert (ROOT / target).is_file(), (name, 'missing local file', target)

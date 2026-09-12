@@ -4,7 +4,7 @@ El panel en `/admin/` administra el proyecto Supabase Riccie Oriach (`vacmyqiddt
 
 ## Fotos
 
-La pestaña Fotos de la web incluye portada, artista, tres fotografías de la intro, lanzamiento musical, eventos, contacto, las tres historias editoriales y tienda. Permite URL HTTPS, subida JPG/PNG/WebP, encuadre horizontal y vertical, texto alternativo, restauración de la original y vista previa de la página. Los filtros, máscaras, bordes y animaciones siguen en CSS. Las fotos de nuevas historias, afiches de eventos y productos se editan en sus fichas.
+La pestaña Fotos de la web incluye portada, artista, tres fotografías de la intro, lanzamiento musical, eventos, contacto y tienda. Permite URL HTTPS, subida JPG/PNG/WebP, encuadre horizontal y vertical, texto alternativo, restauración de la original y vista previa de la página. Los filtros, máscaras, bordes y animaciones siguen en CSS. Los afiches de eventos y las fotos de productos se editan en sus fichas. Bitácora se retiró del sitio y del panel; los registros antiguos quedan conservados en la base de datos.
 
 ## Publicar contenido
 
