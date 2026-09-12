@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
   <title>Gestión | Riccie Oriach</title><link rel="icon" href="../assets/favicon.svg">
-  <link rel="stylesheet" href="../assets/site.css?v=20260922"><link rel="stylesheet" href="manager.css?v=20260921">
+  <link rel="stylesheet" href="../assets/site.css?v=20260922"><link rel="stylesheet" href="manager.css?v=20260922">
   <script src="../assets/supabase-config.js?v=20260918"></script><script src="../assets/supabase-client.js?v=20260918" defer></script>
-  <script src="../assets/content-model.js?v=20260921" defer></script><script src="manager.js?v=20260921" defer></script>
+  <script src="../assets/content-model.js?v=20260921" defer></script><script src="manager.js?v=20260922" defer></script>
 </head>
 <body class="manager-page">
   <a class="skip-link" href="#manager-main">Saltar al contenido</a>
@@ -14,8 +14,8 @@
     <div class="manager-title"><div><p class="eyebrow">El centro de tu universo</p><h1>Tu web.<br><em>A tu manera.</em></h1></div><p>Fotos, conciertos, entradas y todo lo que la gente se lleva del coro. Un solo lugar para gestionarlo.</p></div>
     <p id="connection-status" class="manager-notice" role="status">Conectando con el gestor…</p>
     <section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
-      <div><p class="eyebrow">Acceso privado</p><h2 id="auth-title">Entra con tu enlace mágico.</h2><p id="auth-copy">Usa el correo de tu cuenta administradora. El enlace de acceso llegará a tu bandeja de entrada.</p></div>
-      <form id="auth-form" class="auth-form"><label for="auth-email">Correo de la cuenta invitada</label><div class="auth-form-row"><input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com"><button class="button" type="submit" id="auth-submit">Enviar enlace</button></div></form>
+      <div><p class="eyebrow">Acceso privado</p><h2 id="auth-title">Accede a tu gestor.</h2><p id="auth-copy">Entra con el correo y la contraseña de tu cuenta. Solo las cuentas autorizadas pueden administrar el contenido.</p></div>
+      <form id="auth-form" class="auth-form"><label for="auth-email">Correo de acceso</label><input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com"><label for="auth-password">Contraseña</label><input id="auth-password" name="password" type="password" autocomplete="current-password" required><button class="button" type="submit" id="auth-submit">Iniciar sesión</button><button class="text-button" type="button" id="auth-magic-link">Prefiero recibir un enlace mágico</button></form>
       <p id="auth-status" class="save-status" role="status"></p><button type="button" id="sign-out" class="text-button" hidden>Cerrar sesión</button>
     </section>
     <div id="manager-workspace" hidden>

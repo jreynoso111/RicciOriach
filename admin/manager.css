@@ -71,7 +71,7 @@
 }
 .auth-form {
   display: grid;
-  gap: 9px;
+  gap: 10px;
 }
 .auth-form label {
   color: var(--cream);
@@ -79,15 +79,11 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.auth-form-row {
-  display: flex;
-  gap: 10px;
+.auth-form .button {
+  justify-self: start;
+  margin-top: 6px;
 }
-.auth-form-row input {
-  min-width: 0;
-  flex: 1;
-}
-.auth-panel .text-button {
+.auth-panel > .text-button {
   grid-column: 2;
   justify-self: start;
 }
@@ -392,12 +388,11 @@
     grid-template-columns: 1fr;
     padding: 22px 20px;
   }
-  .auth-panel .text-button {
+  .auth-panel > .text-button {
     grid-column: auto;
   }
-  .auth-form-row {
-    align-items: stretch;
-    flex-direction: column;
+  .auth-form .button {
+    justify-self: stretch;
   }
   .manager-grid {
     grid-template-columns: 1fr;

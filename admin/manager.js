@@ -305,12 +305,34 @@
       loadedUser = next.user.id; $("#manager-workspace").hidden = false; $("#auth-panel").classList.add("is-connected");
       $("#auth-title").textContent = "Sesión administradora activa"; $("#auth-copy").textContent = "Tu contenido se guarda en la web.";
       status("#auth-status", next.user.email || "Cuenta autorizada"); status("#connection-status", "Conectado · Los cambios publicados se reflejan al guardar."); switchKind(kind);
-    } catch (e) { if (generation === sessionGeneration) { status("#connection-status", "No se pudo abrir el gestor.", true); status("#auth-status", e.message, true); } }
+    } catch (e) { if (generation === sessionGeneration) { loadedUser = null; $("#manager-workspace").hidden = true; $("#auth-form").hidden = false; status("#connection-status", "No se pudo abrir el gestor.", true); status("#auth-status", e.message, true); } }
   }
   $("#auth-form").addEventListener("submit", async (e) => {
-    e.preventDefault(); if (!client) return; $("#auth-submit").disabled = true; status("#auth-status", "Enviando enlace…");
-    try { const result = await client.auth.signInWithOtp({email: $("#auth-email").value.trim(), options: {shouldCreateUser: false, emailRedirectTo: new URL("/admin/index.html",location.origin).href}}); if (result.error) throw result.error; status("#auth-status", "Revisa tu correo. El enlace abre el gestor."); }
-    catch (error) { status("#auth-status", error.message, true); } finally { $("#auth-submit").disabled = false; }
+    e.preventDefault(); if (!client) return; $("#auth-submit").disabled = true; $("#auth-magic-link").disabled = true; status("#auth-status", "Comprobando tus datos…");
+    try {
+      const result = await client.auth.signInWithPassword({email: $("#auth-email").value.trim(), password: $("#auth-password").value});
+      if (result.error) throw result.error;
+      $("#auth-password").value = "";
+      status("#auth-status", "Acceso confirmado. Comprobando permisos…");
+    } catch (error) {
+      const message = error.code === "invalid_credentials" || error.message === "Invalid login credentials"
+        ? "El correo o la contraseña no coinciden. Revisa tus datos e inténtalo otra vez."
+        : error.code === "email_not_confirmed"
+          ? "Confirma tu correo electrónico antes de iniciar sesión."
+          : error.message || "No se pudo iniciar sesión. Inténtalo otra vez.";
+      status("#auth-status", message, true);
+    } finally { $("#auth-submit").disabled = false; $("#auth-magic-link").disabled = false; }
+  });
+  $("#auth-magic-link").addEventListener("click", async () => {
+    const email = $("#auth-email");
+    if (!client || !email.reportValidity()) return;
+    $("#auth-submit").disabled = true; $("#auth-magic-link").disabled = true; status("#auth-status", "Enviando enlace…");
+    try {
+      const result = await client.auth.signInWithOtp({email: email.value.trim(), options: {shouldCreateUser: false, emailRedirectTo: new URL("/admin/index.html", location.origin).href}});
+      if (result.error) throw result.error;
+      status("#auth-status", "Revisa tu correo. El enlace abre el gestor.");
+    } catch (error) { status("#auth-status", error.message || "No se pudo enviar el enlace. Inténtalo otra vez.", true); }
+    finally { $("#auth-submit").disabled = false; $("#auth-magic-link").disabled = false; }
   });
   $("#sign-out").addEventListener("click", async () => { if (!leave()) return; const result = await client.auth.signOut(); if (result.error) status("#auth-status", result.error.message, true); });
   if (!client) { status("#connection-status", "Falta la configuración del gestor.", true); return; }
