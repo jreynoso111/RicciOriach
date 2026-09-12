@@ -313,28 +313,68 @@
       link: "https://riccieoriach.bandcamp.com/album/mi-derriengue",
     },
   ];
-  let content = { events: [], posts: [] };
-  let contentLoaded = false;
-  try {
+  const mapEvent = (row) => ({
+    ...row,
+    ticketStatus: row.ticket_status ?? row.ticketStatus ?? "available",
+    ticketUrl: row.ticket_url ?? row.ticketUrl ?? "",
+  });
+  const mapPost = (row) => ({
+    ...row,
+    image: row.image_url ?? row.image ?? "",
+  });
+  const validContent = (value) =>
+    value && Array.isArray(value.events) && Array.isArray(value.posts);
+  const readPublishedFile = async () => {
     const response = await fetch("content/published.json", {
       cache: "no-store",
       signal: AbortSignal.timeout(8000),
     });
     if (!response.ok) throw new Error("Content unavailable");
-    content = await response.json();
-    if (
-      !content ||
-      !Array.isArray(content.events) ||
-      !Array.isArray(content.posts)
-    )
-      throw new Error("Invalid content");
+    const value = await response.json();
+    if (!validContent(value)) throw new Error("Invalid content");
+    return value;
+  };
+  const readPublishedCloud = async () => {
+    const client = window.riccieSupabase;
+    if (!client) throw new Error("Supabase is not configured");
+    const [eventsResult, postsResult] = await Promise.all([
+      client
+        .from("events")
+        .select("*")
+        .eq("status", "Publicado")
+        .order("date", { ascending: true }),
+      client
+        .from("posts")
+        .select("*")
+        .eq("status", "Publicado")
+        .order("date", { ascending: false }),
+    ]);
+    if (eventsResult.error) throw eventsResult.error;
+    if (postsResult.error) throw postsResult.error;
+    return {
+      events: (eventsResult.data || []).map(mapEvent),
+      posts: (postsResult.data || []).map(mapPost),
+    };
+  };
+  let content = { events: [], posts: [] };
+  let contentLoaded = false;
+  try {
+    content = window.riccieSupabase
+      ? await readPublishedCloud()
+      : await readPublishedFile();
     contentLoaded = true;
   } catch {
-    content = { events: [], posts: [] };
-    const message = $("#event-count");
-    if (message)
-      message.textContent =
-        "No pudimos cargar la agenda. Vuelve a intentarlo en unos minutos.";
+    try {
+      // Keep the published snapshot as a resilient fallback during an API outage.
+      content = await readPublishedFile();
+      contentLoaded = true;
+    } catch {
+      content = { events: [], posts: [] };
+      const message = $("#event-count");
+      if (message)
+        message.textContent =
+          "No pudimos cargar la agenda. Vuelve a intentarlo en unos minutos.";
+    }
   }
   const storedPosts = (Array.isArray(content.posts) ? content.posts : [])
     .filter((post) => post && post.status === "Publicado")

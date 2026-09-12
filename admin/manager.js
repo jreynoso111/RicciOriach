@@ -2,12 +2,20 @@
   "use strict";
   const $ = (selector) => document.querySelector(selector);
   const form = $("#editor-form");
+  const supabase = window.riccieSupabase;
+  const authPanel = $("#auth-panel");
+  const authForm = $("#auth-form");
+  const authEmail = $("#auth-email");
+  const authSubmit = $("#auth-submit");
+  const authStatus = $("#auth-status");
+  const signOut = $("#sign-out");
+  const workspace = $("#manager-workspace");
   let content = { events: [], posts: [] },
-    revision,
     kind = "events",
     editing = null,
     dirty = false,
-    saving = false;
+    saving = false,
+    activeSession = null;
   const field = (name) => form.elements.namedItem(name);
   const imageFile = $("#image-file");
   const imagePreviewCard = $("#image-preview-card");
@@ -26,6 +34,76 @@
       copy: "Escribe una historia breve, elige una foto y publícala cuando esté lista.",
     },
   };
+  const mapEvent = (row) => ({
+    ...row,
+    ticketStatus: row.ticket_status ?? "available",
+    ticketUrl: row.ticket_url ?? "",
+  });
+  const mapPost = (row) => ({
+    ...row,
+    image: row.image_url ?? "",
+  });
+  const toEventRow = (item) => ({
+    id: item.id,
+    title: item.title,
+    date: item.date,
+    status: item.status,
+    city: item.city,
+    venue: item.venue,
+    time: item.time || "",
+    ticket_status: item.ticketStatus || "available",
+    ticket_url: item.ticketUrl || "",
+    description: item.description || "",
+  });
+  const toPostRow = (item, imageUrl) => ({
+    id: item.id,
+    title: item.title,
+    date: item.date,
+    status: item.status,
+    slug: item.slug,
+    category: item.category || "",
+    author: item.author || "",
+    image_url: imageUrl || "",
+    excerpt: item.excerpt || "",
+    content: item.content || "",
+    link: item.link || "",
+  });
+  const setAuthStatus = (text, error = false) => {
+    if (!authStatus) return;
+    authStatus.textContent = text;
+    authStatus.classList.toggle("is-error", error);
+  };
+  const setConnection = (text, error = false) => {
+    const status = $("#connection-status");
+    if (!status) return;
+    status.textContent = text;
+    status.classList.toggle("is-error", error);
+  };
+  const adminRedirect = () => new URL("index.html", document.baseURI).href;
+  const isDataImage = (value) =>
+    typeof value === "string" && /^data:image\/(?:jpeg|png|webp);base64,/i.test(value);
+  const dataUrlToBlob = async (value) => {
+    const response = await fetch(value);
+    return response.blob();
+  };
+  async function uploadImage(value) {
+    if (typeof value === "string" && value.toLowerCase().startsWith("data:image/")) {
+      if (!isDataImage(value))
+        throw new Error("La foto debe ser JPG, PNG o WebP.");
+    }
+    if (!isDataImage(value)) return value || "";
+    if (!supabase) throw new Error("Supabase no está disponible.");
+    const path = `posts/${crypto.randomUUID()}.jpg`;
+    const blob = await dataUrlToBlob(value);
+    const result = await supabase.storage.from("site-media").upload(path, blob, {
+      contentType: "image/jpeg",
+      cacheControl: "31536000",
+      upsert: false,
+    });
+    if (result.error) throw result.error;
+    const publicFile = supabase.storage.from("site-media").getPublicUrl(path);
+    return publicFile.data.publicUrl;
+  }
   const imageSource = (value) => {
     if (typeof value !== "string" || !value.trim()) return "";
     if (/^data:image\/(?:png|jpeg|webp|gif);base64,[a-z0-9+/]+=*$/i.test(value))
@@ -306,35 +384,37 @@
       item[key] = item[key].trim();
     });
     item.id = editing || crypto.randomUUID();
-    const next = structuredClone(content);
-    const index = next[kind].findIndex((entry) => entry.id === item.id);
-    if (index < 0) next[kind].push(item);
-    else next[kind][index] = item;
     saving = true;
     $("#save-record").disabled = true;
     $("#archive-record").disabled = true;
     message("Guardando…");
     try {
-      const response = await fetch("/api/manage/content", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: next, revision }),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "No se pudo guardar.");
-      content = result.content;
-      revision = result.revision;
+      if (!activeSession || !supabase)
+        throw new Error("Inicia sesión para guardar cambios.");
+      const table = kind;
+      let row;
+      if (kind === "events") row = toEventRow(item);
+      else row = toPostRow(item, await uploadImage(item.image));
+      const query = editing
+        ? supabase.from(table).update(row).eq("id", item.id).select("*").single()
+        : supabase.from(table).insert(row).select("*").single();
+      const result = await query;
+      if (result.error) throw result.error;
+      const saved = kind === "events" ? mapEvent(result.data) : mapPost(result.data);
+      content[kind] = editing
+        ? content[kind].map((entry) => (entry.id === saved.id ? saved : entry))
+        : [...content[kind], saved];
       dirty = false;
-      edit(item);
+      edit(saved);
       message(
         item.status === "Publicado"
-          ? "Guardado y visible en la web local. La publicación en internet requiere desplegar los cambios."
+          ? "Guardado y visible en la web pública."
           : "Guardado. Este contenido no aparece en la web pública.",
       );
     } catch (error) {
       message(
         error.message ||
-          "No se pudo conectar. El formulario conserva tus cambios.",
+          "No se pudo guardar. El formulario conserva tus cambios.",
       );
     } finally {
       saving = false;
@@ -351,27 +431,95 @@
     dirty = true;
     save();
   });
-  async function boot() {
-    try {
-      const response = await fetch("/api/manage/content", {
-        cache: "no-store",
-      });
-      if (
-        !response.ok ||
-        !response.headers.get("content-type")?.includes("application/json")
-      )
-        throw new Error();
-      const result = await response.json();
-      content = result.content;
-      revision = result.revision;
-      $("#connection-status").textContent =
-        "Gestión local · Los cambios se guardan en esta Mac. Solo el contenido publicado se incluye en la web. El acceso desde otros dispositivos está pendiente de conexión.";
-      $("#manager-workspace").hidden = false;
-      edit();
-    } catch {
-      $("#connection-status").textContent =
-        "El gestor remoto todavía no está conectado. En esta Mac, inicia el gestor local para editar el contenido. La web pública sigue disponible.";
+  async function loadContent() {
+    const [eventsResult, postsResult] = await Promise.all([
+      supabase.from("events").select("*").order("date", { ascending: false }),
+      supabase.from("posts").select("*").order("date", { ascending: false }),
+    ]);
+    if (eventsResult.error) throw eventsResult.error;
+    if (postsResult.error) throw postsResult.error;
+    content = {
+      events: (eventsResult.data || []).map(mapEvent),
+      posts: (postsResult.data || []).map(mapPost),
+    };
+  }
+  async function handleSession(session) {
+    activeSession = session || null;
+    if (signOut) signOut.hidden = !activeSession;
+    if (!activeSession) {
+      workspace.hidden = true;
+      authPanel.hidden = false;
+      authForm.hidden = false;
+      setAuthStatus("");
+      setConnection("Inicia sesión para abrir el gestor.");
+      return;
     }
+    authForm.hidden = true;
+    setAuthStatus("Comprobando permisos de esta cuenta…");
+    const membership = await supabase
+      .from("site_admins")
+      .select("user_id")
+      .eq("user_id", activeSession.user.id)
+      .maybeSingle();
+    if (membership.error) {
+      workspace.hidden = true;
+      setConnection("No se pudieron comprobar los permisos del gestor.", true);
+      setAuthStatus(membership.error.message, true);
+      return;
+    }
+    if (!membership.data) {
+      workspace.hidden = true;
+      setConnection("Esta cuenta está autenticada, pero aún no tiene acceso de administrador.", true);
+      setAuthStatus("Pide al propietario del proyecto que añada esta cuenta a la lista de administradores.", true);
+      return;
+    }
+    try {
+      await loadContent();
+      workspace.hidden = false;
+      authPanel.hidden = false;
+      $("#auth-title").textContent = "Sesión administradora activa.";
+      setAuthStatus(activeSession.user.email || "Cuenta autorizada");
+      setConnection("Conectado a Supabase · Los cambios se guardan y aparecen en la web pública al instante.");
+      edit();
+    } catch (error) {
+      workspace.hidden = true;
+      setConnection("Supabase está conectado, pero no se pudo leer el contenido.", true);
+      setAuthStatus(error.message || "Vuelve a intentarlo en unos minutos.", true);
+    }
+  }
+  authForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!supabase || !authEmail?.value.trim()) return;
+    authSubmit.disabled = true;
+    setAuthStatus("Enviando el enlace…");
+    const result = await supabase.auth.signInWithOtp({
+      email: authEmail.value.trim(),
+      options: { shouldCreateUser: false, emailRedirectTo: adminRedirect() },
+    });
+    authSubmit.disabled = false;
+    if (result.error) {
+      setAuthStatus(result.error.message || "No se pudo enviar el enlace.", true);
+      return;
+    }
+    setAuthStatus("Revisa tu correo. El enlace abre directamente el gestor.");
+  });
+  signOut?.addEventListener("click", async () => {
+    await supabase?.auth.signOut();
+  });
+  async function boot() {
+    if (!supabase) {
+      setConnection("Falta la configuración de Supabase en esta web.", true);
+      return;
+    }
+    supabase.auth.onAuthStateChange((_event, session) => {
+      window.setTimeout(() => handleSession(session), 0);
+    });
+    const result = await supabase.auth.getSession();
+    if (result.error) {
+      setConnection("No se pudo iniciar Auth. Recarga la página para intentarlo de nuevo.", true);
+      return;
+    }
+    await handleSession(result.data.session);
   }
   boot();
 })();

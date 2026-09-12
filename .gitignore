@@ -2,3 +2,5 @@
 .env*
 .local-cms/
 __pycache__/
+
+node_modules/

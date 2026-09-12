@@ -1,0 +1,31 @@
+{
+  "name": "riccioriach",
+  "version": "1.0.0",
+  "description": "Sitio del artista dominicano, con una dirección visual de afiche musical, fotografía real y un prólogo cinematográfico. HTML, CSS y JavaScript sin dependencias de ejecución ni compilación.",
+  "main": "script.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bundle:supabase": "esbuild src/supabase-client.js --bundle --format=iife --global-name=RiccieSupabaseBundle --outfile=assets/supabase-client.js --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jreynoso111/RicciOriach.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jreynoso111/RicciOriach/issues"
+  },
+  "homepage": "https://github.com/jreynoso111/RicciOriach#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "2.116.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

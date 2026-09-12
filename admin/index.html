@@ -8,6 +8,8 @@
     <link rel="icon" href="../assets/favicon.svg" />
     <link rel="stylesheet" href="../assets/site.css?v=20260917" />
     <link rel="stylesheet" href="manager.css?v=20260916" />
+    <script src="../assets/supabase-config.js?v=20260918"></script>
+    <script src="../assets/supabase-client.js?v=20260918" defer></script>
     <script src="manager.js?v=20260916" defer></script>
   </head>
   <body class="manager-page">
@@ -32,6 +34,25 @@
       <p id="connection-status" class="manager-notice" role="status">
         Conectando con el gestor…
       </p>
+      <section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
+        <div>
+          <p class="eyebrow">Acceso privado</p>
+          <h2 id="auth-title">Entra con tu enlace mágico.</h2>
+          <p>
+            Solo las cuentas invitadas para este proyecto pueden administrar las
+            presentaciones y la bitácora. Te enviaremos un enlace de un solo uso.
+          </p>
+        </div>
+        <form id="auth-form" class="auth-form">
+          <label for="auth-email">Correo de la cuenta invitada</label>
+          <div class="auth-form-row">
+            <input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com" />
+            <button class="button" type="submit" id="auth-submit">Enviar enlace</button>
+          </div>
+          <p id="auth-status" class="save-status" role="status"></p>
+        </form>
+        <button type="button" id="sign-out" class="text-button" hidden>Cerrar sesión</button>
+      </section>
       <div id="manager-workspace" hidden>
         <div class="manager-stats">
           <div>

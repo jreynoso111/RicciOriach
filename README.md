@@ -28,18 +28,19 @@ Los archivos antiguos `style.css` y `script.js` se conservan para compatibilidad
 
 Los colores se definen en `:root` de `assets/site.css`. El contenido principal está en el HTML; los tres artículos editoriales están en `editorialPosts` de `assets/site.js`.
 
-Abre [el gestor local](http://127.0.0.1:4180/admin/) para crear, editar y archivar presentaciones y nuevas historias. No utiliza credenciales de demostración ni un login ficticio. El servicio solo acepta solicitudes desde su origen local; **no exponer `serve.py` a internet**.
+Abre [el gestor](http://127.0.0.1:4180/admin/) para crear, editar y archivar presentaciones y nuevas historias. Usa el mismo proyecto Supabase en local y en producción; no utiliza credenciales de demostración ni un login ficticio.
 
-- Los cambios se guardan en `.local-cms/content.json`, excluido de Git y Vercel. Las versiones anteriores se conservan en `.local-cms/history/`.
-- `content/published.json` contiene exclusivamente los registros con estado `Publicado`. La agenda y la bitácora leen este archivo; los cambios dejan de depender de `localStorage`.
+- El gestor remoto usa el proyecto Supabase `Riccie Oriach`: las tablas `events` y `posts` tienen RLS, el acceso está limitado a cuentas incluidas en `site_admins` y las fotos se guardan en el bucket de medios `site-media` con URLs públicas de lectura.
+- `assets/supabase-config.js` contiene únicamente la URL del proyecto y su clave publicable, apta para navegador. Nunca pongas una clave `sb_secret_` o `service_role` en este repositorio.
+- La agenda y la bitácora consultan Supabase y conservan `content/published.json` como respaldo estático si la API no responde.
 - Las próximas presentaciones se ordenan por fecha ascendente y el historial por fecha descendente. Hay filtro por ciudad y estados de entradas.
 - Las historias editoriales existentes permanecen en el código. El gestor administra las historias adicionales.
-- En una historia nueva o editada puedes pegar una URL HTTPS o subir una foto JPG, PNG o WebP desde esta Mac. El gestor la comprime y muestra una vista previa antes de guardarla.
-- Para publicar cambios en internet, revisar y desplegar `content/published.json` con la web. Guardar desde el gestor actual actualiza únicamente la web local.
-- El gestor remoto con autenticación y base de datos compartida está pendiente de definir la organización/proyecto de Riccie. No se ha creado ni modificado un proyecto de Supabase ajeno.
+- En una historia nueva o editada puedes pegar una URL HTTPS o subir una foto JPG, PNG o WebP desde esta Mac. El gestor la comprime, la sube a Storage y muestra una vista previa antes de guardar.
+- Las publicaciones nuevas aparecen en la web pública sin editar archivos ni desplegar manualmente.
+- Para entrar, usa el enlace mágico que se envía a una cuenta invitada. El primer administrador debe añadirse a `site_admins` desde el dashboard después de crear o invitar su usuario en Auth.
 - No hay pasarela de pago, compra interna de entradas ni servidor de correo. Los enlaces de entradas llevan al proveedor externo.
 
-Usa siempre `serve.py` para el gestor: un servidor genérico puede exponer archivos de borradores. Una edición con una revisión desactualizada devuelve HTTP 409 para evitar sobrescribir cambios de otra ventana.
+Para probar la web en esta Mac usa `serve.py`, que fija la raíz del proyecto y desactiva la caché. El gestor remoto guarda el contenido directamente en Supabase y ya no depende de archivos locales ni de `localStorage`.
 
 El intro guarda solo una preferencia de sesión con la clave `riccie-cinema-v2`. Respeta `prefers-reduced-motion`, funciona sin almacenamiento disponible y no reproduce audio automáticamente. Los iframes se crean al abrir un video y se eliminan al cerrarlo.
 
