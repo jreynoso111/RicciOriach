@@ -133,6 +133,12 @@ button {
 .section {
   padding-block: 110px;
 }
+#en-rotacion {
+  padding-bottom: clamp(28px, 4vw, 52px);
+}
+#videos {
+  padding-top: clamp(28px, 4vw, 52px);
+}
 .eyebrow {
   display: flex;
   align-items: center;
