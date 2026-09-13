@@ -35,7 +35,7 @@ class ManagerTests(unittest.TestCase):
             error.close()
             return result
     def event(self, state='Borrador'):
-        return {'id':'test', 'title':'Prueba <script>', 'date':'2099-06-15', 'city':'Santo Domingo', 'venue':'Sala', 'status':state, 'ticketStatus':'available', 'ticketUrl':'https://example.com/tickets'}
+        return {'id':'test', 'title':'Prueba <script>', 'date':'2099-06-15', 'city':'Santo Domingo', 'venue':'Sala', 'status':state, 'ticketStatus':'available', 'ticketProvider':'Tix', 'ticketUrl':'https://example.com/tickets', 'ticketAvailability':'Quedan 12 · VIP agotado'}
     def post(self, state='Borrador'):
         return {'id':'post-test', 'title':'Historia con foto', 'date':'2099-06-15', 'status':state, 'slug':'historia-con-foto', 'category':'Bitácora', 'author':'Riccie', 'image':'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ==', 'excerpt':'Una historia breve.', 'content':'El texto de la historia.', 'link':'https://example.com/historia'}
     def test_publish_archive_conflict_and_private_files(self):
@@ -57,11 +57,24 @@ class ManagerTests(unittest.TestCase):
         _, initial = self.request()
         payload = {'revision':initial['revision'],'content':{'events':[self.event()], 'posts':[]}}
         self.assertEqual(self.request(data=payload, origin='https://other.test')[0], 403)
-        for field, value in [('ticketUrl','javascript:alert(1)'), ('image','data:image/jpeg;base64,not-valid'), ('date','2099-02-30'), ('city','')]:
+        for field, value in [('ticketUrl','javascript:alert(1)'), ('ticketAvailability','x' * 161), ('image','data:image/jpeg;base64,not-valid'), ('date','2099-02-30'), ('city','')]:
             payload['content']['events'] = [self.event()]
             payload['content']['events'][0][field] = value
             self.assertEqual(self.request(data=payload)[0], 400)
         self.assertEqual(self.request('/content/published.json')[1]['events'], [])
+
+    def test_ticket_status_requires_external_link_when_published(self):
+        _, initial = self.request()
+        event = self.event('Publicado')
+        event['ticketUrl'] = ''
+        payload = {'revision': initial['revision'], 'content': {'events': [event], 'posts': []}}
+        self.assertEqual(self.request(data=payload)[0], 400)
+
+        _, initial = self.request()
+        event['ticketStatus'] = 'coming_soon'
+        event['ticketUrl'] = ''
+        payload = {'revision': initial['revision'], 'content': {'events': [event], 'posts': []}}
+        self.assertEqual(self.request(data=payload)[0], 200)
 
     def test_accept_uploaded_photo_data(self):
         _, initial = self.request()

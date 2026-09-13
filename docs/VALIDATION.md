@@ -24,7 +24,7 @@ Verificado con el navegador conectado de Codex; `agent-browser` no estaba instal
 
 ## Dependencias externas
 
-Las fotografías y portadas se sirven desde `assets/images`. Google Fonts aporta tipografía. Los videos usan el reproductor oficial de YouTube y tienen enlace alternativo. Las fechas y entradas del editor original continúan siendo locales al navegador: no se añadió un CMS remoto ni un servicio de pagos.
+Las fotografías y portadas se sirven desde `assets/images`. Google Fonts aporta tipografía. Los videos usan el reproductor oficial de YouTube y tienen enlace alternativo. En la agenda, cada evento puede mostrar su estado de boletas, un texto de stock mantenido manualmente y un enlace HTTPS directo a su plataforma externa. No se consultan APIs de inventario en tiempo real.
 
 ## 2026-09-10 — Agenda y gestión local
 

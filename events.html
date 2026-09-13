@@ -7,13 +7,13 @@
     <title>En vivo | Riccie Oriach</title>
     <meta
       name="description"
-      content="Conciertos y encuentros de Riccie Oriach. Consulta las próximas fechas y conecta con el artista para conciertos y festivales."
+      content="Consulta las presentaciones de Riccie Oriach y abre el enlace de cada evento en su plataforma externa de boletas."
     />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="En vivo | Riccie Oriach" />
     <meta
       property="og:description"
-      content="Conciertos y encuentros de Riccie Oriach. Consulta las próximas fechas y conecta con el artista para conciertos y festivales."
+      content="Consulta las presentaciones de Riccie Oriach y abre el enlace de cada evento en su plataforma externa de boletas."
     />
     <meta
       property="og:image"
@@ -28,16 +28,18 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260922" />
+    <link rel="stylesheet" href="assets/site.css?v=20260913-external-tickets1" />
     <script>
       document.documentElement.classList.add("js");
     </script>
     <script src="assets/supabase-config.js?v=20260918"></script>
     <script src="assets/supabase-client.js?v=20260918" defer></script>
-    <script src="assets/content-model.js?v=20260921" defer></script>
+    <script src="assets/content-model.js?v=20260923" defer></script>
+    <script src="assets/preview-content.js?v=20260913-external-tickets1" defer></script>
     <script src="assets/photos.js?v=20260919" defer></script>
-    <script src="assets/commerce.js?v=20260919" defer></script>
-    <script src="assets/site.js?v=20260921" defer></script>
+    <script src="assets/notifications.js?v=20260912-notifications1" defer></script>
+    <script src="assets/commerce.js?v=20260913-external-tickets1" defer></script>
+    <script src="assets/site.js?v=20260913-external-tickets1" defer></script>
   </head>
   <body class="page-events">
     <div class="site-shell">
@@ -76,12 +78,13 @@
             <h1>Nos vemos<br /><em>en el coro.</em></h1>
             <div class="page-hero-bottom">
               <p>
-                Hay canciones que se escuchan. Y otras que se viven entre la
-                gente. Esta es una invitación a lo segundo.
+                Más abajo puedes revisar las fechas y entrar directamente a la
+                plataforma externa donde se venden las boletas.
               </p>
             </div>
-            <a class="text-link" href="#agenda"
-              >Explorar las presentaciones ↓</a
+            <a class="live-hero-scroll" href="#agenda"
+              ><span class="live-hero-scroll-arrow" aria-hidden="true">↓</span>
+              <span>Baja para ver fechas y boletas</span></a
             >
           </div>
           <figure class="live-hero-photo">
@@ -104,9 +107,11 @@
             <div>
               <p class="eyebrow">En vivo / La ruta</p>
               <h2>Encuentra el <em>coro.</em></h2>
+              <p class="agenda-intro">Revisa el estado de las boletas y abre el enlace oficial de la plataforma externa para comprarlas. La disponibilidad se actualiza desde el gestor.</p>
             </div>
             <a class="text-link" href="contact.html">Booking & contacto ↗</a>
           </div>
+          <p class="preview-notice" data-preview-notice hidden><strong>Agenda de muestra</strong> Fechas, estados, stock y enlaces ficticios. <a href="events.html?demo=0#agenda">Ver agenda real ↗</a></p>
           <div class="agenda-controls">
             <div
               class="agenda-tabs"
@@ -117,7 +122,7 @@
                 Próximas fechas
               </button>
               <button type="button" data-period="past" aria-pressed="false">
-                Así lo vivimos
+                Presentaciones pasadas
               </button>
             </div>
             <label class="agenda-city"
@@ -150,6 +155,23 @@
               >
             </div>
           </div>
+          <aside class="event-notification-panel" aria-labelledby="event-notification-title">
+            <div class="event-notification-copy">
+              <p class="eyebrow">El próximo encuentro</p>
+              <h2 id="event-notification-title">Que no se te pase <em>el coro.</em></h2>
+              <p>Déjanos tu correo y te avisaremos cuando anunciemos nuevas presentaciones.</p>
+            </div>
+            <div class="event-notification-form-wrap">
+              <form id="event-notification-form">
+                <label>Correo electrónico<input name="email" type="email" required maxlength="254" autocomplete="email" placeholder="tu@correo.com"></label>
+                <div class="request-honeypot" aria-hidden="true"><label>Deja este campo vacío<input name="website" tabindex="-1" autocomplete="off"></label></div>
+                <label class="request-consent"><input type="checkbox" name="consent" required> Acepto recibir correos sobre nuevas presentaciones de Riccie Oriach.</label>
+                <button class="button" type="submit">Avisarme de nuevas presentaciones</button>
+              </form>
+              <p id="event-notification-status" class="request-status" role="status"></p>
+              <p id="event-notification-note" class="field-note">Usaremos tu correo solo para avisarte de nuevas presentaciones.</p>
+            </div>
+          </aside>
           <noscript
             ><p>
               Consulta los anuncios de conciertos en el Instagram de Riccie
@@ -306,7 +328,6 @@
       <p class="event-modal-location" id="event-modal-location"></p>
       <p class="event-modal-description" id="event-modal-description"></p>
       <img id="event-modal-image" class="event-modal-image" alt="" hidden>
-      <section id="event-tickets" aria-label="Taquillas de la presentación"></section>
       <div class="event-modal-actions">
         <a
           class="button"

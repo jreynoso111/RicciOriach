@@ -46,6 +46,6 @@ Las fotografías, portadas y miniaturas se sirven localmente; no se generó ni s
 - Reproductores de YouTube con carga tras una acción explícita. Cerrar el diálogo destruye el iframe y detiene audio/video; existe un enlace alternativo a YouTube.
 - Portadas completas y enlaces a Bandcamp, Spotify y Apple Music. No se reutiliza una portada ampliada como retrato del artista.
 - Las seis páginas públicas comparten CSS y comportamiento. No requieren compilación ni framework.
-- La agenda admite los eventos futuros `Activo` del almacenamiento local existente. No se modifican esos datos. Solo se ofrece compra cuando el evento aporta `ticketUrl`; de lo contrario, se ofrece contacto.
+- La agenda admite eventos publicados y fecha futura. Las boletas abren el enlace externo definido por evento. El estado y el texto de stock se mantienen en el gestor y son manuales, sin sincronización en tiempo real con la boletera.
 - La bitácora conserva compatibilidad con entradas locales `Publicado`; excluye borradores y las tres entradas de demostración identificadas en el código original. Los artículos nuevos tienen enlaces a su fuente primaria.
 - El editor existente usa almacenamiento del navegador; esta entrega no lo convierte en un CMS remoto ni habilita ventas o envío de formularios.

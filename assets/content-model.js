@@ -7,7 +7,7 @@
     ["intro-one", "Intro · primera foto", "index.html", "riccie-portrait.jpg", "cinema", 50, 50],
     ["intro-two", "Intro · segunda foto", "index.html", "riccie-bandcamp.jpg", "cinema", 50, 50],
     ["intro-three", "Intro · tercera foto", "index.html", "riccie-portrait.jpg", "cinema", 50, 50],
-    ["music-feature", "Música · lanzamiento destacado", "music.html", "pa-que-bailemos.jpg", "cover", 50, 50],
+    ["music-feature", "Música · lanzamiento destacado", "music.html", "pa-que-bailemos-cover.webp", "cover", 50, 50],
     ["events-hero", "En vivo · foto principal", "events.html", "riccie-portrait.jpg", "live", 50, 50],
     ["contact-photo", "Contacto · retrato", "contact.html", "riccie-portrait.jpg", "contact", 50, 50],
     ["store-hero", "Tienda · foto principal", "store.html", "riccie-bandcamp.jpg", "store", 50, 38],

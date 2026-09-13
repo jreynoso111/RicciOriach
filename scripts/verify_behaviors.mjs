@@ -137,7 +137,7 @@ const noJournal = await boot({
 assert.equal(noJournal.elements["#blog-grid"].childElementCount, 0);
 assert.equal(noJournal.elements["#published-journal"].childElementCount, 0);
 
-// Past events and drafts are excluded, while a future active event needs a real ticket URL.
+// Past events and drafts are excluded; unsafe ticket URLs never become links.
 const agenda = await boot({
   selectors: [
     "#event-list",
@@ -167,17 +167,40 @@ const agenda = await boot({
   },
 });
 assert.equal(agenda.elements["#event-list"].childElementCount, 1);
+const unsafeActions = agenda.elements["#event-list"].children[0].children[2];
 assert.equal(
-  agenda.elements["#event-list"].children[0].children[2].type,
+  unsafeActions.children[0].type,
   "button",
 );
 assert.equal(agenda.elements["#events-empty"].hidden, true);
-agenda.elements["#event-list"].children[0].children[2].events.get("click")();
+unsafeActions.children[0].events.get("click")();
 assert.equal(agenda.elements["#event-modal"].open, true);
 assert.equal(agenda.elements["#event-modal-title"].textContent, "Future");
 assert.equal(agenda.elements["#event-modal-tickets"].hidden, true);
 agenda.elements["#event-modal-close"].events.get("click")();
 assert.equal(agenda.elements["#event-modal"].open, false);
+
+const externalAgenda = await boot({
+  selectors: ["#event-list", "#events-empty"],
+  publicContent: {
+    posts: [],
+    events: [{
+      date: "2099-01-01", title: "Ticketed", status: "Publicado",
+      ticketStatus: "available", ticketProvider: "Ticketmaster",
+      ticketUrl: "https://tickets.example.test/show",
+      ticketAvailability: "Quedan 12",
+    }],
+  },
+});
+const externalRow = externalAgenda.elements["#event-list"].children[0];
+const externalActions = externalRow.children[2];
+const externalLink = externalActions.children[0];
+assert.equal(externalLink.href, "https://tickets.example.test/show");
+assert.equal(externalLink.target, "_blank");
+assert.equal(externalLink.rel, "noopener noreferrer");
+assert.equal(externalLink.textContent, "Comprar en Ticketmaster ↗");
+assert.equal(externalRow.children[1].children[3].textContent, "Boletas disponibles");
+assert.equal(externalRow.children[1].children[4].textContent, "Quedan 12");
 
 const cinemaSelectors = [
   "#cinema",

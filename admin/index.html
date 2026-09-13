@@ -3,33 +3,125 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
   <title>Gestión | Riccie Oriach</title><link rel="icon" href="../assets/favicon.svg">
-  <link rel="stylesheet" href="../assets/site.css?v=20260922"><link rel="stylesheet" href="manager.css?v=20260922">
+  <link rel="stylesheet" href="../assets/site.css?v=20260923-external-tickets1"><link rel="stylesheet" href="manager.css?v=20260912-notifications1">
   <script src="../assets/supabase-config.js?v=20260918"></script><script src="../assets/supabase-client.js?v=20260918" defer></script>
-  <script src="../assets/content-model.js?v=20260921" defer></script><script src="manager.js?v=20260922" defer></script>
+  <script src="../assets/content-model.js?v=20260921" defer></script><script src="../assets/preview-content.js?v=20260923-external-tickets1" defer></script><script src="manager.js?v=20260913-external-tickets1" defer></script>
 </head>
 <body class="manager-page">
   <a class="skip-link" href="#manager-main">Saltar al contenido</a>
-  <header class="manager-header"><a class="brand" href="../index.html" aria-label="Riccie Oriach, inicio"><span>riccie</span><span>oriach.</span></a><span class="manager-label">Detrás del escenario</span><a class="text-link" href="../index.html" target="_blank" rel="noopener">Ver la web ↗</a></header>
+  <header class="manager-header">
+    <a class="brand" href="../index.html" aria-label="Riccie Oriach, inicio"><span>riccie</span><span>oriach.</span></a>
+    <div class="manager-label"><span class="manager-label-dot" aria-hidden="true"></span><span>Detrás del escenario</span><span class="manager-label-separator">/</span><strong>Panel de gestión</strong></div>
+    <a class="text-link manager-site-link" href="../index.html" target="_blank" rel="noopener">Ver sitio <span class="arrow" aria-hidden="true">↗</span></a>
+  </header>
   <main id="manager-main" class="manager-wrap">
-    <div class="manager-title"><div><p class="eyebrow">El centro de tu universo</p><h1>Tu web.<br><em>A tu manera.</em></h1></div><p>Fotos, conciertos, entradas y todo lo que la gente se lleva del coro. Un solo lugar para gestionarlo.</p></div>
-    <p id="connection-status" class="manager-notice" role="status">Conectando con el gestor…</p>
-    <section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
-      <div><p class="eyebrow">Acceso privado</p><h2 id="auth-title">Accede a tu gestor.</h2><p id="auth-copy">Entra con el correo y la contraseña de tu cuenta. Solo las cuentas autorizadas pueden administrar el contenido.</p></div>
-      <form id="auth-form" class="auth-form"><label for="auth-email">Correo de acceso</label><input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com"><label for="auth-password">Contraseña</label><input id="auth-password" name="password" type="password" autocomplete="current-password" required><button class="button" type="submit" id="auth-submit">Iniciar sesión</button><button class="text-button" type="button" id="auth-magic-link">Prefiero recibir un enlace mágico</button></form>
-      <p id="auth-status" class="save-status" role="status"></p><button type="button" id="sign-out" class="text-button" hidden>Cerrar sesión</button>
+    <section class="manager-intro" aria-labelledby="manager-page-title">
+      <div class="manager-title">
+        <div>
+          <p class="eyebrow"><span class="dot" aria-hidden="true"></span>Espacio de trabajo · Riccie Oriach</p>
+          <h1 id="manager-page-title">Panel de <em>control.</em></h1>
+        </div>
+        <p>Administra el contenido del sitio y mantén eventos, enlaces de boletas, tienda y pedidos al día.</p>
+      </div>
+      <p id="connection-status" class="manager-notice" role="status">Conectando con el gestor…</p>
     </section>
-    <div id="manager-workspace" hidden>
-      <div class="manager-stats"><div><strong id="count-events">0</strong><span>Presentaciones publicadas</span></div><div><strong id="count-products">0</strong><span>Productos publicados</span></div><div><strong id="count-pending">0</strong><span>Solicitudes pendientes</span></div><div><strong id="count-drafts">0</strong><span>Borradores</span></div></div>
-      <div class="manager-toolbar"><nav aria-label="Contenido del sitio">
-        <button type="button" data-kind="page_images" aria-pressed="true">Fotos de la web</button><button type="button" data-kind="events" aria-pressed="false">Eventos</button><button type="button" data-kind="ticket_types" aria-pressed="false">Taquillas</button><button type="button" data-kind="products" aria-pressed="false">Tienda</button><button type="button" data-kind="orders" aria-pressed="false">Pedidos y reservas</button>
-      </nav></div>
-      <div class="manager-context"><strong id="kind-help-label">Fotos de la web</strong><span id="kind-help-copy">Cambia las fotos conservando sus colores, máscaras y animaciones.</span></div>
-      <div class="content-actions"><button type="button" class="text-link" id="refresh-records">Actualizar listado ↻</button><button type="button" class="button" id="new-record" hidden>Nuevo +</button></div>
-      <div class="manager-grid">
-        <section aria-label="Contenido guardado"><div class="list-filters"><label for="record-search">Buscar<input type="search" id="record-search" placeholder="Nombre, lugar o referencia…"></label><label id="filter-label" for="record-filter">Estado<select id="record-filter"><option value="">Todos</option></select></label></div><p id="record-count" class="field-note" role="status"></p><div id="records" class="records"></div><button type="button" id="load-more" class="text-button" hidden>Cargar más pedidos</button></section>
-        <section class="editor" aria-labelledby="editor-title"><div class="editor-heading"><h2 id="editor-title">Elige una foto</h2><span id="record-state"></span></div>
-          <form id="editor-form"><div id="editor-fields"></div><div class="editor-actions"><button class="button" id="save-record" type="submit">Guardar cambios</button><button type="button" id="archive-record" hidden>Archivar</button></div><p id="save-status" role="status" class="save-status"></p><p id="editor-help" class="editor-help">Los cambios publicados se reflejan en la web al guardar.</p></form>
-        </section>
+
+    <section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
+      <div>
+        <p class="eyebrow">Acceso privado</p>
+        <h2 id="auth-title">Accede a tu gestor.</h2>
+        <p id="auth-copy">Entra con el correo y la contraseña de tu cuenta. Solo las cuentas autorizadas pueden administrar el contenido.</p>
+      </div>
+      <form id="auth-form" class="auth-form">
+        <label for="auth-email">Correo de acceso<input id="auth-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com"></label>
+        <label for="auth-password">Contraseña<input id="auth-password" name="password" type="password" autocomplete="current-password" required></label>
+        <button class="button" type="submit" id="auth-submit">Iniciar sesión</button>
+        <button class="text-button" type="button" id="auth-magic-link">Prefiero recibir un enlace mágico</button>
+      </form>
+      <p id="auth-status" class="save-status" role="status"></p>
+      <button type="button" id="sign-out" class="text-button" hidden>Cerrar sesión</button>
+    </section>
+
+    <div id="manager-workspace" class="manager-workspace" hidden>
+      <section class="manager-stats" aria-label="Resumen del sitio">
+        <div class="stat-card"><span class="stat-icon" aria-hidden="true">↗</span><strong id="count-events">0</strong><span>Presentaciones publicadas</span></div>
+        <div class="stat-card"><span class="stat-icon" aria-hidden="true">◇</span><strong id="count-products">0</strong><span>Productos publicados</span></div>
+        <div class="stat-card"><span class="stat-icon" aria-hidden="true">◷</span><strong id="count-pending">0</strong><span>Solicitudes pendientes</span></div>
+        <div class="stat-card"><span class="stat-icon" aria-hidden="true">▤</span><strong id="count-drafts">0</strong><span>Borradores</span></div>
+      </section>
+
+      <div class="manager-layout">
+        <aside class="manager-sidebar" aria-label="Navegación de gestión">
+          <div class="manager-toolbar">
+            <p class="sidebar-heading">Gestión del sitio</p>
+            <nav class="manager-nav" aria-label="Contenido del sitio">
+              <button type="button" data-kind="page_images" aria-current="page">
+                <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="m20.5 15-5-5L5 20.5"></path></svg>
+                <span>Fotos de la web</span>
+              </button>
+              <button type="button" data-kind="events">
+                <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"></rect><path d="M8 3v4M16 3v4M3.5 10h17"></path></svg>
+                <span>Eventos</span>
+              </button>
+              <button type="button" data-kind="products">
+                <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1 12H5L4 8Z"></path><path d="M8 9V6a4 4 0 0 1 8 0v3"></path></svg>
+                <span>Tienda</span>
+              </button>
+              <button type="button" data-kind="orders">
+                <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h12v17l-2.5-1.6L12 20.5l-3.5-1.6L6 20.5z"></path><path d="M9 8h6M9 12h6M9 16h3"></path></svg>
+                <span>Pedidos de tienda</span><span id="nav-count-pending" class="nav-count" aria-hidden="true">0</span>
+              </button>
+              <button type="button" data-kind="notification_signups">
+                <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m4 7 8 6 8-6"></path></svg>
+                <span>Avisos por correo</span><span id="nav-count-notifications" class="nav-count" aria-hidden="true">0</span>
+              </button>
+            </nav>
+          </div>
+          <div class="sidebar-note">
+            <span class="sidebar-note-dot" aria-hidden="true"></span>
+            <p><strong>Conexión activa</strong><span>Los cambios se reflejan en la web al guardar.</span></p>
+          </div>
+        </aside>
+
+        <div class="manager-main-content">
+          <section class="manager-context" aria-labelledby="workspace-title">
+            <div class="manager-section-intro">
+              <p class="eyebrow">Sección activa</p>
+              <h2 id="workspace-title">Fotos de la web</h2>
+              <p id="kind-help-copy">Cambia las fotos conservando sus colores, máscaras y animaciones.</p>
+              <p id="manager-preview-note" class="manager-preview-note" role="status" hidden></p>
+            </div>
+            <div class="content-actions">
+              <button type="button" class="text-link" id="refresh-records"><span class="refresh-icon" aria-hidden="true">↻</span>Actualizar listado</button>
+              <button type="button" class="button" id="new-record" hidden>Crear nuevo +</button>
+            </div>
+          </section>
+
+          <div class="manager-grid">
+            <section class="records-panel" aria-labelledby="records-title">
+              <div class="records-panel-heading">
+                <div><p class="eyebrow">Biblioteca</p><h3 id="records-title">Contenido guardado</h3></div>
+                <p id="record-count" class="record-count" role="status"></p>
+              </div>
+              <div class="list-filters">
+                <label for="record-search">Buscar<input type="search" id="record-search" placeholder="Nombre, lugar o referencia…"></label>
+                <label id="filter-label" for="record-filter">Estado<select id="record-filter"><option value="">Todos</option></select></label>
+              </div>
+              <div id="records" class="records"></div>
+              <button type="button" id="load-more" class="text-button" hidden>Cargar más pedidos</button>
+            </section>
+
+            <section class="editor" aria-labelledby="editor-title">
+              <div class="editor-heading"><div><p class="eyebrow">Editor</p><h2 id="editor-title">Elige una foto</h2></div><span id="record-state"></span></div>
+              <form id="editor-form">
+                <div id="editor-fields"></div>
+                <div class="editor-actions"><button class="button" id="save-record" type="submit">Guardar cambios</button><button type="button" id="archive-record" hidden>Archivar</button></div>
+                <p id="save-status" role="status" class="save-status"></p>
+                <p id="editor-help" class="editor-help">Los cambios publicados se reflejan en la web al guardar.</p>
+              </form>
+            </section>
+          </div>
+        </div>
       </div>
     </div>
   </main>

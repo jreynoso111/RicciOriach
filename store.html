@@ -28,16 +28,18 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260922" />
+    <link rel="stylesheet" href="assets/site.css?v=20260913-external-tickets1" />
     <script>
       document.documentElement.classList.add("js");
     </script>
     <script src="assets/supabase-config.js?v=20260918"></script>
     <script src="assets/supabase-client.js?v=20260918" defer></script>
-    <script src="assets/content-model.js?v=20260921" defer></script>
+    <script src="assets/content-model.js?v=20260923" defer></script>
+    <script src="assets/preview-content.js?v=20260913-external-tickets1" defer></script>
     <script src="assets/photos.js?v=20260919" defer></script>
-    <script src="assets/commerce.js?v=20260919" defer></script>
-    <script src="assets/site.js?v=20260921" defer></script>
+    <script src="assets/notifications.js?v=20260912-notifications1" defer></script>
+    <script src="assets/commerce.js?v=20260913-external-tickets1" defer></script>
+    <script src="assets/site.js?v=20260913-external-tickets1" defer></script>
   </head>
   <body class="page-store">
     <div class="site-shell">
@@ -75,8 +77,9 @@
         </section>
         <section class="store-catalog-shell" id="catalogo" aria-labelledby="shop-title"><div class="wrap">
           <div class="store-breadcrumb"><a href="index.html">Inicio</a><span>/</span><span>Tienda</span></div>
+          <p class="preview-notice" data-preview-notice hidden><strong>Catálogo de muestra</strong> Piezas, precios y existencias de ejemplo para explorar la tienda. <a href="store.html?demo=0#catalogo">Ver catálogo real ↗</a></p>
           <div class="store-catalog-top"><div><p class="eyebrow">La colección</p><h2 id="shop-title">Todos los productos<span class="shop-title-dot">.</span></h2></div><button type="button" class="store-cart-button" id="open-cart"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 7h14l1 14H4L5 7Zm3 0V5a4 4 0 0 1 8 0v2"/></svg>Carrito <span id="cart-count">0</span></button></div>
-          <div class="store-layout"><aside class="store-sidebar" aria-label="Filtros de productos"><h3>Explorar</h3><label for="product-category">Colección</label><select id="product-category"><option value="">Todos los productos</option></select><nav id="shop-categories" aria-label="Colecciones"><button type="button" aria-pressed="true" data-category="">Todos los productos</button></nav><label class="stock-filter"><input id="product-in-stock" type="checkbox"> Solo disponibles</label><div class="store-assistance"><span aria-hidden="true">✳</span><h4>¿Una mano con tu pedido?</h4><p>El equipo te ayuda a elegir y coordinar tu entrega.</p><a href="contact.html">Hablemos ↗</a></div></aside>
+          <div class="store-layout"><aside class="store-sidebar" aria-label="Filtros de productos"><h3>Explorar</h3><label for="product-category">Colección</label><select id="product-category" aria-label="Colección"><option value="">Todos los productos</option></select><nav id="shop-categories" aria-label="Colecciones"><button type="button" aria-pressed="true" data-category="">Todos los productos</button></nav><label class="stock-filter"><input id="product-in-stock" type="checkbox"> Solo disponibles</label><div class="store-assistance"><span aria-hidden="true">✳</span><h4>¿Una mano con tu pedido?</h4><p>El equipo te ayuda a elegir y coordinar tu entrega.</p><a href="contact.html">Hablemos ↗</a></div></aside>
           <div class="store-results"><div class="store-search-row"><label class="store-search" for="product-search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></svg><input id="product-search" aria-label="Buscar en la tienda" type="search" placeholder="Buscar en la tienda…"></label><label class="store-sort" for="product-sort">Ordenar<select id="product-sort"><option value="newest">Novedades</option><option value="price-asc">Precio: menor a mayor</option><option value="price-desc">Precio: mayor a menor</option><option value="name">Nombre: A–Z</option></select></label></div><p id="shop-count" role="status">Cargando productos…</p>
           <div id="product-grid" class="product-grid"></div><div id="shop-empty" class="shop-empty" hidden><svg aria-hidden="true" class="empty-bag" viewBox="0 0 80 90"><path d="M15 27h50l5 55H10l5-55Zm14 0V17a11 11 0 0 1 22 0v10"/><path d="m30 53 20 20m0-20L30 73"/></svg><h3>La colección viene en camino.</h3><p>El catálogo todavía no tiene productos publicados. Vuelve pronto para descubrir las primeras piezas.</p><button type="button" class="store-reset" id="reset-shop-filters" hidden>Limpiar filtros</button></div>
           <button type="button" id="shop-retry" class="store-reset" hidden>Volver a cargar productos</button></div></div>

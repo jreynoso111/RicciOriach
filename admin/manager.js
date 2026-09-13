@@ -3,16 +3,19 @@
   const $ = (s) => document.querySelector(s);
   const client = window.riccieSupabase;
   const { photos, safeImage, money, available } = window.RiccieContent;
+  const preview = window.RicciePreview || null;
   const form = $("#editor-form");
   const field = (name) => form.elements.namedItem(name);
   const kinds = {
     page_images: ["Fotos de la web", "Elige una foto, ajusta el encuadre y revisa el resultado. Los efectos originales se conservan.", "foto"],
-    events: ["Eventos", "Gestiona fechas, lugares, afiches y estados. Crea sus tipos de entrada desde Taquillas.", "evento"],
-    ticket_types: ["Taquillas", "Crea entradas General, VIP o por etapa; establece precio, cupo y modalidad de pago.", "taquilla"],
+    events: ["Eventos", "Gestiona fechas, lugares, afiches, enlaces externos y disponibilidad de boletas.", "evento"],
     products: ["Tienda", "Publica productos con precio e inventario. Crea un producto por talla o variante para controlar sus unidades.", "producto"],
-    orders: ["Pedidos y reservas", "Revisa solicitudes, confirma disponibilidad y registra la entrega. Los pagos automáticos llegan confirmados por la pasarela.", "pedido"],
+    orders: ["Pedidos de tienda", "Revisa pedidos de productos, confirma disponibilidad y registra la entrega. Los pagos automáticos llegan confirmados por la pasarela.", "pedido"],
+    notification_signups: ["Avisos por correo", "Consulta las direcciones inscritas para avisos de productos y nuevas presentaciones.", "aviso"],
   };
+  const notificationStatusLabels = { active: "Activa", queued: "Pendiente de envío", notified: "Notificada", unsubscribed: "Cancelada" };
   let content = Object.fromEntries(Object.keys(kinds).map((key) => [key, []]));
+  let notificationOutbox = [], pendingNotificationCount = 0, notificationSchemaReady = false;
   let kind = "page_images", editing = null, dirty = false, busy = false, preparing = false, imageGeneration = 0;
   let session = null, loadedUser = null, sessionGeneration = 0, moreOrders = false;
   const el = (tag, text, className) => {
@@ -147,38 +150,57 @@
   form.addEventListener("input", () => { if (!busy) { markDirty(); updatePreview(); } });
   form.addEventListener("change", () => { if (!busy) { markDirty(); updatePreview(); } });
   function lock(value) {
-    form.querySelectorAll("input,select,textarea,button").forEach((input) => { input.disabled = value; });
+    const disabled = value || Boolean(editing?.demo);
+    form.querySelectorAll("input,select,textarea,button").forEach((input) => { input.disabled = disabled; });
     $("#refresh-records").disabled = value; $("#new-record").disabled = value;
   }
   function edit(item = null) {
     imageGeneration++; editing = item; dirty = false;
     const root = $("#editor-fields"); root.replaceChildren(); msg("");
-    form.hidden = kind === "orders" && !item;
-    $("#editor-title").textContent = kind === "page_images" ? item.title : kind === "orders" ? item?.reference || "Elige un pedido" : `${item ? "Editar" : "Crear"} ${kinds[kind][2]}`;
-    $("#record-state").textContent = item?.status || (kind === "page_images" ? "" : "Borrador");
-    $("#archive-record").hidden = !item || ["page_images", "orders"].includes(kind) || item.status === "Archivado";
+    form.hidden = ["orders", "notification_signups"].includes(kind) && !item;
+    const readOnlyDemo = Boolean(item?.demo);
+    $("#editor-title").textContent = readOnlyDemo ? item.title : kind === "page_images" ? item.title : kind === "orders" ? item?.reference || "Elige un pedido" : kind === "notification_signups" ? item?.email || "Suscripción" : `${item ? "Editar" : "Crear"} ${kinds[kind][2]}`;
+    $("#record-state").textContent = readOnlyDemo ? "Muestra local · solo lectura" : kind === "notification_signups" ? notificationStatusLabels[item?.status] || "" : item?.status || (kind === "page_images" ? "" : "Borrador");
+    $("#archive-record").hidden = readOnlyDemo || !item || ["page_images", "orders", "notification_signups"].includes(kind) || item.status === "Archivado";
+    $("#save-record").hidden = readOnlyDemo || (kind === "notification_signups" && !item);
     if (kind === "page_images") root.append(imageEditor(true));
     else if (kind === "orders") { if (item) orderEditor(root, item); }
+    else if (kind === "notification_signups") {
+      if (item) {
+        const details = el("dl", undefined, "notification-detail-list");
+        const detail = (label, value) => { const row = el("div"); row.append(el("dt", label), el("dd", value)); details.append(row); };
+        detail("Tipo de aviso", item.notification_type === "new_events" ? "Nuevas presentaciones" : "Producto disponible");
+        detail("Interés", item.title || "Producto sin catálogo");
+        detail("Registrada", new Date(item.created_at).toLocaleString("es-DO"));
+        detail("Consentimiento", new Date(item.consent_at).toLocaleString("es-DO"));
+        detail("Correos pendientes", String(item.pending_count || 0));
+        const options = [[item.status, notificationStatusLabels[item.status] || item.status]];
+        if (item.status !== "unsubscribed") options.push(["unsubscribed", "Cancelar suscripción"]);
+        root.append(details, control("status", "Estado de la suscripción", { options, note: "Los avisos cancelados no se enviarán, aunque ya estuvieran en cola." }));
+      }
+    }
     else {
       root.append(text("title", "Título", 180, true));
       if (kind === "events") root.append(group(control("date", "Fecha", { type: "date", required: true }), standardStatus()));
       else root.append(standardStatus());
       if (kind === "events") root.append(
         group(text("city", "Ciudad", 120, true), text("venue", "Lugar", 180, true)),
-        group(control("time", "Hora local", { type: "time" }), control("ticket_status", "Estado de las entradas", { options: [["available", "Disponibles / por anunciar"], ["free", "Entrada libre"], ["soldout", "Agotadas"], ["postponed", "Pospuesto"], ["cancelled", "Cancelado"]] })),
-        control("ticket_url", "Enlace externo de entradas (opcional)", { type: "url", pattern: "https://.*", note: "Las taquillas de esta web se configuran en la pestaña Taquillas." }), area("description", "Detalles"), imageEditor(),
+        group(control("time", "Hora local", { type: "time" }), control("ticket_status", "Estado de las boletas", { options: [["coming_soon", "Próximamente"], ["available", "Disponibles"], ["soldout", "Agotadas"], ["free", "Entrada libre"], ["postponed", "Pospuesto"], ["cancelled", "Cancelado"]] })),
+        group(control("ticket_provider", "Plataforma externa", { maxLength: 80, placeholder: "Ticketmaster, Tix…" }), control("ticket_url", "Enlace directo de boletas", { type: "url", pattern: "https://.*", maxLength: 1500, placeholder: "https://…", note: "Requerido para publicar boletas disponibles o agotadas. Solo enlaces HTTPS." })),
+        control("ticket_availability", "Stock / disponibilidad visible", { maxLength: 160, placeholder: "Quedan 12 · VIP agotado", note: "Se actualiza manualmente según la plataforma externa; no es un dato en tiempo real." }),
+        area("description", "Detalles"), imageEditor(),
       );
-      if (kind === "ticket_types") root.append(control("event_id", "Presentación", { required: true, options: [["", "Selecciona una presentación"], ...content.events.map((e) => [e.id, `${e.title} · ${e.date} · ${e.status}`])], note: "Solo se venden entradas para presentaciones publicadas y vigentes." }));
       if (kind === "products") root.append(group(text("category", "Categoría", 120), text("variant", "Talla / variante", 120)), text("sku", "Referencia / SKU", 80), imageEditor());
-      if (["products", "ticket_types"].includes(kind)) root.append(
+      if (kind === "products") root.append(
         area("description", "Descripción"), group(control("price", "Precio por unidad", { type: "number", min: 0, max: 1000000, step: "0.01", required: true, value: 0 }), control("currency", "Moneda", { options: [["DOP", "Pesos dominicanos (DOP)"], ["USD", "Dólares (USD)"], ["EUR", "Euros (EUR)"]] })),
-        control("capacity", kind === "products" ? "Inventario total" : "Cupo total", { type: "number", min: item?.allocated || 0, max: 1000000, step: 1, required: true, value: 0, note: `${item?.allocated || 0} unidades asignadas a pedidos confirmados o en proceso de pago. Disponible = total menos asignadas.` }),
+        control("capacity", "Inventario total", { type: "number", min: item?.allocated || 0, max: 1000000, step: 1, required: true, value: 0, note: `${item?.allocated || 0} unidades asignadas a pedidos confirmados o en proceso de pago. Disponible = total menos asignadas.` }),
         control("sale_mode", "Modalidad de compra", { options: [["manual", "Solicitud con confirmación manual"], ["both", "Manual y pago automático"], ["online", "Solo pago automático"]], note: "PayPal admite USD y EUR. Activa las credenciales de la pasarela antes de usar esta modalidad. Los importes en DOP se gestionan manualmente." }),
       );
     }
     if (item) Object.entries(item).forEach(([name, value]) => { const input = field(name); if (input && input.type !== "file") input.value = value ?? ""; });
     if (kind === "orders" && item) { field("admin_note").value = item.admin_note; field("next_status").value = item.status; if (field("manual_payment")) field("manual_payment").value = item.payment_status; }
-    $("#editor-help").textContent = kind === "orders" ? "Confirmar una solicitud manual asigna inventario. Cancelarla libera sus unidades. El registro del pago es independiente de la entrega." : kind === "page_images" ? "La foto se actualiza en la web al guardar. Puedes restaurar la original cuando quieras." : "Publicado aparece en la web. Borrador y Archivado quedan fuera del catálogo público.";
+    $("#editor-help").textContent = readOnlyDemo ? "Ejemplo local de la vista previa. No está guardado en Supabase y no se puede editar desde aquí." : kind === "notification_signups" ? "La lista está reservada a administradores. Los avisos permanecerán en cola hasta configurar el remitente de correo." : kind === "events" ? "Las boletas se venden fuera del sitio. Publica el enlace de la boletera y actualiza manualmente el estado y el stock visible." : kind === "orders" ? "Aquí se gestionan pedidos de tienda. Las boletas de conciertos se compran en la plataforma externa del evento." : kind === "page_images" ? "La foto se actualiza en la web al guardar. Puedes restaurar la original cuando quieras." : "Publicado aparece en la web. Borrador y Archivado quedan fuera del catálogo público.";
+    form.querySelectorAll("input,select,textarea,button").forEach((input) => { input.disabled = readOnlyDemo; });
     updatePreview(); render();
   }
   function orderEditor(root, item) {
@@ -199,17 +221,22 @@
   }
   function render() {
     const query = $("#record-search").value.toLocaleLowerCase("es"); const filter = $("#record-filter").value;
-    const records = content[kind].filter((item) => (!filter || item.status === filter) && [item.title, item.city, item.venue, item.category, item.reference, item.customer_name, item.customer_email, item.variant, content.events.find((e) => e.id === item.event_id)?.title].join(" ").toLocaleLowerCase("es").includes(query));
+    const records = content[kind].filter((item) => (!filter || item.status === filter) && [item.title, item.email, item.city, item.venue, item.category, item.reference, item.customer_name, item.customer_email, item.variant, item.notification_type, item.ticket_provider, item.ticket_availability, content.events.find((e) => e.id === item.event_id)?.title].join(" ").toLocaleLowerCase("es").includes(query));
     const root = $("#records"); root.replaceChildren();
-    if (!records.length) root.append(el("p", query || filter ? "No hay resultados con estos filtros." : kind === "orders" ? "Los pedidos y reservas aparecerán aquí cuando lleguen." : "Todavía no hay registros. Crea el primero como borrador.", "records-empty"));
+    if (!records.length) root.append(el("p", query || filter ? "No hay resultados con estos filtros." : kind === "orders" ? "Los pedidos de tienda aparecerán aquí cuando lleguen." : kind === "notification_signups" ? "Aún no hay personas inscritas para recibir avisos." : "Todavía no hay registros. Crea el primero como borrador.", "records-empty"));
     records.forEach((item) => {
       const button = el("button", undefined, "record"); button.type = "button"; button.setAttribute("aria-current", String(item.id === editing?.id));
       const copy = el("span", undefined, "record-copy");
-      copy.append(el("span", item.status || (item.image_url ? "Foto personalizada" : "Foto original"), "record-status"), el("strong", item.title || item.reference));
+      const badgeText = item.demo ? "Muestra local" : kind === "notification_signups" ? notificationStatusLabels[item.status] || item.status : item.status || (item.image_url ? "Foto personalizada" : "Foto original");
+      const badge = el("span", badgeText, "record-status");
+      if (item.demo) badge.classList.add("is-demo");
+      copy.append(badge, el("strong", kind === "notification_signups" ? item.email : item.title || item.reference));
       let detail = [item.date, item.city, item.venue].filter(Boolean).join(" · ");
       if (kind === "page_images") detail = item.page;
-      if (["products", "ticket_types"].includes(kind)) detail = `${money(item.price, item.currency)} · ${available(item)} disponibles${item.variant ? ` · ${item.variant}` : ""}${item.event_id ? ` · ${content.events.find((e) => e.id === item.event_id)?.title || "Presentación"}` : ""}`;
+      if (kind === "events") detail = [item.date, item.city, item.venue, item.ticket_provider || "", item.ticket_status === "soldout" ? "Agotadas" : item.ticket_status === "available" ? "Disponibles" : item.ticket_status === "coming_soon" ? "Próximamente" : "", item.ticket_availability || ""].filter(Boolean).join(" · ");
+      if (kind === "products") detail = `${money(item.price, item.currency)} · ${available(item)} disponibles${item.variant ? ` · ${item.variant}` : ""}`;
       if (kind === "orders") detail = `${item.customer_name} · ${money(item.total, item.currency)} · ${item.kind === "ticket" ? "Entradas" : "Tienda"}`;
+      if (kind === "notification_signups") detail = `${item.notification_type === "new_events" ? "Nuevas presentaciones" : item.title || "Producto agotado"} · ${item.pending_count || 0} avisos en cola`;
       copy.append(el("small", detail));
       const source = safeImage(item.image_url || item.default_url);
       if (source) { const image = el("img", undefined, "record-thumb"); image.src = source; image.alt = ""; image.loading = "lazy"; button.classList.add("record-has-image"); button.append(image); }
@@ -217,20 +244,50 @@
     });
     $("#record-count").textContent = `${records.length} ${records.length === 1 ? "registro" : "registros"}${kind === "orders" && moreOrders ? " cargados · hay más pedidos" : ""}`;
     $("#load-more").hidden = kind !== "orders" || !moreOrders;
-    $("#count-events").textContent = content.events.filter((r) => r.status === "Publicado").length;
-    $("#count-products").textContent = content.products.filter((r) => r.status === "Publicado").length;
+    $("#count-events").textContent = content.events.filter((r) => !r.demo && r.status === "Publicado").length;
+    $("#count-products").textContent = content.products.filter((r) => !r.demo && r.status === "Publicado").length;
     $("#count-pending").textContent = content.orders.filter((r) => r.status === "Pendiente").length;
-    $("#count-drafts").textContent = ["events", "products", "ticket_types"].flatMap((k) => content[k]).filter((r) => r.status === "Borrador").length;
+    $("#count-drafts").textContent = ["events", "products"].flatMap((k) => content[k]).filter((r) => !r.demo && r.status === "Borrador").length;
+    $("#nav-count-pending").textContent = $("#count-pending").textContent;
+    $("#nav-count-notifications").textContent = content.notification_signups.length;
   }
   function switchKind(next) {
     if (!leave()) return; kind = next;
-    document.querySelectorAll("[data-kind]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.kind === kind)));
-    $("#kind-help-label").textContent = kinds[kind][0]; $("#kind-help-copy").textContent = kinds[kind][1];
-    $("#new-record").hidden = ["page_images", "orders"].includes(kind); $("#new-record").textContent = `Crear ${kinds[kind][2]} +`;
+    document.querySelectorAll("[data-kind]").forEach((b) => {
+      if (b.dataset.kind === kind) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
+    });
+    $("#workspace-title").textContent = kinds[kind][0]; $("#kind-help-copy").textContent = kinds[kind][1];
+    const previewItems = preview ? ({events: preview.events, products: preview.products}[kind] || []) : [];
+    const previewNote = $("#manager-preview-note");
+    previewNote.hidden = previewItems.length === 0;
+    if (previewItems.length) {
+      const labels = {events: "presentaciones", products: "productos"};
+      previewNote.textContent = `Vista previa local: ${previewItems.length} ${labels[kind]} de ejemplo. No están en Supabase y son de solo lectura.`;
+    }
+    if (kind === "notification_signups") {
+      previewNote.hidden = false;
+      if (!notificationSchemaReady) previewNote.textContent = "La lista de avisos aún no está disponible en Supabase. Aplica la migración antes de recibir inscripciones.";
+      else {
+        const pending = pendingNotificationCount;
+        previewNote.textContent = pending
+          ? `${pending} avisos esperan el envío. Configura el remitente de correo para completar la entrega.`
+          : "Las inscripciones están listas. Los avisos se pondrán en cola cuando haya novedades; el remitente se configura después.";
+      }
+    }
+    $("#new-record").hidden = ["page_images", "orders", "notification_signups"].includes(kind); $("#new-record").textContent = `Crear ${kinds[kind][2]} +`;
     $("#record-search").value = ""; $("#filter-label").hidden = kind === "page_images";
     $("#record-filter").replaceChildren();
-    ["", ...(kind === "orders" ? ["Pendiente", "Confirmado", "Entregado", "Cancelado"] : ["Borrador", "Publicado", "Archivado"])].forEach((v) => { const o = el("option", v || "Todos"); o.value = v; $("#record-filter").append(o); });
-    edit(["page_images", "orders"].includes(kind) ? content[kind][0] || null : null);
+    const filterValues = kind === "orders"
+      ? ["Pendiente", "Confirmado", "Entregado", "Cancelado"]
+      : kind === "notification_signups"
+        ? Object.entries(notificationStatusLabels).map(([value, label]) => [value, label])
+        : ["Borrador", "Publicado", "Archivado"];
+    ["", ...filterValues].forEach((entry) => {
+      const [value, label] = Array.isArray(entry) ? entry : [entry, entry];
+      const option = el("option", label || "Todos"); option.value = value; $("#record-filter").append(option);
+    });
+    edit(["page_images", "orders", "notification_signups"].includes(kind) ? content[kind][0] || null : null);
   }
   async function upload(value) {
     if (!value.startsWith("data:")) return { url: value };
@@ -241,14 +298,22 @@
     return { path, url: client.storage.from("site-media").getPublicUrl(path).data.publicUrl };
   }
   async function save() {
+    if (editing?.demo) { msg("Los ejemplos de la vista previa son de solo lectura."); return; }
     if (busy || preparing || !form.reportValidity()) return;
     const values = Object.fromEntries([...new FormData(form)].filter(([name]) => name !== "photo-file").map(([k, v]) => [k, String(v).trim()]));
-    if (["products","ticket_types"].includes(kind) && values.sale_mode === "online" && values.currency === "DOP") { msg("Para PayPal elige USD o EUR. En DOP utiliza la confirmación manual.",true); return; }
+    if (kind === "notification_signups" && values.status === editing?.status) { msg("Elige “Cancelar suscripción” para guardar un cambio.", true); return; }
+    if (kind === "events" && values.status === "Publicado" && ["available", "soldout"].includes(values.ticket_status) && !values.ticket_url) { msg("Para publicar boletas disponibles o agotadas, añade el enlace externo de la boletera. Si la venta todavía no abre, elige “Próximamente”.", true); return; }
+    if (kind === "products" && values.sale_mode === "online" && values.currency === "DOP") { msg("Para PayPal elige USD o EUR. En DOP utiliza la confirmación manual.",true); return; }
     busy = true; lock(true); msg("Guardando…"); let uploaded;
     try {
       if (!session) throw new Error("Inicia sesión para guardar.");
       let result;
       if (kind === "orders") result = await client.rpc("manage_order", { p_id: editing.id, p_status: values.next_status, p_note: values.admin_note, p_payment_status: values.manual_payment || editing.payment_status, p_expected_updated_at: editing.updated_at }).single();
+      else if (kind === "notification_signups") {
+        if (!editing || values.status !== "unsubscribed") throw new Error("Solo puedes cancelar una suscripción desde esta lista.");
+        result = await client.from("notification_signups").update({status: "unsubscribed"}).eq("id", editing.id).eq("status", editing.status).select().maybeSingle();
+        if (!result.error && !result.data) throw new Error("La suscripción cambió en otra sesión. Actualiza el listado.");
+      }
       else {
         for (const key of ["price", "capacity", "focal_x", "focal_y"]) if (key in values) values[key] = Number(values[key]);
         if ("image_url" in values) { uploaded = await upload(values.image_url); values.image_url = uploaded.url; }
@@ -261,7 +326,8 @@
       content[kind] = content[kind].some((r) => r.id === saved.id) ? content[kind].map((r) => r.id === saved.id ? saved : r) : [saved, ...content[kind]];
       dirty = false;
       if (kind === "orders") await loadCatalog();
-      edit(saved); msg(kind === "orders" ? "Pedido actualizado. Inventario sincronizado." : kind === "page_images" || values.status === "Publicado" ? "Guardado y publicado en la web." : "Guardado. Este contenido queda fuera de la web pública.");
+      if (kind === "notification_signups") await loadNotifications();
+      edit(kind === "notification_signups" ? content.notification_signups.find((item) => item.id === saved.id) || saved : saved); msg(kind === "orders" ? "Pedido actualizado. Inventario sincronizado." : kind === "notification_signups" ? "Suscripción cancelada. Los avisos pendientes también se detuvieron." : kind === "page_images" || values.status === "Publicado" ? "Guardado y publicado en la web." : "Guardado. Este contenido queda fuera de la web pública.");
     } catch (error) {
       // Preserve uploaded files on an ambiguous network failure: the save may have committed.
       if (uploaded?.url) field("image_url").value = uploaded.url;
@@ -269,11 +335,40 @@
     } finally { busy = false; lock(false); }
   }
   async function loadCatalog() {
-    const keys = ["events", "products", "ticket_types", "page_images"];
+    const keys = ["events", "products", "page_images"];
     const results = await Promise.all(keys.map((key) => client.from(key).select("*").order(key === "page_images" ? "id" : key === "events" ? "date" : "created_at", {ascending: false})));
     results.forEach((result, i) => { if (result.error) throw new Error(`No se pudo cargar ${kinds[keys[i]][0]}: ${result.error.message}`); });
     results.forEach((result, i) => { content[keys[i]] = result.data; });
     content.page_images = photos.map((photo) => ({...photo, ...content.page_images.find((r) => r.id === photo.id)}));
+    if (preview) {
+      const previewEvents = preview.events.map((event) => ({...event, ticket_status: event.ticketStatus, ticket_url: event.ticketUrl, ticket_provider: event.ticketProvider, ticket_availability: event.ticketAvailability}));
+      content.events = [...content.events, ...previewEvents];
+      content.products = [...content.products, ...preview.products];
+    }
+  }
+  function missingNotificationSchema(error) {
+    return ["PGRST202", "PGRST205", "42P01"].includes(error?.code)
+      || /notification_(signups|outbox)/i.test(error?.message || "") && /(not found|does not exist|schema cache)/i.test(error?.message || "");
+  }
+  async function loadNotifications() {
+    const [signupsResult, outboxResult] = await Promise.all([
+      client.from("notification_signups").select("*").order("created_at", {ascending: false}),
+      client.from("notification_outbox").select("id,signup_id,status", {count: "exact"}).eq("status", "pending").order("created_at", {ascending: false}).range(0, 999),
+    ]);
+    const failure = signupsResult.error || outboxResult.error;
+    if (failure && missingNotificationSchema(failure)) {
+      notificationSchemaReady = false; notificationOutbox = []; pendingNotificationCount = 0; content.notification_signups = [];
+      return;
+    }
+    if (signupsResult.error) throw new Error(`No se pudo cargar la lista de avisos: ${signupsResult.error.message}`);
+    if (outboxResult.error) throw new Error(`No se pudo cargar la cola de avisos: ${outboxResult.error.message}`);
+    notificationOutbox = outboxResult.data || []; pendingNotificationCount = outboxResult.count ?? notificationOutbox.length;
+    content.notification_signups = (signupsResult.data || []).map((signup) => ({
+      ...signup,
+      title: signup.notification_type === "new_events" ? "Nuevas presentaciones" : content.products.find((product) => product.id === signup.product_id)?.title || "Producto agotado",
+      pending_count: notificationOutbox.filter((notice) => notice.signup_id === signup.id).length,
+    }));
+    notificationSchemaReady = true;
   }
   async function loadOrders(append = false) {
     const offset = append ? content.orders.length : 0;
@@ -283,7 +378,7 @@
   }
   $("#refresh-records").addEventListener("click", async () => {
     if (!leave()) return; busy = true; lock(true); msg("Actualizando…");
-    try { await Promise.all([loadCatalog(), loadOrders()]); const selected = content[kind].find((r) => r.id === editing?.id); edit(selected || (["page_images", "orders"].includes(kind) ? content[kind][0] : null)); msg("Listado actualizado."); }
+    try { await Promise.all([loadCatalog(), loadOrders()]); await loadNotifications(); const selected = content[kind].find((r) => r.id === editing?.id); edit(selected || (["page_images", "orders", "notification_signups"].includes(kind) ? content[kind][0] : null)); msg("Listado actualizado."); }
     catch (error) { msg(error.message, true); } finally { busy = false; lock(false); }
   });
   $("#load-more").addEventListener("click", async () => { $("#load-more").disabled = true; try { await loadOrders(true); render(); } catch (e) { msg(e.message,true); } finally { $("#load-more").disabled = false; } });
@@ -301,7 +396,7 @@
       const membership = await client.from("site_admins").select("user_id").eq("user_id", next.user.id).maybeSingle();
       if (membership.error) throw membership.error;
       if (!membership.data) throw new Error("Esta cuenta aún no tiene acceso de administrador. El propietario debe autorizarla.");
-      await Promise.all([loadCatalog(), loadOrders()]); if (generation !== sessionGeneration) return;
+      await Promise.all([loadCatalog(), loadOrders()]); await loadNotifications(); if (generation !== sessionGeneration) return;
       loadedUser = next.user.id; $("#manager-workspace").hidden = false; $("#auth-panel").classList.add("is-connected");
       $("#auth-title").textContent = "Sesión administradora activa"; $("#auth-copy").textContent = "Tu contenido se guarda en la web.";
       status("#auth-status", next.user.email || "Cuenta autorizada"); status("#connection-status", "Conectado · Los cambios publicados se reflejan al guardar."); switchKind(kind);

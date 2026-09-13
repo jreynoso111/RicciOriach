@@ -71,8 +71,12 @@ def validate(data):
             if kind == 'events':
                 if not item.get('city', '').strip() or not item.get('venue', '').strip():
                     raise ValueError('Completa la ciudad y el lugar.')
-                if item.get('ticketStatus') not in ('available', 'soldout', 'free', 'cancelled', 'postponed'):
+                if len(item.get('ticketProvider', '')) > 80 or len(item.get('ticketAvailability', '')) > 160:
+                    raise ValueError('La plataforma admite 80 caracteres y la disponibilidad, 160.')
+                if item.get('ticketStatus') not in ('available', 'coming_soon', 'soldout', 'free', 'cancelled', 'postponed'):
                     raise ValueError('Estado de entradas inválido.')
+                if item.get('status') == 'Publicado' and item.get('ticketStatus') in ('available', 'soldout') and not item.get('ticketUrl'):
+                    raise ValueError('Añade el enlace externo para publicar boletas disponibles o agotadas.')
             else:
                 slug = item.get('slug', '')
                 if not slug or slug in slugs or slug in ('pa-que-bailemos', 'maquine', 'mi-derriengue'):

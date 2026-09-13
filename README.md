@@ -21,13 +21,13 @@ Abrir [http://127.0.0.1:4180](http://127.0.0.1:4180). El servidor fija la raíz 
 - `assets/images/`: fotografías, portadas y miniaturas de canales del artista.
 - `docs/DESIGN_RESEARCH.md`: investigación, fuentes, procedencia de imágenes y decisiones.
 
-Los archivos antiguos `style.css` y `script.js` se conservan para compatibilidad con otras superficies. Las páginas públicas nuevas utilizan `assets/site.css` y `assets/site.js`. El directorio `admin/` contiene el gestor de eventos, taquillas, tienda y pedidos.
+Los archivos antiguos `style.css` y `script.js` se conservan para compatibilidad con otras superficies. Las páginas públicas nuevas utilizan `assets/site.css` y `assets/site.js`. El directorio `admin/` contiene el gestor de eventos, enlaces a plataformas externas de taquillas, tienda y pedidos.
 
 ## Gestionar la web
 
-Abre [el gestor](http://127.0.0.1:4180/admin/) para administrar fotos, eventos, taquillas, productos, pedidos y reservas. Las fotos conservan los efectos de la web y permiten ajustar el encuadre. El catálogo está en [la tienda](http://127.0.0.1:4180/store.html).
+Abre [el gestor](http://127.0.0.1:4180/admin/) para administrar fotos, eventos y sus enlaces/estados de boletas externas, productos y pedidos de tienda. Las boletas se compran en Ticketmaster, Tix u otra plataforma vinculada por evento; el stock visible se actualiza manualmente. Las fotos conservan los efectos de la web y permiten ajustar el encuadre. El catálogo está en [la tienda](http://127.0.0.1:4180/store.html).
 
-La cuenta administradora y la activación de PayPal se dejan pendientes por decisión del propietario. Los pedidos manuales y reservas se confirman desde el panel. PayPal queda implementado y desactivado hasta completar su configuración y pruebas sandbox.
+La cuenta administradora y la activación de PayPal se dejan pendientes por decisión del propietario. Los pedidos manuales de tienda se confirman desde el panel. PayPal queda implementado y desactivado hasta completar su configuración y pruebas sandbox.
 
 Consulta [la guía de gestión y activación](docs/MANAGEMENT.md) para funcionamiento, inventario, acceso, secretos de servidor y límites de la integración de pagos.
 
@@ -52,3 +52,11 @@ npx vercel --prod --yes
 ```
 
 Dominio: [riccie-oriach.vercel.app](https://riccie-oriach.vercel.app/).
+
+## Vista de muestra local
+
+En `127.0.0.1:4180`, la tienda muestra ocho productos ficticios y la agenda cuatro fechas futuras y tres pasadas. La mercancía incluye mockups con las ilustraciones de Maquiné, Mi Derriengue y Viaje al infinito. Los precios, existencias, recintos y fechas son ejemplos. Las fechas son relativas al día de la visita para conservar ambos estados de la agenda.
+
+Los filtros, el carrito, las cantidades, la selección de entradas y la confirmación simulada funcionan en el navegador. Las solicitudes de ejemplo no llaman al servidor de pedidos ni a una pasarela. Su carrito usa almacenamiento separado. Añade `?demo=0` para consultar los datos reales en local. En dominios públicos, los ejemplos no se activan.
+
+Imágenes y prompts: [docs/DEMO_MERCH.md](docs/DEMO_MERCH.md). La portada conserva los tres álbumes/EPs del [catálogo oficial de Bandcamp](https://riccieoriach.bandcamp.com/music), en un carrusel continuo con pausa, controles y respeto por movimiento reducido.

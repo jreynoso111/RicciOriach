@@ -195,18 +195,38 @@
     if (eventModal?.open) eventModal.close();
   }
 
-  function openEventModal(event, trigger) {
-    if (!eventModal || typeof eventModal.showModal !== "function") return;
-    const date = new Date(`${event.date}T12:00:00`);
-    const ticketUrl = safeUrl(event.ticketUrl);
-    const status = event.ticketStatus || "available";
-    const statusLabels = {
-      available: "Boletas disponibles",
+  const eventTicketStatus = (event) => event.ticketStatus || event.ticket_status || "coming_soon";
+  const eventTicketUrl = (event) => safeUrl(event.ticketUrl ?? event.ticket_url);
+  const eventTicketProvider = (event) => String(event.ticketProvider ?? event.ticket_provider ?? "").trim();
+  const eventTicketAvailability = (event) => String(event.ticketAvailability ?? event.ticket_availability ?? "").trim();
+  function ticketStatusLabel(event, past = false) {
+    if (past) return "Presentación pasada";
+    const state = eventTicketStatus(event);
+    const labels = {
+      available: eventTicketUrl(event) ? "Boletas disponibles" : "Boletas disponibles · enlace por anunciar",
+      coming_soon: "Boletas próximamente",
       free: "Entrada libre",
-      soldout: "Entradas agotadas",
+      soldout: "Boletas agotadas",
       cancelled: "Cancelado",
       postponed: "Pospuesto",
     };
+    return labels[state] || "Consulta el evento";
+  }
+  function ticketActionLabel(event) {
+    const state = eventTicketStatus(event);
+    const provider = eventTicketProvider(event);
+    if (state === "soldout") return provider ? `Ver estado en ${provider} ↗` : "Ver estado en boletería ↗";
+    if (state === "free") return provider ? `Reservar en ${provider} ↗` : "Ver entrada libre ↗";
+    if (state === "coming_soon") return provider ? `Ver en ${provider} ↗` : "Ver plataforma ↗";
+    return provider ? `Comprar en ${provider} ↗` : "Comprar boletas ↗";
+  }
+
+  function openEventModal(event, trigger) {
+    if (!eventModal || typeof eventModal.showModal !== "function") return;
+    const date = new Date(`${event.date}T12:00:00`);
+    const ticketUrl = eventTicketUrl(event);
+    const status = eventTicketStatus(event);
+    const past = new Date(`${event.date}T23:59:59`) < new Date();
     const dateLabel = Number.isNaN(date.getTime())
       ? event.date || "Fecha por confirmar"
       : date.toLocaleDateString("es", {
@@ -217,8 +237,11 @@
         });
     $("#event-modal-title").textContent = event.title || "Presentación";
     $("#event-modal-date").textContent = dateLabel;
-    $("#event-modal-status").textContent =
-      statusLabels[status] || "Presentación";
+    $("#event-modal-status").textContent = [
+      event.demo ? "Ejemplo" : "",
+      ticketStatusLabel(event, past),
+      past ? "" : eventTicketAvailability(event),
+    ].filter(Boolean).join(" · ");
     $("#event-modal-location").textContent = [
       event.city,
       event.venue,
@@ -231,15 +254,15 @@
       "Pronto compartiremos más detalles de esta presentación.";
     const tickets = $("#event-modal-tickets");
     if (tickets) {
-      tickets.hidden = !ticketUrl;
+      tickets.hidden = past || !ticketUrl || ["cancelled", "postponed"].includes(status);
       tickets.href = ticketUrl || "contact.html";
+      tickets.textContent = ticketActionLabel(event);
     }
     const contact = $("#event-modal-contact");
     if (contact)
       contact.textContent = ticketUrl
         ? "¿Necesitas más información? Hablemos ↗"
         : "Consulta disponibilidad y detalles ↗";
-    window.RiccieCommerce?.showTickets(event);
     const poster = $("#event-modal-image");
     if (poster) { poster.hidden = !safeUrl(event.image_url, true); if (!poster.hidden) { poster.src = safeUrl(event.image_url, true); poster.alt = event.title; } }
     eventReturnFocus = trigger;
@@ -275,8 +298,10 @@
 
   const mapEvent = (row) => ({
     ...row,
-    ticketStatus: row.ticket_status ?? row.ticketStatus ?? "available",
+    ticketStatus: row.ticket_status ?? row.ticketStatus ?? "coming_soon",
     ticketUrl: row.ticket_url ?? row.ticketUrl ?? "",
+    ticketProvider: row.ticket_provider ?? row.ticketProvider ?? "",
+    ticketAvailability: row.ticket_availability ?? row.ticketAvailability ?? "",
   });
   const validContent = (value) =>
     value && Array.isArray(value.events);
@@ -305,22 +330,27 @@
   };
   let content = { events: [] };
   let contentLoaded = false;
-  try {
-    content = window.riccieSupabase
-      ? await readPublishedCloud()
-      : await readPublishedFile();
+  if (window.RicciePreview) {
+    content = { events: window.RicciePreview.events };
     contentLoaded = true;
-  } catch {
+  } else if ($("#event-list")) {
     try {
-      // Keep the published snapshot as a resilient fallback during an API outage.
-      content = await readPublishedFile();
+      content = window.riccieSupabase
+        ? await readPublishedCloud()
+        : await readPublishedFile();
       contentLoaded = true;
     } catch {
-      content = { events: [] };
-      const message = $("#event-count");
-      if (message)
-        message.textContent =
-          "No pudimos cargar la agenda. Vuelve a intentarlo en unos minutos.";
+      try {
+        // Keep the published snapshot as a resilient fallback during an API outage.
+        content = await readPublishedFile();
+        contentLoaded = true;
+      } catch {
+        content = { events: [] };
+        const message = $("#event-count");
+        if (message)
+          message.textContent =
+            "No pudimos cargar la agenda. Vuelve a intentarlo en unos minutos.";
+      }
     }
   }
   const eventsRoot = $("#event-list");
@@ -379,35 +409,57 @@
         when.append(month);
         const info = document.createElement("div");
         info.className = "event-info";
-        const title = document.createElement("h3");
+        const heading = document.createElement("h3");
+        const title = document.createElement("button");
+        title.type = "button";
+        title.className = "event-title-trigger";
         title.textContent = event.title;
+        title.addEventListener("click", () => openEventModal(event, title));
+        heading.append(title);
         const place = document.createElement("p");
         place.textContent = [event.city, event.venue, event.time]
           .filter(Boolean)
           .join(" · ");
         const description = document.createElement("p");
         description.textContent = event.description || "";
-        info.append(title, place, description);
-        const state = event.ticketStatus || "available";
-        const inactive =
-          past || ["soldout", "cancelled", "postponed"].includes(state);
-        const action = document.createElement(inactive ? "span" : "button");
-        if (inactive) {
-          action.className = "event-status";
-          action.textContent =
-            {
-              cancelled: "Cancelado",
-              postponed: "Pospuesto",
-              soldout: "Entradas agotadas",
-            }[state] || "Así lo vivimos";
-        } else {
-          action.type = "button";
-          action.className = "button button-outline";
-          action.textContent =
-            state === "free" ? "Entrada libre" : "Consultar detalles ↗";
-          action.addEventListener("click", () => openEventModal(event, action));
+        const ticketStatus = document.createElement("small");
+        ticketStatus.className = "event-ticket-status";
+        ticketStatus.textContent = past ? "Presentación pasada" : ticketStatusLabel(event);
+        info.append(heading, place, description, ticketStatus);
+        const stockNote = eventTicketAvailability(event);
+        if (!past && stockNote) {
+          const stock = document.createElement("small");
+          stock.className = "event-ticket-stock";
+          stock.textContent = stockNote;
+          info.append(stock);
         }
-        row.append(when, info, action);
+        if (event.demo) {
+          const badge = document.createElement("small");
+          badge.className = "event-demo-label";
+          badge.textContent = "Presentación de ejemplo";
+          info.append(badge);
+        }
+        const state = eventTicketStatus(event);
+        const ticketUrl = eventTicketUrl(event);
+        const actions = document.createElement("div");
+        actions.className = "event-row-actions";
+        if (!past && ticketUrl && !["cancelled", "postponed"].includes(state)) {
+          const ticketLink = document.createElement("a");
+          ticketLink.className = "button button-outline";
+          ticketLink.href = ticketUrl;
+          ticketLink.target = "_blank";
+          ticketLink.rel = "noopener noreferrer";
+          ticketLink.textContent = ticketActionLabel(event);
+          ticketLink.setAttribute("aria-label", `${ticketLink.textContent} · ${event.title}`);
+          actions.append(ticketLink);
+        }
+        const details = document.createElement("button");
+        details.type = "button";
+        details.className = "event-details-button";
+        details.textContent = "Detalles";
+        details.addEventListener("click", () => openEventModal(event, details));
+        actions.append(details);
+        row.append(when, info, actions);
         eventsRoot.append(row);
       });
       $("#events-empty").hidden = selected.length > 0;

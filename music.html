@@ -28,15 +28,15 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="assets/site.css?v=20260922" />
+    <link rel="stylesheet" href="assets/site.css?v=20260923-tracks" />
     <script>
       document.documentElement.classList.add("js");
     </script>
     <script src="assets/supabase-config.js?v=20260918"></script>
     <script src="assets/supabase-client.js?v=20260918" defer></script>
-    <script src="assets/content-model.js?v=20260921" defer></script>
+    <script src="assets/content-model.js?v=20260923" defer></script>
     <script src="assets/photos.js?v=20260919" defer></script>
-    <script src="assets/site.js?v=20260921" defer></script>
+    <script src="assets/site.js?v=20260923" defer></script>
   </head>
   <body class="page-music">
     <div class="site-shell">
@@ -67,86 +67,39 @@
         </button>
       </header>
       <main id="main-content" tabindex="-1">
-        <section class="page-hero wrap">
-          <p class="eyebrow"><span class="dot"></span>El universo sonoro</p>
-          <h1>Ponte <em>en órbita.</em></h1>
-          <div class="page-hero-bottom">
-            <p>
-              Canciones que empiezan en la isla y terminan donde te lleve el
-              cuerpo.
-            </p>
-            <a
-              class="text-link"
-              href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Escuchar en Spotify
-              <span class="arrow" aria-hidden="true">↗</span></a
-            >
-          </div>
+        <section class="page-hero wrap music-intro">
+          <div><p class="eyebrow"><span class="dot"></span>El universo sonoro</p><h1>Ponte <em>en órbita.</em></h1></div>
+          <p>Canciones que empiezan en la isla y terminan donde te lleve el cuerpo.</p>
         </section>
-        <section
-          class="section wrap music-catalog"
-          aria-labelledby="catalog-title"
-        >
-          <div class="section-top music-catalog-heading">
-            <div>
-              <p class="eyebrow">El catálogo</p>
-              <h2 id="catalog-title">
-                Todo el viaje<br /><em>en un solo lugar.</em>
-              </h2>
-            </div>
+        <nav class="music-jumpnav wrap" aria-label="Explorar la música">
+          <a href="#lanzamiento">En rotación <span>↘</span></a>
+          <a href="#discografia">Álbumes & EPs <span>↘</span></a>
+          <a href="#sencillos">Sencillos <span>↘</span></a>
+          <a href="#videoclips">Videoclips <span>↘</span></a>
+        </nav>
+        <section class="music-feature wrap" id="lanzamiento" aria-labelledby="release-title">
+          <a class="music-feature-art" href="https://www.youtube.com/watch?v=1S2t2gNuf8M" data-video="1S2t2gNuf8M" data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach" aria-label="Ver Pa’ que bailemos">
+            <img data-photo-slot="music-feature" src="assets/images/pa-que-bailemos-cover.webp" alt="Portada de Pa’ que bailemos" width="600" height="600" fetchpriority="high">
+            <span class="play-disc" aria-hidden="true">▶</span>
+          </a>
+          <div class="music-feature-copy">
+            <p class="eyebrow"><span class="dot"></span>En rotación · Sencillo / 2025</p>
+            <h2 id="release-title">Pa’ que <em>bailemos.</em></h2>
+            <p class="music-artists">LENA DARDELET × RICCIE ORIACH</p>
+            <p>Dos universos que se encuentran. Una invitación a soltar el cuerpo y dejar que la música haga lo suyo.</p>
+            <a class="button" href="https://www.youtube.com/watch?v=1S2t2gNuf8M" data-video="1S2t2gNuf8M" data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach">Ver el videoclip <span aria-hidden="true">↗</span></a>
           </div>
-          <div class="new-release">
-            <a
-              class="release-visual reveal"
-              href="https://www.youtube.com/watch?v=1S2t2gNuf8M"
-              data-video="1S2t2gNuf8M"
-              data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach"
-              aria-label="Ver Pa’ que bailemos"
-              ><img data-photo-slot="music-feature"
-                src="assets/images/pa-que-bailemos-cover.webp"
-                alt="Portada del sencillo Pa’ que bailemos, de Lena Dardelet y Riccie Oriach"
-                width="480"
-                height="360"
-                loading="lazy"
-              /><span class="image-tag">En rotación / 2025</span
-              ><span class="play-disc"
-                ><span aria-hidden="true">▶</span></span
-              ></a
-            >
-            <div class="release-copy reveal">
-              <p class="eyebrow">
-                <span class="dot"></span> Lo nuevo suena así
-              </p>
-              <h2>Pa’ que<br /><em>bailemos.</em></h2>
-              <p class="artists">LENA DARDELET × RICCIE ORIACH</p>
-              <p>
-                Dos universos que se encuentran. Una invitación a soltar el
-                cuerpo y dejar que la música haga lo suyo.
-              </p>
-              <a
-                class="text-link"
-                href="https://www.youtube.com/watch?v=1S2t2gNuf8M"
-                data-video="1S2t2gNuf8M"
-                data-video-title="Pa’ que bailemos · Lena Dardelet & Riccie Oriach"
-                >Ver el videoclip
-                <span class="arrow" aria-hidden="true">↗</span></a
-              >
-              <div class="release-year">
-                <span>Sencillo / 05 dic 2025</span
-                ><span>El Caribe se mueve.</span>
-              </div>
-            </div>
+          <span class="music-feature-star" aria-hidden="true">✳</span>
+        </section>
+        <section class="music-discography section wrap" id="discografia" aria-labelledby="discography-title">
+          <div class="section-top">
+            <div><p class="eyebrow">01 / Álbumes & EPs</p><h2 id="discography-title">Cada disco, <em>un universo.</em></h2></div>
+            <p class="music-section-note">Tres discos, veinte canciones.<br>Escúchalos de principio a fin.</p>
           </div>
-          <div class="catalog-albums">
-            <div class="catalog-subhead">
-              <p class="eyebrow">La discografía</p>
-              <h3>Tres viajes. Un mismo origen.</h3>
-            </div>
-            <div class="album-grid">
+          <div class="album-grid">
+            <article class="album-entry reveal">
               <a
-                class="album-card reveal"
+                class="album-card"
                 href="https://riccieoriach.bandcamp.com/album/maquin"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -164,8 +117,22 @@
                   <span>01 / Riccie Oriach</span><span>Álbum · 2021</span>
                 </div>
                 <h3>Maquiné</h3></a
-              ><a
-                class="album-card reveal"
+              >
+              <p class="album-track-label">8 canciones</p>
+              <ol class="album-track-list" aria-label="Canciones de Maquiné">
+                <li>Maquiné</li>
+                <li>Caracolita</li>
+                <li>Quién la entiende</li>
+                <li>La Gomba</li>
+                <li>Yo propongo</li>
+                <li>Demanda un verso</li>
+                <li>Súbete</li>
+                <li>No me quieras tanto</li>
+              </ol>
+            </article>
+            <article class="album-entry reveal">
+              <a
+                class="album-card"
                 href="https://riccieoriach.bandcamp.com/album/mi-derriengue"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -183,8 +150,20 @@
                   <span>02 / Riccie Oriach</span><span>EP · 2020</span>
                 </div>
                 <h3>Mi Derriengue</h3></a
-              ><a
-                class="album-card reveal"
+              >
+              <p class="album-track-label">6 canciones</p>
+              <ol class="album-track-list" aria-label="Canciones de Mi Derriengue">
+                <li>Mi Derriengue</li>
+                <li>Antojo</li>
+                <li>Pa’ que suba</li>
+                <li>La Cuyaya</li>
+                <li>No sé men</li>
+                <li>Bendita Maldición</li>
+              </ol>
+            </article>
+            <article class="album-entry reveal">
+              <a
+                class="album-card"
                 href="https://riccieoriach.bandcamp.com/album/viaje-al-infinito"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -203,69 +182,113 @@
                 </div>
                 <h3>Viaje al infinito</h3></a
               >
-            </div>
-            <div class="platforms">
-              <span>ENCUENTRA TU FORMA DE ESCUCHAR.</span>
-              <div class="platform-links">
-                <a
-                  href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Spotify <span class="arrow" aria-hidden="true">↗</span></a
-                ><a
-                  href="https://music.apple.com/us/artist/riccie-oriach/1149242812"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Apple Music
-                  <span class="arrow" aria-hidden="true">↗</span></a
-                ><a
-                  href="https://riccieoriach.bandcamp.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Bandcamp <span class="arrow" aria-hidden="true">↗</span></a
-                >
-              </div>
-            </div>
+              <p class="album-track-label">6 canciones</p>
+              <ol class="album-track-list" aria-label="Canciones de Viaje al infinito">
+                <li>Viaje al infinito</li>
+                <li>El Mosquitero</li>
+                <li>La Dueña</li>
+                <li>Prima Tecata</li>
+                <li>La Guayaba</li>
+                <li>Esa Flor</li>
+              </ol>
+            </article>
           </div>
-          <div class="catalog-tracks" aria-labelledby="tracks-title">
-            <div class="catalog-subhead">
-              <p class="eyebrow">Lanzamientos recientes</p>
-              <h3 id="tracks-title">Dos sencillos.</h3>
-            </div>
-            <div class="track-list">
+          <div class="platforms">
+            <span>ENCUENTRA TU FORMA DE ESCUCHAR.</span>
+            <div class="platform-links">
               <a
-                class="track-row"
-                href="https://music.apple.com/us/song/1852175979"
+                href="https://open.spotify.com/artist/3b12EGhDU7EhHcuZmMG3oV"
                 target="_blank"
                 rel="noopener noreferrer"
-                ><span>01</span><strong>Guillermina</strong
-                ><small>Sencillo · 2025</small
-                ><span class="arrow" aria-hidden="true">↗</span></a
+                >Spotify <span class="arrow" aria-hidden="true">↗</span></a
               ><a
-                class="track-row"
-                href="https://open.spotify.com/album/2Qy9CVgdBqHYtDOWKuJ33w"
+                href="https://music.apple.com/us/artist/riccie-oriach/1149242812"
                 target="_blank"
                 rel="noopener noreferrer"
-                ><span>02</span><strong>Arregoso vaya y sea</strong
-                ><small>Sencillo · 2023</small
-                ><span class="arrow" aria-hidden="true">↗</span></a
+                >Apple Music <span class="arrow" aria-hidden="true">↗</span></a
+              ><a
+                href="https://riccieoriach.bandcamp.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Bandcamp <span class="arrow" aria-hidden="true">↗</span></a
               >
             </div>
           </div>
+
         </section>
-        <section class="section wrap music-section">
-          <div class="section-top">
-            <div>
-              <p class="eyebrow">El archivo audiovisual</p>
-              <h2>Sube el volumen.</h2>
-            </div>
+        <section class="music-singles section wrap" id="sencillos" aria-labelledby="tracks-title">
+          <div><p class="eyebrow">02 / Sencillos</p><h2 id="tracks-title">El viaje<br><em>sigue sonando.</em></h2><p class="music-section-note">Sencillos, colaboraciones y sesiones en directo.</p></div>
+          <div class="track-list">
             <a
-              class="text-link"
-              href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A"
+              class="track-row"
+              href="https://music.apple.com/us/song/1852175979"
               target="_blank"
               rel="noopener noreferrer"
-              >Ir a YouTube <span class="arrow" aria-hidden="true">↗</span></a
-            >
+              ><span>01</span><strong>Guillermina</strong
+              ><small>Sencillo · 2025</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://riccieoriach.bandcamp.com/track/riccie-oriach-ah-e-votos-matrimoniales"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>02</span><strong>Ahí e (Votos Matrimoniales)</strong
+              ><small>Sencillo · 2025</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://music.apple.com/us/album/encaramao-sessions-vol-1-single/1772000239"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>03</span><strong>Encaramao Sessions Vol.1</strong
+              ><small>Sencillo · 2024</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://riccieoriach.bandcamp.com/track/el-almendro-live-encaramao-sessions"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>04</span><strong>El Almendro (Live @ Encaramao Sessions)</strong
+              ><small>Sencillo · 2024</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://music.apple.com/us/album/azarosa-live-at-encaramao-sessions-single/1748380050"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>05</span><strong>Azarosa (Live at Encaramao Sessions)</strong
+              ><small>Sencillo · 2024</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://music.apple.com/us/album/el-vejigazo-feat-moreno-negron-single/1730579723"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>06</span><strong>El Vejigazo (feat. Moreno Negron)</strong
+              ><small>Sencillo · 2024</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://open.spotify.com/album/2Qy9CVgdBqHYtDOWKuJ33w"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>07</span><strong>Arregoso vaya y sea</strong
+              ><small>Sencillo · 2023</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+            ><a
+              class="track-row"
+              href="https://music.apple.com/us/album/todos-los-animales-se-drogan-single/1668219803"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span>08</span><strong>Todos los animales se drogan</strong
+              ><small>Sencillo · 2023</small
+              ><span class="arrow" aria-hidden="true">↗</span></a
+          </div>
+        </section>
+        <section class="section wrap music-videos" id="videoclips" aria-labelledby="videos-title">
+          <div class="section-top">
+            <div><p class="eyebrow">03 / El archivo audiovisual</p><h2 id="videos-title">Sube el <em>volumen.</em></h2></div>
+            <a class="text-link" href="https://www.youtube.com/channel/UChn8x4zh25eHbTe_DDgbe4A" target="_blank" rel="noopener noreferrer">Todos los videos <span aria-hidden="true">↗</span></a>
           </div>
           <div class="video-grid">
             <article class="video-card reveal">
@@ -332,6 +355,7 @@
               <p>Videoclip · Viaje al infinito</p>
             </article>
           </div>
+
         </section>
       </main>
       <footer class="site-footer wrap">
